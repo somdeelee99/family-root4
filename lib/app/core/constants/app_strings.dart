@@ -3,7 +3,7 @@ class AppStrings {
   AppStrings._();
 
   static const String appName = 'Family Root';
-  static const String appTagline = 'ຮາກເຮົາ ຮາກໃຈ ຮາກຄອບຄົວ';
+  static const String appTagline = 'ຮາກຖານຄອບຄົວ';
 
   // ---- Tabs ----
   static const String tabHome = 'ໜ້າຫຼັກ';

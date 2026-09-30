@@ -33,30 +33,43 @@ class SplashView extends GetView<SplashController> {
               children: [
                 const Spacer(flex: 3),
                 Container(
-                  padding: EdgeInsets.all(26.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.25),
-                        width: 1.5),
-                  ),
-                  child: Icon(Icons.park_rounded,
-                      size: 60.sp, color: Colors.white),
-                ).animate().fadeIn(duration: 500.ms).scale(
-                    begin: const Offset(0.7, 0.7),
-                    curve: Curves.easeOutBack,
-                    duration: 700.ms),
+                      padding: EdgeInsets.all(26.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.25),
+                          width: 1.5,
+                        ),
+                      ),
+                      // child: Icon(
+                      //   Icons.park_rounded,
+                      //   size: 60.sp,
+                      //   color: Colors.white,
+                      // ),
+                      child: Image.asset(
+                        'assets/images/icon.png',
+                        width: 60.w,
+                        height: 60.w,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 500.ms)
+                    .scale(
+                      begin: const Offset(0.7, 0.7),
+                      curve: Curves.easeOutBack,
+                      duration: 700.ms,
+                    ),
                 SizedBox(height: 26.h),
                 Text(
-                  AppStrings.appName,
-                  style: TextStyle(
-                    fontSize: 34.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                )
+                      AppStrings.appName,
+                      style: TextStyle(
+                        fontSize: 34.sp,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    )
                     .animate()
                     .fadeIn(delay: 250.ms, duration: 500.ms)
                     .slideY(begin: 0.25, end: 0),
@@ -79,7 +92,8 @@ class SplashView extends GetView<SplashController> {
                         minHeight: 5.h,
                         backgroundColor: Colors.white.withValues(alpha: 0.22),
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.accent),
+                          AppColors.accent,
+                        ),
                       ),
                     ),
                   ),
@@ -88,8 +102,9 @@ class SplashView extends GetView<SplashController> {
                 Text(
                   AppStrings.loading,
                   style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.white.withValues(alpha: 0.75)),
+                    fontSize: 12.sp,
+                    color: Colors.white.withValues(alpha: 0.75),
+                  ),
                 ),
                 SizedBox(height: 46.h),
               ],
@@ -101,8 +116,8 @@ class SplashView extends GetView<SplashController> {
   }
 
   Widget _circle(double size, Color color) => Container(
-        width: size.w,
-        height: size.w,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-      );
+    width: size.w,
+    height: size.w,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  );
 }

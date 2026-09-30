@@ -45,10 +45,15 @@ class AuthView extends GetView<AuthController> {
                               color: Colors.white.withValues(alpha: 0.16),
                               borderRadius: BorderRadius.circular(16.r),
                             ),
-                            child: Icon(
-                              Icons.park_rounded,
-                              color: Colors.white,
-                              size: 26.sp,
+                            // child: Icon(
+                            //   Icons.park_rounded,
+                            //   color: Colors.white,
+                            //   size: 26.sp,
+                            // ),
+                            child: Image.asset(
+                              'assets/images/icon.png',
+                              width: 26.w,
+                              height: 26.w,
                             ),
                           ),
                           SizedBox(width: 12.w),
