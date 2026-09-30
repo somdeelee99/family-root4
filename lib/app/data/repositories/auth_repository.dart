@@ -37,17 +37,11 @@ class AuthRepository {
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   // ============================ Google ============================
-  // FIXED: google_sign_in 7.2.0 ต้องมี serverClientId จริง ไม่ใช่ค่าว่าง
 
-  // ใส่ Web Client ID ของเจ้าตรงนี้เลย
-  // เอามาจาก Firebase Console > Project Settings > หรือ Google Cloud > Credentials > Web client
+  // Client ID
+
   static const String _googleServerClientId =
       'PASTE_YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
-  // ถ้าอยากใช้ --dart-define ให้ใช้แบบนี้แทน:
-  // static const String _googleServerClientId = String.fromEnvironment(
-  // 'GOOGLE_SERVER_CLIENT_ID',
-  // defaultValue: 'PASTE_YOUR_WEB_CLIENT_ID.apps.googleusercontent.com',
-  // );
 
   Future<void> _ensureGoogleInitialized() async {
     if (_googleInitialized) return;
