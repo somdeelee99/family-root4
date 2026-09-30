@@ -69,7 +69,9 @@ class MemberTile extends StatelessWidget {
                       children: [
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 7.w, vertical: 2.h),
+                            horizontal: 7.w,
+                            vertical: 2.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primarySoft,
                             borderRadius: BorderRadius.circular(20.r),
@@ -88,8 +90,9 @@ class MemberTile extends StatelessWidget {
                           Text(
                             '${AppDateUtils.age(member.birthDate, deathDate: member.deathDate)} ປີ',
                             style: TextStyle(
-                                fontSize: 11.sp,
-                                color: AppColors.textSecondary),
+                              fontSize: 11.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                       ],
                     ),

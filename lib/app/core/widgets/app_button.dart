@@ -35,7 +35,9 @@ class AppButton extends StatelessWidget {
             height: 22.h,
             width: 22.h,
             child: const CircularProgressIndicator(
-                strokeWidth: 2.4, color: Colors.white),
+              strokeWidth: 2.4,
+              color: Colors.white,
+            ),
           )
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,7 +82,8 @@ class AppButton extends StatelessWidget {
             : FilledButton(
                 onPressed: disabled ? null : onPressed,
                 style: FilledButton.styleFrom(
-                    minimumSize: Size.fromHeight(buttonHeight)),
+                  minimumSize: Size.fromHeight(buttonHeight),
+                ),
                 child: child,
               );
         break;
@@ -88,15 +91,13 @@ class AppButton extends StatelessWidget {
         base = OutlinedButton(
           onPressed: disabled ? null : onPressed,
           style: OutlinedButton.styleFrom(
-              minimumSize: Size.fromHeight(buttonHeight)),
+            minimumSize: Size.fromHeight(buttonHeight),
+          ),
           child: child,
         );
         break;
       case AppButtonVariant.text:
-        base = TextButton(
-          onPressed: disabled ? null : onPressed,
-          child: child,
-        );
+        base = TextButton(onPressed: disabled ? null : onPressed, child: child);
         break;
     }
 
@@ -143,8 +144,9 @@ class SocialLoginButton extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-              border:
-                  borderColor == null ? null : Border.all(color: borderColor!),
+              border: borderColor == null
+                  ? null
+                  : Border.all(color: borderColor!),
             ),
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(
@@ -157,7 +159,9 @@ class SocialLoginButton extends StatelessWidget {
                             height: 20.h,
                             width: 20.h,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2.2, color: foregroundColor),
+                              strokeWidth: 2.2,
+                              color: foregroundColor,
+                            ),
                           )
                         : Text(
                             label,

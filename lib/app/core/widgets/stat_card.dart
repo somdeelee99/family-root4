@@ -78,81 +78,84 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-        child: Container(
-          padding: EdgeInsets.all(14.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
             borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-            border: Border.all(color: AppColors.divider),
-            boxShadow: AppSizes.softShadow,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+            child: Container(
+              padding: EdgeInsets.all(14.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+                border: Border.all(color: AppColors.divider),
+                boxShadow: AppSizes.softShadow,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(icon, size: 18.sp, color: color),
-                  ),
-                  const Spacer(),
-                  if (trend != null)
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
-                      decoration: BoxDecoration(
-                        color: AppColors.primarySoft,
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        trend!,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
+                        child: Icon(icon, size: 18.sp, color: color),
+                      ),
+                      const Spacer(),
+                      if (trend != null)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 7.w,
+                            vertical: 3.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primarySoft,
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Text(
+                            trend!,
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: value.toDouble()),
+                    duration: const Duration(milliseconds: 900),
+                    curve: Curves.easeOutCubic,
+                    builder: (context, val, _) => Text(
+                      val.toInt().toString(),
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        height: 1.1,
                       ),
                     ),
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11.5.sp,
+                      color: AppColors.textSecondary,
+                      height: 1.25,
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(height: 12.h),
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: value.toDouble()),
-                duration: const Duration(milliseconds: 900),
-                curve: Curves.easeOutCubic,
-                builder: (context, val, _) => Text(
-                  val.toInt().toString(),
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                    height: 1.1,
-                  ),
-                ),
-              ),
-              SizedBox(height: 3.h),
-              Text(
-                label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: 11.5.sp,
-                    color: AppColors.textSecondary,
-                    height: 1.25),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
-    )
+        )
         .animate(delay: (index * 70).ms)
         .fadeIn(duration: 400.ms)
         .slideY(begin: 0.18, end: 0, curve: Curves.easeOutCubic);
