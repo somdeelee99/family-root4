@@ -1,0 +1,57 @@
+rules_version = '2';
+
+// =============================================================
+// Family Root - Cloud Storage Security Rules
+// ໂຄງສ້າງ:
+//   avatars/{uid}/...                              -> ຮູບໂປຣໄຟລ໌
+//   families/{familyId}/members/{memberId}.jpg     -> ຮູບສະມາຊິກໃນຜັງ
+//   families/{familyId}/chat/{roomId}/...          -> ຮູບໃນການສົນທະນາ
+//   families/{familyId}/cover.jpg                  -> ຮູບປົກຄອບຄົວ
+// =============================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    function sizeLimitMb(mb) {
+      return request.resource.size < mb * 1024 * 1024;
+    }
+
+    match /avatars/{uid}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == uid && isImage() && sizeLimitMb(5);
+    }
+
+    match /families/{familyId}/{allPaths=**} {
+      function familyOf() {
+        return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.familyId;
+      }
+      function isAdminOfFamily() {
+        return isSignedIn() &&
+          familyOf() == familyId &&
+          firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      }
+
+      // ອ່ານໄດ້ທຸກຄົນທີ່ເຂົ້າລະບົບ (ເນື່ອງຈາກ URL ມີ token ຢູ່ແລ້ວ)
+      allow read: if isSignedIn();
+
+      // ຮູບສະມາຊິກ ແລະ ຮູບປົກ ອັບໂຫຼດໄດ້ສະເພາະ admin
+      allow write: if isAdminOfFamily() && isImage() && sizeLimitMb(8);
+
+      // ຮູບໃນການສົນທະນາ ອັບໂຫຼດໄດ້ທຸກສະມາຊິກຂອງຄອບຄົວນັ້ນ
+      match /chat/{roomId}/{fileName} {
+        allow write: if isSignedIn() &&
+          familyOf() == familyId &&
+          isImage() &&
+          sizeLimitMb(8);
+      }
+    }
+  }
+}

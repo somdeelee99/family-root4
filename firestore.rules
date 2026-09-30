@@ -1,0 +1,110 @@
+rules_version = '2';
+
+// =============================================================
+// Family Root - Firestore Security Rules
+// ຫຼັກການ:
+//   1. ທຸກຄົນທີ່ເຂົ້າລະບົບຕ້ອງມີເອກະສານ users/{uid}
+//   2. ຂໍ້ມູນຄອບຄົວ (families) ເຂົ້າເຖິງໄດ້ສະເພາະສະມາຊິກຂອງຄອບຄົວນັ້ນ
+//   3. ການເພີ່ມ/ແກ້ໄຂ/ລຶບ ສະມາຊິກໃນຜັງ ແລະ ບັນຊີ  => ສະເພາະ role == 'admin'
+//   4. ການສົນທະນາ: ສະມາຊິກຄອບຄົວດຽວກັນເຫັນໄດ້, ລຶບຂໍ້ຄວາມບໍ່ໄດ້ (allow delete: false)
+// =============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDoc().role == 'admin';
+    }
+
+    function myFamilyId() {
+      return isSignedIn() ? userDoc().familyId : null;
+    }
+
+    function inSameFamily(familyId) {
+      return isSignedIn() && myFamilyId() == familyId;
+    }
+
+    // ------------------------- users -------------------------
+    match /users/{uid} {
+      // ຜູ້ໃຊ້ເຫັນຂໍ້ມູນຕົນເອງ ຫຼື ສະມາຊິກຄອບຄົວດຽວກັນ (ໃຊ້ໃນໜ້າສະມາຊິກ/ແຊັດ)
+      allow read: if isSignedIn() && (
+        request.auth.uid == uid ||
+        (resource != null && resource.data.familyId != null && resource.data.familyId == myFamilyId())
+      );
+
+      // ສ້າງເອກະສານຂອງຕົນເອງ (ຕອນເຂົ້າລະບົບຄັ້ງທຳອິດ)
+      allow create: if isSignedIn() && request.auth.uid == uid;
+
+      // ອັບເດດ: ຕົນເອງ (ບໍ່ສາມາດປ່ຽນ role ຂອງຕົນເອງ) ຫຼື admin ຂອງຄອບຄົວດຽວກັນ
+      allow update: if isSignedIn() && (
+        (request.auth.uid == uid &&
+          request.resource.data.role == resource.data.role) ||
+        (isAdmin() && resource.data.familyId == myFamilyId())
+      );
+
+      // ລຶບ: ສະເພາະ admin ຂອງຄອບຄົວດຽວກັນ (ບໍ່ລວມການລຶບບັນຊີຕົນເອງ)
+      allow delete: if isAdmin() && resource.data.familyId == myFamilyId();
+    }
+
+    // ------------------------ families -----------------------
+    match /families/{familyId} {
+      allow read: if inSameFamily(familyId);
+
+      // admin ທີ່ຍັງບໍ່ມີຄອບຄົວ ສ້າງຄອບຄົວໃໝ່ໄດ້
+      allow create: if isAdmin();
+
+      allow update: if isAdmin() && inSameFamily(familyId);
+      allow delete: if false; // ບໍ່ອະນຸຍາດໃຫ້ລຶບຄອບຄົວຈາກແອັບ
+
+      // ------------------- ສະມາຊິກໃນຜັງ -------------------
+      match /members/{memberId} {
+        allow read: if inSameFamily(familyId);
+        allow create, update, delete: if isAdmin() && inSameFamily(familyId);
+
+        // ---------------- ການສົນທະນາ ----------------
+        match /chats/{roomId} {
+          function isParticipant() {
+            return request.auth.uid in resource.data.participants;
+          }
+
+          allow read: if inSameFamily(familyId) && isParticipant();
+
+          allow create: if inSameFamily(familyId) &&
+            request.auth.uid in request.resource.data.participants;
+
+          // ອັບເດດໄດ້ສະເພາະຜູ້ເຂົ້າຮ່ວມຫ້ອງ (unread / ຂໍ້ຄວາມຫຼ້າສຸດ)
+          allow update: if inSameFamily(familyId) && isParticipant();
+
+          // ບໍ່ອະນຸຍາດໃຫ້ລຶບປະຫວັດການສົນທະນາ
+          allow delete: if false;
+
+          match /messages/{messageId} {
+            allow read: if inSameFamily(familyId);
+            allow create: if inSameFamily(familyId) &&
+              request.resource.data.senderId == request.auth.uid;
+            // ອະນຸຍາດອັບເດດສະເພາະ readBy
+            allow update: if inSameFamily(familyId) &&
+              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']);
+            // ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້
+            allow delete: if false;
+          }
+        }
+
+        // ---------------- activity log ----------------
+        match /activity/{logId} {
+          allow read: if inSameFamily(familyId);
+          allow create: if inSameFamily(familyId);
+          allow update, delete: if false;
+        }
+      }
+    }
+  }
+}
