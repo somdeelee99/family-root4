@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logger/logger.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/constants/firestore_paths.dart';
@@ -25,7 +24,6 @@ class AuthRepository {
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
-  final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
   static const _secure = FlutterSecureStorage();
 

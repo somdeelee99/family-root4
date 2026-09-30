@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 
 import '../../core/constants/firestore_paths.dart';
 import '../../core/services/cloud_function_service.dart';
@@ -18,7 +17,6 @@ class UserRepository {
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
-  final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
   CollectionReference<Map<String, dynamic>> get _users =>
       _firestore.collection(FirestorePaths.users);

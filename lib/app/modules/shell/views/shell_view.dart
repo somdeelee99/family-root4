@@ -22,11 +22,10 @@ class ShellView extends GetView<ShellController> {
     final chatController = Get.find<ChatController>();
 
     return Scaffold(
-      body: Obx(
-        () => Column(
-          children: [
-            // ແຈ້ງເຕືອນເມື່ອອອບລາຍ
-            Obx(
+      body: Column(
+        children: [
+          // ແຈ້ງເຕືອນເມື່ອອອບລາຍ
+          Obx(
               () => ConnectivityService.to.isOnline.value
                   ? const SizedBox.shrink()
                   : Container(
@@ -36,32 +35,39 @@ class ShellView extends GetView<ShellController> {
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.wifi_off_rounded, color: Colors.white, size: 15),
+                          Icon(
+                            Icons.wifi_off_rounded,
+                            color: Colors.white,
+                            size: 15,
+                          ),
                           SizedBox(width: 8),
                           Text(
                             'ທ່ານກຳລັງໃຊ້ງານແບບອອບລາຍ - ຂໍ້ມູນຈະຊິ້ງເມື່ອມີເນັດ',
-                            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-            ),
-            Expanded(
-              child: Obx(
-                () => IndexedStack(
-                  index: controller.currentIndex.value,
-                  children: const [
-                    HomeView(),
-                    FamilyTreeView(),
-                    MembersView(),
-                    ChatView(),
-                    ProfileView(),
-                  ],
+),
                 ),
+          ),
+          Expanded(
+            child: Obx(
+              () => IndexedStack(
+                index: controller.currentIndex.value,
+                children: const [
+                  HomeView(),
+                  FamilyTreeView(),
+                  MembersView(),
+                  ChatView(),
+                  ProfileView(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: Obx(
         () => StreamBuilder<int>(

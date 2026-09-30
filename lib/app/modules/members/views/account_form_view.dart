@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -44,7 +42,7 @@ class AccountFormView extends GetView<AccountFormController> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(32.r),
                           child: Image.file(
-                            controller.pickedImage.value! as File,
+                            controller.pickedImage.value!,
                             width: 110.w,
                             height: 110.w,
                             fit: BoxFit.cover,
@@ -250,7 +248,7 @@ class AccountFormView extends GetView<AccountFormController> {
                         ),
                         child: SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: AppColors.primary,
+                          activeThumbColor: AppColors.primary,
                           value: controller.isActive.value,
                           onChanged: (value) =>
                               controller.isActive.value = value,

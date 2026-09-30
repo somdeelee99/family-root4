@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:logger/logger.dart';
 
 import '../../core/constants/firestore_paths.dart';
 import '../models/chat_message.dart';
@@ -12,7 +11,6 @@ class ChatRepository {
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
-  final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
   CollectionReference<Map<String, dynamic>> _rooms(String familyId) =>
       _firestore.collection(FirestorePaths.familyChats(familyId));

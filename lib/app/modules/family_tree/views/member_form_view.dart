@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -277,46 +275,45 @@ class MemberFormView extends GetView<MemberFormController> {
                       icon: Icons.link_rounded,
                       children: [
                         Obx(
-                          () => Column(
-                            children: [
-                              for (final account in controller.accounts)
+                          () => RadioGroup<String?>(
+                            groupValue: controller.linkedUserId.value,
+                            onChanged: (value) =>
+                                controller.linkedUserId.value = value,
+                            child: Column(
+                              children: [
+                                for (final account in controller.accounts)
+                                  RadioListTile<String?>(
+                                    value: account.uid,
+                                    contentPadding: EdgeInsets.zero,
+                                    dense: true,
+                                    activeColor: AppColors.primary,
+                                    title: Text(
+                                      account.displayName,
+                                      style: TextStyle(
+                                          fontSize: 13.5.sp,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: Text(
+                                      account.email ?? account.phone ?? '',
+                                      style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: AppColors.textSecondary),
+                                    ),
+                                  ),
                                 RadioListTile<String?>(
-                                  value: account.uid,
-                                  groupValue: controller.linkedUserId.value,
-                                  onChanged: (value) =>
-                                      controller.linkedUserId.value = value,
+                                  value: null,
                                   contentPadding: EdgeInsets.zero,
                                   dense: true,
                                   activeColor: AppColors.primary,
                                   title: Text(
-                                    account.displayName,
+                                    'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
                                     style: TextStyle(
                                         fontSize: 13.5.sp,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: Text(
-                                    account.email ?? account.phone ?? '',
-                                    style: TextStyle(
-                                        fontSize: 11.sp,
                                         color: AppColors.textSecondary),
                                   ),
                                 ),
-                              RadioListTile<String?>(
-                                value: null,
-                                groupValue: controller.linkedUserId.value,
-                                onChanged: (value) =>
-                                    controller.linkedUserId.value = null,
-                                contentPadding: EdgeInsets.zero,
-                                dense: true,
-                                activeColor: AppColors.primary,
-                                title: Text(
-                                  'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
-                                  style: TextStyle(
-                                      fontSize: 13.5.sp,
-                                      color: AppColors.textSecondary),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -447,7 +444,7 @@ class MemberFormView extends GetView<MemberFormController> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(30.r),
                       child: Image.file(
-                        controller.pickedImage.value! as File,
+                        controller.pickedImage.value!,
                         width: 104.w,
                         height: 104.w,
                         fit: BoxFit.cover,

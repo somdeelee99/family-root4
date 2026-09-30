@@ -11,7 +11,6 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/theme_service.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/app_avatar.dart';
-import '../../../core/widgets/role_badge.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../data/models/enums.dart';
 import '../controllers/profile_controller.dart';

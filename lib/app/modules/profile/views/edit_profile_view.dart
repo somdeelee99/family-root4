@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,7 +9,6 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../core/widgets/app_text_field.dart';
-import '../../../data/models/enums.dart';
 import '../controllers/edit_profile_controller.dart';
 
 class EditProfileView extends GetView<EditProfileController> {
@@ -41,7 +38,7 @@ class EditProfileView extends GetView<EditProfileController> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(32.r),
                           child: Image.file(
-                            controller.pickedImage.value! as File,
+                            controller.pickedImage.value!,
                             width: 112.w,
                             height: 112.w,
                             fit: BoxFit.cover,
@@ -65,7 +62,11 @@ class EditProfileView extends GetView<EditProfileController> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: Icon(Icons.camera_alt_rounded, size: 15.sp, color: Colors.white),
+                          child: Icon(
+                            Icons.camera_alt_rounded,
+                            size: 15.sp,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -148,9 +149,13 @@ class EditProfileView extends GetView<EditProfileController> {
                     child: Row(
                       children: [
                         Icon(
-                          user?.isAdmin ?? false ? Icons.verified_rounded : Icons.person_rounded,
+                          user?.isAdmin ?? false
+                              ? Icons.verified_rounded
+                              : Icons.person_rounded,
                           size: 15.sp,
-                          color: user?.isAdmin ?? false ? AppColors.accent : AppColors.primary,
+                          color: user?.isAdmin ?? false
+                              ? AppColors.accent
+                              : AppColors.primary,
                         ),
                         SizedBox(width: 8.w),
                         Expanded(
@@ -158,7 +163,10 @@ class EditProfileView extends GetView<EditProfileController> {
                             user?.isAdmin ?? false
                                 ? 'ບົດບາດ: Admin - ຈັດການຄອບຄົວໄດ້ທັງໝົດ'
                                 : 'ບົດບາດ: Member - ບໍ່ສາມາດປ່ຽນບົດບາດດ້ວຍຕົນເອງ',
-                            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+                            style: TextStyle(
+                              fontSize: 11.5.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
@@ -191,7 +199,10 @@ class EditProfileView extends GetView<EditProfileController> {
                   ? SizedBox(
                       width: 18.w,
                       height: 18.w,
-                      child: const CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.check_rounded, size: 20),
               label: const Text(AppStrings.save),
