@@ -23,7 +23,7 @@ class AppStrings {
   static const String password = 'ລະຫັດຜ່ານ';
   static const String forgotPassword = 'ລືມລະຫັດຜ່ານ?';
   static const String memberOnlyNote =
-      'ບັນຊີອີແມວ ແລະ ລະຫັດຜ່ານ ສ້າງໂດຍ Admin ຂອງຄອບຄົວເທົ່ານັ້ນ';
+      'ສະມາຊິກບໍ່ສາມາດລົງທະບຽນໄດ້ ກະລຸນາຕິດຕໍ່ Admin ';
   static const String signOut = 'ອອກຈາກລະບົບ';
   static const String signOutConfirm = 'ທ່ານຕ້ອງການອອກຈາກລະບົບແທ້ບໍ?';
 
@@ -62,7 +62,8 @@ class AppStrings {
   static const String addNode = 'ເພີ່ມສະມາຊິກໃນຜັງ';
   static const String editNode = 'ແກ້ໄຂຂໍ້ມູນ';
   static const String deleteNode = 'ລຶບສະມາຊິກ';
-  static const String deleteNodeConfirm = 'ທ່ານຕ້ອງການລຶບສະມາຊິກນີ້ອອກຈາກຜັງແທ້ບໍ?';
+  static const String deleteNodeConfirm =
+      'ທ່ານຕ້ອງການລຶບສະມາຊິກນີ້ອອກຈາກຜັງແທ້ບໍ?';
   static const String exportPdf = 'Export ຜັງເປັນ PDF';
   static const String exportImage = 'ບັນທຶກຮູບຜັງ';
   static const String generation = 'ລຸ້ນທີ';
@@ -87,7 +88,8 @@ class AppStrings {
   static const String roleAdmin = 'Admin (ຜູ້ດູແລຄອບຄົວ)';
   static const String roleMember = 'Member (ສະມາຊິກຄອບຄົວ)';
   static const String noMembers = 'ຍັງບໍ່ມີສະມາຊິກ';
-  static const String noMembersDesc = 'Admin ສາມາດເພີ່ມບັນຊີສະມາຊິກໄດ້ຈາກປຸ່ມດ້ານລຸ່ມ';
+  static const String noMembersDesc =
+      'Admin ສາມາດເພີ່ມບັນຊີສະມາຊິກໄດ້ຈາກປຸ່ມດ້ານລຸ່ມ';
   static const String chatNow = 'ແຊັດຫາ';
   static const String call = 'ໂທ';
   static const String accountInfo = 'ຂໍ້ມູນບັນຊີ';
