@@ -94,6 +94,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "949919542824-2kpbhpgkmp8uqmt0tcoia5tkct564sfp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.familyrootsdl2026.family_root",
+            "certificate_hash": "3ead04121bab39c5fbc40e286cad571611c32a25"
+          }
+        },
+        {
           "client_id": "949919542824-c2mapsmfhnrbucr9atjtia1eoefnqjlg.apps.googleusercontent.com",
           "client_type": 3
         }
