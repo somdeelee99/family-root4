@@ -25,7 +25,11 @@ class AuthController extends GetxController {
   Future<void> signInWith(AuthProviderType provider) async {
     final ok = await _auth.signInWithProvider(provider);
     if (!ok) {
-      UiHelpers.error(_auth.errorMessage.value.isEmpty ? AppStrings.error : _auth.errorMessage.value);
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
       return;
     }
     UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
@@ -42,7 +46,11 @@ class AuthController extends GetxController {
     );
 
     if (!ok) {
-      UiHelpers.error(_auth.errorMessage.value.isEmpty ? AppStrings.error : _auth.errorMessage.value);
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
       return;
     }
 
@@ -70,7 +78,9 @@ class AuthController extends GetxController {
       if (auth.isAdmin) {
         Get.offAllNamed(Routes.FAMILY_SETUP);
       } else {
-        UiHelpers.warning('ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກເພີ່ມເຂົ້າຄອບຄົວ ກະລຸນາຕິດຕໍ່ Admin');
+        UiHelpers.warning(
+          'ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກເພີ່ມເຂົ້າຄອບຄົວ ກະລຸນາຕິດຕໍ່ Admin',
+        );
       }
       return;
     }

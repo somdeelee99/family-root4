@@ -38,7 +38,9 @@ class ProfileView extends GetView<ProfileController> {
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: AppColors.headerGradient,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
               ),
               child: SafeArea(
                 bottom: false,
@@ -66,7 +68,10 @@ class ProfileView extends GetView<ProfileController> {
                       SizedBox(height: 6.h),
                       Text(
                         user?.email ?? user?.phone ?? '',
-                        style: TextStyle(fontSize: 12.5.sp, color: Colors.white.withValues(alpha: 0.85)),
+                        style: TextStyle(
+                          fontSize: 12.5.sp,
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
                       ),
                       SizedBox(height: 12.h),
                       Row(
@@ -74,7 +79,10 @@ class ProfileView extends GetView<ProfileController> {
                         children: [
                           if (user != null)
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 5.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.16),
                                 borderRadius: BorderRadius.circular(30.r),
@@ -82,9 +90,13 @@ class ProfileView extends GetView<ProfileController> {
                               child: Row(
                                 children: [
                                   Icon(
-                                    user.isAdmin ? Icons.verified_rounded : Icons.person_rounded,
+                                    user.isAdmin
+                                        ? Icons.verified_rounded
+                                        : Icons.person_rounded,
                                     size: 12.sp,
-                                    color: user.isAdmin ? AppColors.accent : Colors.white,
+                                    color: user.isAdmin
+                                        ? AppColors.accent
+                                        : Colors.white,
                                   ),
                                   SizedBox(width: 5.w),
                                   Text(
@@ -92,7 +104,9 @@ class ProfileView extends GetView<ProfileController> {
                                     style: TextStyle(
                                       fontSize: 10.5.sp,
                                       fontWeight: FontWeight.w800,
-                                      color: user.isAdmin ? AppColors.accent : Colors.white,
+                                      color: user.isAdmin
+                                          ? AppColors.accent
+                                          : Colors.white,
                                     ),
                                   ),
                                 ],
@@ -100,7 +114,10 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           SizedBox(width: 8.w),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 5.h,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.16),
                               borderRadius: BorderRadius.circular(30.r),
@@ -137,13 +154,24 @@ class ProfileView extends GetView<ProfileController> {
               padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
               child: Row(
                 children: [
-                  _miniStat('ສະມາຊິກ', '${controller.totalMembers}', Icons.groups_rounded),
+                  _miniStat(
+                    'ສະມາຊິກ',
+                    '${controller.totalMembers}',
+                    Icons.groups_rounded,
+                  ),
                   SizedBox(width: 12.w),
-                  _miniStat('ລຸ້ນ', '${controller.generationCount}', Icons.layers_rounded),
+                  _miniStat(
+                    'ລຸ້ນ',
+                    '${controller.generationCount}',
+                    Icons.layers_rounded,
+                  ),
                   SizedBox(width: 12.w),
                   _miniStat(
                     'ເຂົ້າໃຊ້ຫຼ້າສຸດ',
-                    user?.lastSeenAt == null ? '-' : AppDateUtils.relative(user!.lastSeenAt).replaceAll('ກ່ອນ', ''),
+                    user?.lastSeenAt == null
+                        ? '-'
+                        : AppDateUtils.relative(user!.lastSeenAt)
+                              .replaceAll('ກ່ອນ', ''),
                     Icons.schedule_rounded,
                   ),
                 ],
@@ -156,11 +184,16 @@ class ProfileView extends GetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SectionHeader(title: 'ບັນຊີຂອງຂ້ອຍ', icon: Icons.person_outline_rounded),
+                  const SectionHeader(
+                    title: 'ບັນຊີຂອງຂ້ອຍ',
+                    icon: Icons.person_outline_rounded,
+                  ),
                   _menuCard([
                     _menuItem(
                       icon: Icons.edit_outlined,
-                      title: controller.isAdmin ? 'ອັບເດດຂໍ້ມູນ ແລະ ຮູບພາບ' : AppStrings.editProfile,
+                      title: controller.isAdmin
+                          ? 'ອັບເດດຂໍ້ມູນ ແລະ ຮູບພາບ'
+                          : AppStrings.editProfile,
                       subtitle: controller.isAdmin
                           ? 'ປ່ຽນຮູບພາບ ແລະ ຊື່ຂອງທ່ານ'
                           : 'ຊື່, ນາມສະກຸນ, ເບີໂທ, WhatsApp ແລະ ຮູບພາບ',
@@ -185,7 +218,10 @@ class ProfileView extends GetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SectionHeader(title: AppStrings.settings, icon: Icons.settings_outlined),
+                  const SectionHeader(
+                    title: AppStrings.settings,
+                    icon: Icons.settings_outlined,
+                  ),
                   _menuCard([
                     Obx(
                       () => _switchItem(
@@ -237,45 +273,45 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   Widget _miniStat(String label, String value, IconData icon) => Expanded(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 10.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-            border: Border.all(color: AppColors.divider),
+    child: Container(
+      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 10.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 17.sp, color: AppColors.primary),
+          SizedBox(height: 7.h),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+            ),
           ),
-          child: Column(
-            children: [
-              Icon(icon, size: 17.sp, color: AppColors.primary),
-              SizedBox(height: 7.h),
-              Text(
-                value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                label,
-                style: TextStyle(fontSize: 10.5.sp, color: AppColors.textSecondary),
-              ),
-            ],
+          SizedBox(height: 2.h),
+          Text(
+            label,
+            style: TextStyle(fontSize: 10.5.sp, color: AppColors.textSecondary),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 
   Widget _menuCard(List<Widget> children) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-          border: Border.all(color: AppColors.divider),
-        ),
-        child: Column(children: children),
-      );
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+      border: Border.all(color: AppColors.divider),
+    ),
+    child: Column(children: children),
+  );
 
   Widget _menuItem({
     required IconData icon,
@@ -283,31 +319,40 @@ class ProfileView extends GetView<ProfileController> {
     String? subtitle,
     required VoidCallback onTap,
     Color color = AppColors.primary,
-  }) =>
-      ListTile(
-        onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusLg.r)),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-        leading: Container(
-          padding: EdgeInsets.all(9.w),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(11.r),
+  }) => ListTile(
+    onTap: onTap,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+    ),
+    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
+    leading: Container(
+      padding: EdgeInsets.all(9.w),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(11.r),
+      ),
+      child: Icon(icon, size: 17.sp, color: color),
+    ),
+    title: Text(
+      title,
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+      ),
+    ),
+    subtitle: subtitle == null
+        ? null
+        : Text(
+            subtitle,
+            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
           ),
-          child: Icon(icon, size: 17.sp, color: color),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
-        ),
-        subtitle: subtitle == null
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
-              ),
-        trailing: Icon(Icons.chevron_right_rounded, size: 20.sp, color: AppColors.textHint),
-      );
+    trailing: Icon(
+      Icons.chevron_right_rounded,
+      size: 20.sp,
+      color: AppColors.textHint,
+    ),
+  );
 
   Widget _switchItem({
     required IconData icon,
@@ -315,37 +360,42 @@ class ProfileView extends GetView<ProfileController> {
     String? subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
-  }) =>
-      SwitchListTile(
-        value: value,
-        onChanged: onChanged,
-        activeThumbColor: AppColors.primary,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-        secondary: Container(
-          padding: EdgeInsets.all(9.w),
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(11.r),
+  }) => SwitchListTile(
+    value: value,
+    onChanged: onChanged,
+    activeThumbColor: AppColors.primary,
+    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
+    secondary: Container(
+      padding: EdgeInsets.all(9.w),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(11.r),
+      ),
+      child: Icon(icon, size: 17.sp, color: AppColors.primary),
+    ),
+    title: Text(
+      title,
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+      ),
+    ),
+    subtitle: subtitle == null
+        ? null
+        : Text(
+            subtitle,
+            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
           ),
-          child: Icon(icon, size: 17.sp, color: AppColors.primary),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
-        ),
-        subtitle: subtitle == null
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
-              ),
-      );
+  );
 
   /// ສະແດງການເຊື່ອມຕໍ່ການເຂົ້າລະບົບ ຂອງ Admin
   Widget _loginConnections() {
     final user = AuthService.to.user.value;
     final providers = user?.providers ?? const <AuthProviderType>[];
-    final all = AuthProviderType.values.where((p) => p != AuthProviderType.password);
+    final all = AuthProviderType.values.where(
+      (p) => p != AuthProviderType.password,
+    );
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 14.h),
@@ -354,7 +404,11 @@ class ProfileView extends GetView<ProfileController> {
         children: [
           Row(
             children: [
-              Icon(Icons.link_rounded, size: 15.sp, color: AppColors.textSecondary),
+              Icon(
+                Icons.link_rounded,
+                size: 15.sp,
+                color: AppColors.textSecondary,
+              ),
               SizedBox(width: 7.w),
               Text(
                 AppStrings.loginConnections,
@@ -379,7 +433,9 @@ class ProfileView extends GetView<ProfileController> {
                           : AppColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
-                        color: providers.contains(provider) ? AppColors.primary : AppColors.divider,
+                        color: providers.contains(provider)
+                            ? AppColors.primary
+                            : AppColors.divider,
                       ),
                     ),
                     child: Column(
@@ -387,7 +443,9 @@ class ProfileView extends GetView<ProfileController> {
                         Icon(
                           _providerIcon(provider),
                           size: 20.sp,
-                          color: providers.contains(provider) ? AppColors.primary : AppColors.textHint,
+                          color: providers.contains(provider)
+                              ? AppColors.primary
+                              : AppColors.textHint,
                         ),
                         SizedBox(height: 4.h),
                         Text(
@@ -449,7 +507,11 @@ class ProfileView extends GetView<ProfileController> {
             Text(
               'ແອັບຈັດການຜັງໄມ້ຄອບຄົວສຳລັບຄອບຄົວລາວ\nAdmin ຈັດການຂໍ້ມູນ • Member ເຂົ້າຮ່ວມ ແລະ ສື່ສານ',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary, height: 1.5),
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
             ),
           ],
         ),
