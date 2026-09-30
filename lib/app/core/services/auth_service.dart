@@ -45,24 +45,21 @@ class AuthService extends GetxService {
       user.value = null;
       return;
     }
-    _profileSub = _authRepo.userStream(firebaseUser.uid).listen(
-      (value) async {
-        user.value = value;
-        if (value != null) {
-          try {
-            final fid = value.familyId ?? '';
-            if (fid.isNotEmpty) {
-              await NotificationService.instance.subscribeToFamily(fid);
-            }
-            final token = NotificationService.instance.token;
-            if (token != null) await _authRepo.updateFcmToken(token);
-          } catch (e) {
-            _log.w('sync ການແຈ້ງເຕືອນບໍ່ສຳເລັດ: $e');
+    _profileSub = _authRepo.userStream(firebaseUser.uid).listen((value) async {
+      user.value = value;
+      if (value != null) {
+        try {
+          final fid = value.familyId ?? '';
+          if (fid.isNotEmpty) {
+            await NotificationService.instance.subscribeToFamily(fid);
           }
+          final token = NotificationService.instance.token;
+          if (token != null) await _authRepo.updateFcmToken(token);
+        } catch (e) {
+          _log.w('sync ການແຈ້ງເຕືອນບໍ່ສຳເລັດ: $e');
         }
-      },
-      onError: (Object e) => _log.e('ດຶງຂໍ້ມູນຜູ້ໃຊ້ບໍ່ສຳເລັດ: $e'),
-    );
+      }
+    }, onError: (Object e) => _log.e('ດຶງຂໍ້ມູນຜູ້ໃຊ້ບໍ່ສຳເລັດ: $e'));
   }
 
   Future<bool> signInWithProvider(AuthProviderType provider) async {
@@ -92,7 +89,10 @@ class AuthService extends GetxService {
     }
   }
 
-  Future<bool> signInWithEmail({required String email, required String password}) async {
+  Future<bool> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
     isBusy.value = true;
     errorMessage.value = '';
     try {
@@ -106,12 +106,14 @@ class AuthService extends GetxService {
     }
   }
 
-  Future<void> sendPasswordReset(String email) => _authRepo.sendPasswordReset(email);
+  Future<void> sendPasswordReset(String email) =>
+      _authRepo.sendPasswordReset(email);
 
   Future<void> signOut() async {
     try {
       final family = familyId;
-      if (family.isNotEmpty) await NotificationService.instance.unsubscribeFromFamily(family);
+      if (family.isNotEmpty)
+        await NotificationService.instance.unsubscribeFromFamily(family);
       await _authRepo.signOut();
     } catch (e) {
       _log.w('ອອກຈາກລະບົບມີຂໍ້ຜິດພາດ: $e');
@@ -142,7 +144,10 @@ class AuthService extends GetxService {
         gender: gender,
       );
       if (displayName != null || avatarUrl != null) {
-        user.value = user.value?.copyWith(displayName: displayName, avatarUrl: avatarUrl);
+        user.value = user.value?.copyWith(
+          displayName: displayName,
+          avatarUrl: avatarUrl,
+        );
       }
       return true;
     } catch (e) {
@@ -158,7 +163,10 @@ class AuthService extends GetxService {
     if (uid.isEmpty) return false;
     try {
       await _authRepo.updateProfile(familyId: newFamilyId, surname: surname);
-      user.value = user.value?.copyWith(familyId: newFamilyId, surname: surname);
+      user.value = user.value?.copyWith(
+        familyId: newFamilyId,
+        surname: surname,
+      );
       return true;
     } catch (e) {
       errorMessage.value = UiHelpers.mapError(e);

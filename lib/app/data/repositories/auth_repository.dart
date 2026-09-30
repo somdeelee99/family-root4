@@ -19,11 +19,9 @@ import '../models/enums.dart';
 /// - Google / Facebook / Apple  => ສະເພາະ Admin ຂອງຄອບຄົວ
 /// - ອີແມວ + ລະຫັດຜ່ານ        => ສະເພາະ Member ທີ່ admin ສ້າງບັນຊີໃຫ້
 class AuthRepository {
-  AuthRepository({
-    FirebaseAuth? auth,
-    FirebaseFirestore? firestore,
-  })  : _auth = auth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
@@ -40,13 +38,15 @@ class AuthRepository {
 
   // ============================ Google ============================
   // google_sign_in 7.x ໃຊ້ singleton + ຕ້ອງ initialize() ກ່ອນ
-  static const String _googleServerClientId =
-      String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  static const String _googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+  );
 
   Future<void> _ensureGoogleInitialized() async {
     if (_googleInitialized) return;
-    await GoogleSignIn.instance
-        .initialize(serverClientId: _googleServerClientId);
+    await GoogleSignIn.instance.initialize(
+      serverClientId: _googleServerClientId,
+    );
     _googleInitialized = true;
   }
 
@@ -55,17 +55,18 @@ class AuthRepository {
 
     try {
       // 1) ການພິສູດຕົວຕົນ (Authentication)
-      final GoogleSignInAccount account =
-          await GoogleSignIn.instance.authenticate(
-        scopeHint: const ['email', 'profile'],
-      );
+      final GoogleSignInAccount account = await GoogleSignIn.instance
+          .authenticate(scopeHint: const ['email', 'profile']);
 
       // 2) ການຂໍສິດ (Authorization) ເພື່ອເອົາ accessToken
       String? accessToken;
       try {
         final clientAuth = account.authorizationClient;
-        final authorization = await clientAuth
-                .authorizationForScopes(const ['email', 'profile']) ??
+        final authorization =
+            await clientAuth.authorizationForScopes(const [
+              'email',
+              'profile',
+            ]) ??
             await clientAuth.authorizeScopes(const ['email', 'profile']);
         accessToken = authorization.accessToken;
       } catch (_) {
@@ -88,37 +89,47 @@ class AuthRepository {
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         throw FirebaseAuthException(
-            code: 'aborted-by-user', message: 'ຍົກເລີກການເຂົ້າລະບົບ');
+          code: 'aborted-by-user',
+          message: 'ຍົກເລີກການເຂົ້າລະບົບ',
+        );
       }
       throw FirebaseAuthException(
-          code: e.code.name,
-          message: e.description ?? 'ເຂົ້າລະບົບດ້ວຍ Google ບໍ່ສຳເລັດ');
+        code: e.code.name,
+        message: e.description ?? 'ເຂົ້າລະບົບດ້ວຍ Google ບໍ່ສຳເລັດ',
+      );
     }
   }
 
   // ========================== Facebook ==========================
   Future<UserCredential> signInWithFacebook() async {
     final fb = FacebookLogin();
-    final result = await fb.logIn(permissions: const [
-      FacebookPermission.publicProfile,
-      FacebookPermission.email
-    ]);
+    final result = await fb.logIn(
+      permissions: const [
+        FacebookPermission.publicProfile,
+        FacebookPermission.email,
+      ],
+    );
 
     if (result.status == FacebookLoginStatus.cancel) {
       throw FirebaseAuthException(
-          code: 'aborted-by-user', message: 'ຍົກເລີກການເຂົ້າລະບົບ');
+        code: 'aborted-by-user',
+        message: 'ຍົກເລີກການເຂົ້າລະບົບ',
+      );
     }
     if (result.status != FacebookLoginStatus.success ||
         result.accessToken == null) {
       throw FirebaseAuthException(
-          code: 'facebook-error',
-          message: result.error?.localizedDescription ??
-              result.error?.developerMessage ??
-              'ເຂົ້າລະບົບດ້ວຍ Facebook ບໍ່ສຳເລັດ');
+        code: 'facebook-error',
+        message:
+            result.error?.localizedDescription ??
+            result.error?.developerMessage ??
+            'ເຂົ້າລະບົບດ້ວຍ Facebook ບໍ່ສຳເລັດ',
+      );
     }
 
-    final credential =
-        FacebookAuthProvider.credential(result.accessToken!.token);
+    final credential = FacebookAuthProvider.credential(
+      result.accessToken!.token,
+    );
     final userCredential = await _auth.signInWithCredential(credential);
     await _ensureAdminProfile(
       user: userCredential.user!,
@@ -162,7 +173,9 @@ class AuthRepository {
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) {
         throw FirebaseAuthException(
-            code: 'aborted-by-user', message: 'ຍົກເລີກການເຂົ້າລະບົບ');
+          code: 'aborted-by-user',
+          message: 'ຍົກເລີກການເຂົ້າລະບົບ',
+        );
       }
       rethrow;
     }
@@ -170,8 +183,10 @@ class AuthRepository {
 
   // ====================== Email / Password ======================
   /// ສະເພາະ member ທີ່ admin ສ້າງບັນຊີໃຫ້ (ບໍ່ມີຟັງຊັນສະໝັກສະມາຊິກເອງ)
-  Future<UserCredential> signInWithEmail(
-      {required String email, required String password}) async {
+  Future<UserCredential> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
     final result = await _auth.signInWithEmailAndPassword(
       email: email.trim(),
       password: password,
@@ -309,8 +324,10 @@ class AuthRepository {
     const charset =
         '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
   }
 
   String _sha256ofString(String input) {

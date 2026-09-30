@@ -15,7 +15,7 @@ class SplashController extends GetxController {
   Future<void> _bootstrap() async {
     // ຈຳລອງການໂຫຼດເພື່ອຄວາມນຽນສະງົບຂອງອະນິເມຊັນ
     for (var i = 1; i <= 10; i++) {
-      await Future<void>.delayed(const Duration(milliseconds: 110));
+      await Future<void>.delayed(const Duration(milliseconds: 210));
       progress.value = i / 10;
     }
 

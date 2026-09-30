@@ -89,25 +89,25 @@ class LoginFormCard extends GetView<AuthController> {
               isRequired: true,
               validator: Validators.password,
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: controller.forgotPassword,
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  AppStrings.forgotPassword,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.centerRight,
+            //   child: TextButton(
+            //     onPressed: controller.forgotPassword,
+            //     style: TextButton.styleFrom(
+            //       foregroundColor: AppColors.primary,
+            //       padding: EdgeInsets.zero,
+            //       minimumSize: Size.zero,
+            //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            //     ),
+            //     child: Text(
+            //       AppStrings.forgotPassword,
+            //       style: TextStyle(
+            //         fontSize: 12.sp,
+            //         fontWeight: FontWeight.w700,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: 14.h),
             Obx(
               () => AppButton(

@@ -69,8 +69,10 @@ class AppTextField extends StatelessWidget {
                 ),
               ),
               if (isRequired)
-                Text(' *',
-                    style: TextStyle(color: AppColors.danger, fontSize: 13.sp)),
+                Text(
+                  ' *',
+                  style: TextStyle(color: AppColors.danger, fontSize: 13.sp),
+                ),
               if (isOptional) ...[
                 SizedBox(width: 6.w),
                 Text(
@@ -100,8 +102,9 @@ class AppTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             counterText: '',
-            prefixIcon:
-                prefixIcon == null ? null : Icon(prefixIcon, size: 20.sp),
+            prefixIcon: prefixIcon == null
+                ? null
+                : Icon(prefixIcon, size: 20.sp),
             suffixIcon: suffixIcon,
             suffixText: suffixText,
             suffixStyle: TextStyle(fontSize: 12.sp, color: AppColors.textHint),
@@ -200,12 +203,16 @@ class AppDateField extends StatelessWidget {
               ),
             ),
             if (isRequired)
-              Text(' *',
-                  style: TextStyle(color: AppColors.danger, fontSize: 13.sp)),
+              Text(
+                ' *',
+                style: TextStyle(color: AppColors.danger, fontSize: 13.sp),
+              ),
             if (isOptional) ...[
               SizedBox(width: 6.w),
-              Text('(ບໍ່ບັງຄັບ)',
-                  style: TextStyle(fontSize: 11.sp, color: AppColors.textHint)),
+              Text(
+                '(ບໍ່ບັງຄັບ)',
+                style: TextStyle(fontSize: 11.sp, color: AppColors.textHint),
+              ),
             ],
           ],
         ),
@@ -235,8 +242,11 @@ class AppDateField extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.keyboard_arrow_down_rounded,
-                    color: AppColors.textHint, size: 22.sp),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.textHint,
+                  size: 22.sp,
+                ),
               ],
             ),
           ),

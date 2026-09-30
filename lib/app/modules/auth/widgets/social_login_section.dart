@@ -55,32 +55,38 @@ class SocialLoginSection extends GetView<AuthController> {
                   ),
                   isLoading: controller.isBusy,
                   onPressed: () =>
-                      controller.signInWith(AuthProviderType.google),
+                      controller.signInWithgoogle(AuthProviderType.google),
                 ),
                 SizedBox(height: 10.h),
                 SocialLoginButton(
                   label: AppStrings.continueWithFacebook,
                   backgroundColor: const Color(0xFF1877F2),
                   foregroundColor: Colors.white,
-                  icon: Icon(Icons.facebook_rounded,
-                      size: 26.sp, color: Colors.white),
-                  isLoading: controller.isBusy,
-                  onPressed: () =>
-                      controller.signInWith(AuthProviderType.facebook),
-                ),
-                if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
-                  SizedBox(height: 10.h),
-                  SocialLoginButton(
-                    label: AppStrings.continueWithApple,
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    icon: Icon(Icons.apple_rounded,
-                        size: 27.sp, color: Colors.white),
-                    isLoading: controller.isBusy,
-                    onPressed: () =>
-                        controller.signInWith(AuthProviderType.apple),
+                  icon: Icon(
+                    Icons.facebook_rounded,
+                    size: 26.sp,
+                    color: Colors.white,
                   ),
-                ],
+                  isLoading: controller.isBusy,
+                  onPressed: () => controller.signInWithFacebook(),
+                ),
+                SizedBox(height: 10.h),
+
+                // if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
+                //   SizedBox(height: 10.h),
+                //   SocialLoginButton(
+                //     label: AppStrings.continueWithApple,
+                //     backgroundColor: Colors.black,
+                //     foregroundColor: Colors.white,
+                //     icon: Icon(
+                //       Icons.apple_rounded,
+                //       size: 27.sp,
+                //       color: Colors.white,
+                //     ),
+                //     isLoading: controller.isBusy,
+                //     onPressed: () => controller.signInWithApple(),
+                //   ),
+                // ],
               ],
             ),
           ),
@@ -90,23 +96,26 @@ class SocialLoginSection extends GetView<AuthController> {
   }
 
   Widget _badge(IconData icon, Color color, String label) => Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.14),
-          borderRadius: BorderRadius.circular(30.r),
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: 0.14),
+      borderRadius: BorderRadius.circular(30.r),
+    ),
+    child: Row(
+      children: [
+        Icon(icon, size: 13.sp, color: color),
+        SizedBox(width: 4.w),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
         ),
-        child: Row(
-          children: [
-            Icon(icon, size: 13.sp, color: color),
-            SizedBox(width: 4.w),
-            Text(
-              label,
-              style: TextStyle(
-                  fontSize: 11.sp, fontWeight: FontWeight.w800, color: color),
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
 
 class _GoogleLogoPainter extends CustomPainter {
@@ -127,13 +136,22 @@ class _GoogleLogoPainter extends CustomPainter {
     ];
     for (final seg in segments) {
       paint.color = seg.$3;
-      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), seg.$1,
-          seg.$2 - seg.$1, false, paint);
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        seg.$1,
+        seg.$2 - seg.$1,
+        false,
+        paint,
+      );
     }
     final bar = Paint()..color = const Color(0xFF4285F4);
     canvas.drawRect(
-      Rect.fromLTWH(size.width * 0.5, size.height * 0.46, size.width * 0.48,
-          size.height * 0.12),
+      Rect.fromLTWH(
+        size.width * 0.5,
+        size.height * 0.46,
+        size.width * 0.48,
+        size.height * 0.12,
+      ),
       bar,
     );
   }

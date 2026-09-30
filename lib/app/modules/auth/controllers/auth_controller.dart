@@ -22,13 +22,47 @@ class AuthController extends GetxController {
 
   void toggleObscure() => obscure.value = !obscure.value;
 
-  Future<void> signInWith(AuthProviderType provider) async {
+  Future<void> signInWithgoogle(AuthProviderType provider) async {
     final ok = await _auth.signInWithProvider(provider);
     if (!ok) {
-      UiHelpers.error(_auth.errorMessage.value.isEmpty ? AppStrings.error : _auth.errorMessage.value);
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
       return;
     }
     UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    _routeAfterLogin();
+  }
+
+  Future<void> signInWithFacebook() async {
+    final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
+    if (!ok) {
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
+      return;
+    }
+    UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    _routeAfterLogin();
+  }
+
+  Future<void> signInWithApple() async {
+    final ok = await _auth.signInWithProvider(AuthProviderType.apple);
+    if (!ok) {
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
+      return;
+    }
+    UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
     await Future<void>.delayed(const Duration(milliseconds: 400));
     _routeAfterLogin();
   }
@@ -42,7 +76,11 @@ class AuthController extends GetxController {
     );
 
     if (!ok) {
-      UiHelpers.error(_auth.errorMessage.value.isEmpty ? AppStrings.error : _auth.errorMessage.value);
+      UiHelpers.error(
+        _auth.errorMessage.value.isEmpty
+            ? AppStrings.error
+            : _auth.errorMessage.value,
+      );
       return;
     }
 
@@ -70,7 +108,9 @@ class AuthController extends GetxController {
       if (auth.isAdmin) {
         Get.offAllNamed(Routes.FAMILY_SETUP);
       } else {
-        UiHelpers.warning('ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກເພີ່ມເຂົ້າຄອບຄົວ ກະລຸນາຕິດຕໍ່ Admin');
+        UiHelpers.warning(
+          'ບັນຊີຂອງທ່ານຍັງບໍ່ຖືກເພີ່ມເຂົ້າຄອບຄົວ ກະລຸນາຕິດຕໍ່ Admin',
+        );
       }
       return;
     }
