@@ -22,7 +22,8 @@ class AccountFormView extends GetView<AccountFormController> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-            controller.isEdit ? AppStrings.editAccount : AppStrings.addAccount),
+          controller.isEdit ? AppStrings.editAccount : AppStrings.addAccount,
+        ),
       ),
       body: Form(
         key: controller.formKey,
@@ -67,8 +68,11 @@ class AccountFormView extends GetView<AccountFormController> {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white, width: 2),
                           ),
-                          child: Icon(Icons.add_a_photo_rounded,
-                              size: 15.sp, color: Colors.white),
+                          child: Icon(
+                            Icons.add_a_photo_rounded,
+                            size: 15.sp,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -143,8 +147,10 @@ class AccountFormView extends GetView<AccountFormController> {
                     padding: EdgeInsets.only(top: 8.h),
                     child: Text(
                       'ບໍ່ສາມາດປ່ຽນອີແມວໄດ້ ເນື່ອງຈາກເປັນບັນຊີເຂົ້າລະບົບ',
-                      style:
-                          TextStyle(fontSize: 11.sp, color: AppColors.textHint),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColors.textHint,
+                      ),
                     ),
                   ),
                 if (!controller.isEdit) ...[
@@ -167,7 +173,9 @@ class AccountFormView extends GetView<AccountFormController> {
                       label: Text(
                         'ສ້າງລະຫັດແບບສຸ່ມ',
                         style: TextStyle(
-                            fontSize: 12.sp, fontWeight: FontWeight.w700),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
@@ -213,16 +221,20 @@ class AccountFormView extends GetView<AccountFormController> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline_rounded,
-                          size: 15.sp, color: AppColors.info),
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 15.sp,
+                        color: AppColors.info,
+                      ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: Text(
                           'Admin ສາມາດກຳນົດ role ຂອງບັນຊີນີ້ໄດ້ທັງ member ແລະ admin',
                           style: TextStyle(
-                              fontSize: 11.5.sp,
-                              color: AppColors.textSecondary,
-                              height: 1.4),
+                            fontSize: 11.5.sp,
+                            color: AppColors.textSecondary,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ],
@@ -237,31 +249,40 @@ class AccountFormView extends GetView<AccountFormController> {
                   ? const SizedBox.shrink()
                   : Padding(
                       padding: EdgeInsets.only(top: 14.h),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.w, vertical: 6.h),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusLg.r),
-                          border: Border.all(color: AppColors.divider),
-                        ),
-                        child: SwitchListTile(
-                          contentPadding: EdgeInsets.zero,
-                          activeThumbColor: AppColors.primary,
-                          value: controller.isActive.value,
-                          onChanged: (value) =>
-                              controller.isActive.value = value,
-                          title: Text(
-                            'ເປີດໃຊ້ງານບັນຊີ',
-                            style: TextStyle(
-                                fontSize: 14.sp, fontWeight: FontWeight.w700),
+                      child: Material(
+                        color: Colors.white,
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusLg.r,
                           ),
-                          subtitle: Text(
-                            'ຖ້າປິດ ສະມາຊິກຈະບໍ່ສາມາດເຂົ້າລະບົບໄດ້',
-                            style: TextStyle(
+                          side: const BorderSide(color: AppColors.divider),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 6.h,
+                          ),
+                          child: SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            activeThumbColor: AppColors.primary,
+                            value: controller.isActive.value,
+                            onChanged: (value) =>
+                                controller.isActive.value = value,
+                            title: Text(
+                              'ເປີດໃຊ້ງານບັນຊີ',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            subtitle: Text(
+                              'ຖ້າປິດ ສະມາຊິກຈະບໍ່ສາມາດເຂົ້າລະບົບໄດ້',
+                              style: TextStyle(
                                 fontSize: 11.sp,
-                                color: AppColors.textSecondary),
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -292,13 +313,16 @@ class AccountFormView extends GetView<AccountFormController> {
                       width: 18.w,
                       height: 18.w,
                       child: const CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : Icon(
                       controller.isEdit
                           ? Icons.check_rounded
                           : Icons.person_add_alt_1_rounded,
-                      size: 20),
+                      size: 20,
+                    ),
               label: Text(
                 controller.isEdit ? AppStrings.update : 'ສ້າງບັນຊີ',
                 style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700),
@@ -331,12 +355,14 @@ class AccountFormView extends GetView<AccountFormController> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.all(13.w),
         decoration: BoxDecoration(
-          color:
-              selected ? color.withValues(alpha: 0.09) : AppColors.surfaceAlt,
+          color: selected
+              ? color.withValues(alpha: 0.09)
+              : AppColors.surfaceAlt,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
           border: Border.all(
-              color: selected ? color : AppColors.divider,
-              width: selected ? 1.6 : 1),
+            color: selected ? color : AppColors.divider,
+            width: selected ? 1.6 : 1,
+          ),
         ),
         child: Row(
           children: [
@@ -365,9 +391,10 @@ class AccountFormView extends GetView<AccountFormController> {
                   Text(
                     description,
                     style: TextStyle(
-                        fontSize: 11.sp,
-                        color: AppColors.textSecondary,
-                        height: 1.35),
+                      fontSize: 11.sp,
+                      color: AppColors.textSecondary,
+                      height: 1.35,
+                    ),
                   ),
                 ],
               ),
@@ -385,10 +412,11 @@ class AccountFormView extends GetView<AccountFormController> {
     );
   }
 
-  Widget _card(
-      {required String title,
-      required IconData icon,
-      required List<Widget> children}) {
+  Widget _card({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(

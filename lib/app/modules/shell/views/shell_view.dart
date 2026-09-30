@@ -26,32 +26,32 @@ class ShellView extends GetView<ShellController> {
         children: [
           // ແຈ້ງເຕືອນເມື່ອອອບລາຍ
           Obx(
-              () => ConnectivityService.to.isOnline.value
-                  ? const SizedBox.shrink()
-                  : Container(
-                      width: double.infinity,
-                      color: AppColors.warning,
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.wifi_off_rounded,
+            () => ConnectivityService.to.isOnline.value
+                ? const SizedBox.shrink()
+                : Container(
+                    width: double.infinity,
+                    color: AppColors.warning,
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.wifi_off_rounded,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'ທ່ານກຳລັງໃຊ້ງານແບບອອບລາຍ - ຂໍ້ມູນຈະຊິ້ງເມື່ອມີເນັດ',
+                          style: TextStyle(
                             color: Colors.white,
-                            size: 15,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
-                          SizedBox(width: 8),
-                          Text(
-                            'ທ່ານກຳລັງໃຊ້ງານແບບອອບລາຍ - ຂໍ້ມູນຈະຊິ້ງເມື່ອມີເນັດ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-),
-                ),
+                        ),
+                      ],
+                    ),
+                  ),
           ),
           Expanded(
             child: Obx(

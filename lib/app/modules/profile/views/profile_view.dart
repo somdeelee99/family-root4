@@ -303,11 +303,12 @@ class ProfileView extends GetView<ProfileController> {
     ),
   );
 
-  Widget _menuCard(List<Widget> children) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
+  Widget _menuCard(List<Widget> children) => Material(
+    color: Colors.white,
+    clipBehavior: Clip.antiAlias,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-      border: Border.all(color: AppColors.divider),
+      side: const BorderSide(color: AppColors.divider),
     ),
     child: Column(children: children),
   );
@@ -318,38 +319,44 @@ class ProfileView extends GetView<ProfileController> {
     String? subtitle,
     required VoidCallback onTap,
     Color color = AppColors.primary,
-  }) => ListTile(
-    onTap: onTap,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-    ),
-    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-    leading: Container(
-      padding: EdgeInsets.all(9.w),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(11.r),
+  }) => Material(
+    type: MaterialType.transparency,
+    child: ListTile(
+      onTap: onTap,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
       ),
-      child: Icon(icon, size: 17.sp, color: color),
-    ),
-    title: Text(
-      title,
-      style: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
+      leading: Container(
+        padding: EdgeInsets.all(9.w),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(11.r),
+        ),
+        child: Icon(icon, size: 17.sp, color: color),
       ),
-    ),
-    subtitle: subtitle == null
-        ? null
-        : Text(
-            subtitle,
-            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
-          ),
-    trailing: Icon(
-      Icons.chevron_right_rounded,
-      size: 20.sp,
-      color: AppColors.textHint,
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      subtitle: subtitle == null
+          ? null
+          : Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                color: AppColors.textSecondary,
+              ),
+            ),
+      trailing: Icon(
+        Icons.chevron_right_rounded,
+        size: 20.sp,
+        color: AppColors.textHint,
+      ),
     ),
   );
 
@@ -359,33 +366,39 @@ class ProfileView extends GetView<ProfileController> {
     String? subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
-  }) => SwitchListTile(
-    value: value,
-    onChanged: onChanged,
-    activeThumbColor: AppColors.primary,
-    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-    secondary: Container(
-      padding: EdgeInsets.all(9.w),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(11.r),
+  }) => Material(
+    type: MaterialType.transparency,
+    child: SwitchListTile(
+      value: value,
+      onChanged: onChanged,
+      activeThumbColor: AppColors.primary,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
+      secondary: Container(
+        padding: EdgeInsets.all(9.w),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(11.r),
+        ),
+        child: Icon(icon, size: 17.sp, color: AppColors.primary),
       ),
-      child: Icon(icon, size: 17.sp, color: AppColors.primary),
-    ),
-    title: Text(
-      title,
-      style: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
       ),
+      subtitle: subtitle == null
+          ? null
+          : Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                color: AppColors.textSecondary,
+              ),
+            ),
     ),
-    subtitle: subtitle == null
-        ? null
-        : Text(
-            subtitle,
-            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
-          ),
   );
 
   /// ສະແດງການເຊື່ອມຕໍ່ການເຂົ້າລະບົບ ຂອງ Admin
