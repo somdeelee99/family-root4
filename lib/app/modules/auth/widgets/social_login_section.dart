@@ -55,7 +55,7 @@ class SocialLoginSection extends GetView<AuthController> {
                   ),
                   isLoading: controller.isBusy,
                   onPressed: () =>
-                      controller.signInWith(AuthProviderType.google),
+                      controller.signInWithgoogle(AuthProviderType.google),
                 ),
                 SizedBox(height: 10.h),
                 SocialLoginButton(
@@ -68,25 +68,25 @@ class SocialLoginSection extends GetView<AuthController> {
                     color: Colors.white,
                   ),
                   isLoading: controller.isBusy,
-                  onPressed: () =>
-                      controller.signInWith(AuthProviderType.facebook),
+                  onPressed: () => controller.signInWithFacebook(),
                 ),
-                if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
-                  SizedBox(height: 10.h),
-                  SocialLoginButton(
-                    label: AppStrings.continueWithApple,
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    icon: Icon(
-                      Icons.apple_rounded,
-                      size: 27.sp,
-                      color: Colors.white,
-                    ),
-                    isLoading: controller.isBusy,
-                    onPressed: () =>
-                        controller.signInWith(AuthProviderType.apple),
-                  ),
-                ],
+                SizedBox(height: 10.h),
+
+                // if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
+                //   SizedBox(height: 10.h),
+                //   SocialLoginButton(
+                //     label: AppStrings.continueWithApple,
+                //     backgroundColor: Colors.black,
+                //     foregroundColor: Colors.white,
+                //     icon: Icon(
+                //       Icons.apple_rounded,
+                //       size: 27.sp,
+                //       color: Colors.white,
+                //     ),
+                //     isLoading: controller.isBusy,
+                //     onPressed: () => controller.signInWithApple(),
+                //   ),
+                // ],
               ],
             ),
           ),
