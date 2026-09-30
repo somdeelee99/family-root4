@@ -11,8 +11,6 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../data/models/enums.dart';
 import '../controllers/account_form_controller.dart';
 
-/// ຟອມສ້າງ / ແກ້ໄຂ ບັນຊີສະມາຊິກ (Admin ເທົ່ານັ້ນ)
-/// ປະກອບດ້ວຍ: ຮູບພາບ, ຊື່, ເບີໂທ, ເບີ WhatsApp, ອີແມວ, ລະຫັດ ແລະ role
 class AccountFormView extends GetView<AccountFormController> {
   const AccountFormView({super.key});
 
@@ -31,7 +29,6 @@ class AccountFormView extends GetView<AccountFormController> {
           padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 120.h),
           physics: const BouncingScrollPhysics(),
           children: [
-            // ---------- ຮູບພາບ ----------
             Center(
               child: Obx(
                 () => GestureDetector(
@@ -89,7 +86,6 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 12.h),
 
-            // ---------- ຂໍ້ມູນບັນຊີ ----------
             _card(
               title: 'ຂໍ້ມູນບັນຊີ',
               icon: Icons.badge_outlined,
@@ -127,7 +123,6 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 14.h),
 
-            // ---------- ການເຂົ້າລະບົບ ----------
             _card(
               title: 'ການເຂົ້າລະບົບ',
               icon: Icons.lock_outline_rounded,
@@ -155,14 +150,14 @@ class AccountFormView extends GetView<AccountFormController> {
                   ),
                 if (!controller.isEdit) ...[
                   SizedBox(height: 14.h),
-                  Obx(
-                    () => AppPasswordField(
-                      controller: controller.passwordController,
-                      label: 'ລະຫັດຜ່ານ (ສຳລັບເຂົ້າລະບົບ)',
-                      hint: 'ຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ',
-                      isRequired: true,
-                      validator: Validators.password,
-                    ),
+                  // FIX: เอา Obx ออก เพราะไม่มี .value ข้างใน
+                  AppTextField(
+                    controller: controller.passwordController,
+                    label: 'ລະຫັດຜ່ານ (ສຳລັບເຂົ້າລະບົບ)',
+                    hint: 'ຢ່າງໜ້ອຍ 6 ຕົວອັກສອນ',
+                    isRequired: true,
+                    // obscureText: true,
+                    validator: Validators.password,
                   ),
                   SizedBox(height: 8.h),
                   Align(
@@ -184,32 +179,24 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 14.h),
 
-            // ---------- ສິດການໃຊ້ງານ ----------
             _card(
               title: AppStrings.role,
               icon: Icons.admin_panel_settings_outlined,
               children: [
-                Obx(
-                  () => Column(
-                    children: [
-                      _roleOption(
-                        role: UserRole.member,
-                        icon: Icons.person_rounded,
-                        title: AppStrings.roleMember,
-                        description:
-                            'ເບິ່ງຂໍ້ມູນ, ແຊັດຫາ ແລະ ແກ້ໄຂໂປຣໄຟລ໌ຂອງຕົນເອງ',
-                      ),
-                      SizedBox(height: 10.h),
-                      _roleOption(
-                        role: UserRole.admin,
-                        icon: Icons.verified_rounded,
-                        title: AppStrings.roleAdmin,
-                        description:
-                            'ຈັດການຜັງ, ສ້າງບັນຊີ ແລະ ຈັດການຂໍ້ມູນທັງໝົດ',
-                        isGold: true,
-                      ),
-                    ],
-                  ),
+                // FIX: เอา Obx ออกจาก Column ใหญ่ ไปใส่ใน _roleOption แทน
+                _roleOption(
+                  role: UserRole.member,
+                  icon: Icons.person_rounded,
+                  title: AppStrings.roleMember,
+                  description: 'ເບິ່ງຂໍ້ມູນ, ແຊັດຫາ ແລະ ແກ້ໄຂໂປຣໄຟລ໌ຂອງຕົນເອງ',
+                ),
+                SizedBox(height: 10.h),
+                _roleOption(
+                  role: UserRole.admin,
+                  icon: Icons.verified_rounded,
+                  title: AppStrings.roleAdmin,
+                  description: 'ຈັດການຜັງ, ສ້າງບັນຊີ ແລະ ຈັດການຂໍ້ມູນທັງໝົດ',
+                  isGold: true,
                 ),
                 SizedBox(height: 6.h),
                 Container(
@@ -243,51 +230,47 @@ class AccountFormView extends GetView<AccountFormController> {
               ],
             ),
 
-            // ---------- ສະຖານະບັນຊີ (ແກ້ໄຂ) ----------
-            Obx(
-              () => !controller.isEdit
-                  ? const SizedBox.shrink()
-                  : Padding(
-                      padding: EdgeInsets.only(top: 14.h),
-                      child: Material(
-                        color: Colors.white,
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusLg.r,
+            // FIX: isEdit ไม่ใช่ observable ไม่ต้องห่อ Obx ทั้งก้อน
+            if (controller.isEdit)
+              Padding(
+                padding: EdgeInsets.only(top: 14.h),
+                child: Obx(
+                  () => Material(
+                    color: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+                      side: const BorderSide(color: AppColors.divider),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 6.h,
+                      ),
+                      child: SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        activeThumbColor: AppColors.primary,
+                        value: controller.isActive.value,
+                        onChanged: (value) => controller.isActive.value = value,
+                        title: Text(
+                          'ເປີດໃຊ້ງານບັນຊີ',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
                           ),
-                          side: const BorderSide(color: AppColors.divider),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 6.h,
-                          ),
-                          child: SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            activeThumbColor: AppColors.primary,
-                            value: controller.isActive.value,
-                            onChanged: (value) =>
-                                controller.isActive.value = value,
-                            title: Text(
-                              'ເປີດໃຊ້ງານບັນຊີ',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'ຖ້າປິດ ສະມາຊິກຈະບໍ່ສາມາດເຂົ້າລະບົບໄດ້',
-                              style: TextStyle(
-                                fontSize: 11.sp,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
+                        subtitle: Text(
+                          'ຖ້າປິດ ສະມາຊິກຈະບໍ່ສາມາດເຂົ້າລະບົບໄດ້',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ),
                     ),
-            ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -345,71 +328,73 @@ class AccountFormView extends GetView<AccountFormController> {
     required String description,
     bool isGold = false,
   }) {
-    final selected = controller.role.value == role;
-    final color = isGold ? AppColors.accent : AppColors.primary;
-
-    return InkWell(
-      onTap: () => controller.setRole(role),
-      borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.all(13.w),
-        decoration: BoxDecoration(
-          color: selected
-              ? color.withValues(alpha: 0.09)
-              : AppColors.surfaceAlt,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-          border: Border.all(
-            color: selected ? color : AppColors.divider,
-            width: selected ? 1.6 : 1,
+    // FIX: เอา Obx มาไว้ในนี้เลย เพื่อให้ .value อยู่ตรงใน Obx
+    return Obx(() {
+      final selected = controller.role.value == role;
+      final color = isGold ? AppColors.accent : AppColors.primary;
+      return InkWell(
+        onTap: () => controller.setRole(role),
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.all(13.w),
+          decoration: BoxDecoration(
+            color: selected
+                ? color.withValues(alpha: 0.09)
+                : AppColors.surfaceAlt,
+            borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+            border: Border.all(
+              color: selected ? color : AppColors.divider,
+              width: selected ? 1.6 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(9.w),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(11.r),
+                ),
+                child: Icon(icon, size: 18.sp, color: color),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 13.5.sp,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: 3.h),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColors.textSecondary,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                selected
+                    ? Icons.radio_button_checked_rounded
+                    : Icons.radio_button_unchecked_rounded,
+                size: 20.sp,
+                color: selected ? color : AppColors.textHint,
+              ),
+            ],
           ),
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(9.w),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(11.r),
-              ),
-              child: Icon(icon, size: 18.sp, color: color),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 13.5.sp,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  SizedBox(height: 3.h),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColors.textSecondary,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              selected
-                  ? Icons.radio_button_checked_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              size: 20.sp,
-              color: selected ? color : AppColors.textHint,
-            ),
-          ],
-        ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _card({

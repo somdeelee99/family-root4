@@ -5,6 +5,55 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 
+/// ຈັດກາດສະຖິຕິເປັນຕາຕະລາງ (ປົກກະຕິ 2 ຖັນ)
+///
+/// ຄວາມສູງຂອງແຕ່ລະແຖວມາຈາກເນື້ອໃນຂອງກາດ (ກາດທີ່ສູງທີ່ສຸດກຳນົດແຖວ)
+/// ຈຶ່ງບໍ່ໃຊ້ `childAspectRatio` ຄົງທີ່ - ດັ່ງນັ້ນຈຶ່ງບໍ່ເກີດ overflow
+/// ເມື່ອຂໍ້ຄວາມຍາວຂຶ້ນ ຫຼື ຜູ້ໃຊ້ເພີ່ມຂະໜາດຕົວອັກສອນ
+class StatCardGrid extends StatelessWidget {
+  const StatCardGrid({
+    super.key,
+    required this.cards,
+    this.columns = 2,
+    this.spacing = 12,
+  });
+
+  final List<Widget> cards;
+  final int columns;
+  final double spacing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (cards.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        for (var start = 0; start < cards.length; start += columns) ...[
+          if (start > 0) SizedBox(height: spacing.h),
+          // IntrinsicHeight ຈຳເປັນເພື່ອໃຫ້ຄວາມສູງຂອງແຖວຖືກກຳນົດຈາກເນື້ອໃນ
+          // (Row ໃນ scroll view ມີຄວາມສູງບໍ່ຈຳກັດ ຈຶ່ງໃຊ້ stretch ໂດຍກົງບໍ່ໄດ້)
+          IntrinsicHeight(
+            child: Row(
+              // stretch ເພື່ອໃຫ້ກາດໃນແຖວດຽວກັນສູງເທົ່າກັນ
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var col = 0; col < columns; col++) ...[
+                  if (col > 0) SizedBox(width: spacing.w),
+                  Expanded(
+                    child: start + col < cards.length
+                        ? cards[start + col]
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 /// ກາດສະຖິຕິ (ໜ້າຫຼັກ) ພ້ອມ animation ນັບເລກ
 class StatCard extends StatelessWidget {
   const StatCard({

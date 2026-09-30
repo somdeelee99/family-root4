@@ -11,6 +11,7 @@ import '../../members/views/members_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../controllers/shell_controller.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/lazy_indexed_stack.dart';
 
 /// ຖານຫຼັກຂອງແອັບ - ບັນຈຸ 5 ໜ້າຫຼັກດ້ວຍ UI ຮ່ວມກັນ
 /// ການເຫັນຂໍ້ມູ້ອຍູ່ໃນແຕ່ລະໜ້າແຍກຕາມ role (admin / member)
@@ -55,7 +56,7 @@ class ShellView extends GetView<ShellController> {
           ),
           Expanded(
             child: Obx(
-              () => IndexedStack(
+              () => LazyIndexedStack(
                 index: controller.currentIndex.value,
                 children: const [
                   HomeView(),

@@ -284,36 +284,42 @@ class MemberFormView extends GetView<MemberFormController> {
                             child: Column(
                               children: [
                                 for (final account in controller.accounts)
-                                  RadioListTile<String?>(
-                                    value: account.uid,
+                                  Material(
+                                    type: MaterialType.transparency,
+                                    child: RadioListTile<String?>(
+                                      value: account.uid,
+                                      contentPadding: EdgeInsets.zero,
+                                      dense: true,
+                                      activeColor: AppColors.primary,
+                                      title: Text(
+                                        account.displayName,
+                                        style: TextStyle(
+                                          fontSize: 13.5.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        account.email ?? account.phone ?? '',
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                Material(
+                                  type: MaterialType.transparency,
+                                  child: RadioListTile<String?>(
+                                    value: null,
                                     contentPadding: EdgeInsets.zero,
                                     dense: true,
                                     activeColor: AppColors.primary,
                                     title: Text(
-                                      account.displayName,
+                                      'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
                                       style: TextStyle(
                                         fontSize: 13.5.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      account.email ?? account.phone ?? '',
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
                                         color: AppColors.textSecondary,
                                       ),
-                                    ),
-                                  ),
-                                RadioListTile<String?>(
-                                  value: null,
-                                  contentPadding: EdgeInsets.zero,
-                                  dense: true,
-                                  activeColor: AppColors.primary,
-                                  title: Text(
-                                    'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
-                                    style: TextStyle(
-                                      fontSize: 13.5.sp,
-                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ),
@@ -513,40 +519,48 @@ class MemberFormView extends GetView<MemberFormController> {
     required List<Widget> children,
   }) {
     return Container(
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-        border: Border.all(color: AppColors.divider),
         boxShadow: AppSizes.softShadow,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: Material(
+        color: Colors.white,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+          side: const BorderSide(color: AppColors.divider),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(icon, size: 16.sp, color: AppColors.primary),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primarySoft,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(icon, size: 16.sp, color: AppColors.primary),
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 10.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.5.sp,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
+              SizedBox(height: 16.h),
+              ...children,
             ],
           ),
-          SizedBox(height: 16.h),
-          ...children,
-        ],
+        ),
       ),
     );
   }

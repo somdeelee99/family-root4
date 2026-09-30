@@ -26,6 +26,7 @@ class MembersView extends GetView<MembersController> {
       backgroundColor: AppColors.background,
       floatingActionButton: isAdmin
           ? FloatingActionButton.extended(
+              heroTag: 'members_fab',
               onPressed: controller.openCreate,
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -69,8 +70,11 @@ class MembersView extends GetView<MembersController> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.groups_rounded,
-                    size: 18.sp, color: Colors.white),
+                child: Icon(
+                  Icons.groups_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(width: 11.w),
               Expanded(
@@ -90,15 +94,19 @@ class MembersView extends GetView<MembersController> {
                           ? 'ຈັດການບັນຊີສະມາຊິກຄອບຄົວ'
                           : 'ລາຍຊື່ສະມາຊິກທັງໝົດ',
                       style: TextStyle(
-                          fontSize: 11.5.sp, color: AppColors.textSecondary),
+                        fontSize: 11.5.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
               Obx(
                 () => Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(30.r),
@@ -153,9 +161,15 @@ class MembersView extends GetView<MembersController> {
       child: Row(
         children: [
           _modeItem(
-              'ບັນຊີສະມາຊິກ', MemberListMode.accounts, Icons.badge_outlined),
+            'ບັນຊີສະມາຊິກ',
+            MemberListMode.accounts,
+            Icons.badge_outlined,
+          ),
           _modeItem(
-              'ທັງໝົດໃນຜັງ', MemberListMode.tree, Icons.account_tree_outlined),
+            'ທັງໝົດໃນຜັງ',
+            MemberListMode.tree,
+            Icons.account_tree_outlined,
+          ),
         ],
       ),
     );
@@ -177,9 +191,11 @@ class MembersView extends GetView<MembersController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  size: 16.sp,
-                  color: active ? Colors.white : AppColors.textSecondary),
+              Icon(
+                icon,
+                size: 16.sp,
+                color: active ? Colors.white : AppColors.textSecondary,
+              ),
               SizedBox(width: 6.w),
               Text(
                 label,
@@ -252,62 +268,76 @@ class MembersView extends GetView<MembersController> {
                   itemBuilder: (context, index) {
                     final user = list[index];
                     return UserTile(
-                      user: user,
-                      onTap: () => controller.openDetail(user),
-                      onChat: () => controller.openChat(user),
-                      trailing: isAdmin
-                          ? PopupMenuButton<String>(
-                              icon: Icon(Icons.more_vert_rounded,
-                                  size: 20.sp, color: AppColors.textHint),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14.r)),
-                              onSelected: (value) {
-                                if (value == 'edit') controller.openEdit(user);
-                                if (value == 'delete')
-                                  controller.deleteAccount(user);
-                                if (value == 'detail')
-                                  controller.openDetail(user);
-                              },
-                              itemBuilder: (context) => const [
-                                PopupMenuItem(
-                                  value: 'detail',
-                                  child: ListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: Icon(Icons.info_outline_rounded,
-                                        size: 20),
-                                    title: Text(AppStrings.seeDetail),
+                          user: user,
+                          onTap: () => controller.openDetail(user),
+                          onChat: () => controller.openChat(user),
+                          trailing: isAdmin
+                              ? PopupMenuButton<String>(
+                                  icon: Icon(
+                                    Icons.more_vert_rounded,
+                                    size: 20.sp,
+                                    color: AppColors.textHint,
                                   ),
-                                ),
-                                PopupMenuItem(
-                                  value: 'edit',
-                                  child: ListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    leading:
-                                        Icon(Icons.edit_outlined, size: 20),
-                                    title: Text(AppStrings.editAccount),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14.r),
                                   ),
+                                  onSelected: (value) {
+                                    if (value == 'edit')
+                                      controller.openEdit(user);
+                                    if (value == 'delete')
+                                      controller.deleteAccount(user);
+                                    if (value == 'detail')
+                                      controller.openDetail(user);
+                                  },
+                                  itemBuilder: (context) => const [
+                                    PopupMenuItem(
+                                      value: 'detail',
+                                      child: ListTile(
+                                        dense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        leading: Icon(
+                                          Icons.info_outline_rounded,
+                                          size: 20,
+                                        ),
+                                        title: Text(AppStrings.seeDetail),
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'edit',
+                                      child: ListTile(
+                                        dense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        leading: Icon(
+                                          Icons.edit_outlined,
+                                          size: 20,
+                                        ),
+                                        title: Text(AppStrings.editAccount),
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: ListTile(
+                                        dense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                        leading: Icon(
+                                          Icons.delete_outline_rounded,
+                                          size: 20,
+                                          color: Colors.red,
+                                        ),
+                                        title: Text(
+                                          AppStrings.delete,
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 22.sp,
+                                  color: AppColors.textHint,
                                 ),
-                                PopupMenuItem(
-                                  value: 'delete',
-                                  child: ListTile(
-                                    dense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: Icon(Icons.delete_outline_rounded,
-                                        size: 20, color: Colors.red),
-                                    title: Text(AppStrings.delete,
-                                        style: TextStyle(color: Colors.red)),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Icon(
-                              Icons.chevron_right_rounded,
-                              size: 22.sp,
-                              color: AppColors.textHint,
-                            ),
-                    )
+                        )
                         .animate(delay: (index * 45).ms)
                         .fadeIn(duration: 320.ms)
                         .slideX(begin: 0.05, end: 0);
@@ -318,10 +348,11 @@ class MembersView extends GetView<MembersController> {
     );
   }
 
-  Widget _filterChip(
-      {required String label,
-      required bool active,
-      required VoidCallback onTap}) {
+  Widget _filterChip({
+    required String label,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(30.r),
@@ -331,8 +362,9 @@ class MembersView extends GetView<MembersController> {
         decoration: BoxDecoration(
           color: active ? AppColors.primary : Colors.white,
           borderRadius: BorderRadius.circular(30.r),
-          border:
-              Border.all(color: active ? AppColors.primary : AppColors.divider),
+          border: Border.all(
+            color: active ? AppColors.primary : AppColors.divider,
+          ),
         ),
         child: Text(
           label,
@@ -361,13 +393,14 @@ class MembersView extends GetView<MembersController> {
       physics: const BouncingScrollPhysics(),
       itemCount: list.length,
       separatorBuilder: (_, __) => SizedBox(height: 10.h),
-      itemBuilder: (context, index) => MemberTile(
-        member: list[index],
-        onTap: () => controller.openPersonDetail(list[index]),
-      )
-          .animate(delay: (index * 45).ms)
-          .fadeIn(duration: 320.ms)
-          .slideX(begin: 0.05, end: 0),
+      itemBuilder: (context, index) =>
+          MemberTile(
+                member: list[index],
+                onTap: () => controller.openPersonDetail(list[index]),
+              )
+              .animate(delay: (index * 45).ms)
+              .fadeIn(duration: 320.ms)
+              .slideX(begin: 0.05, end: 0),
     );
   }
 }
