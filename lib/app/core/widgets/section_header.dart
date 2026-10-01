@@ -55,7 +55,9 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: TextStyle(
-                        fontSize: 12.sp, color: AppColors.textSecondary),
+                      fontSize: 12.sp,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ],
@@ -72,9 +74,13 @@ class SectionHeader extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text(actionLabel!,
-                      style: TextStyle(
-                          fontSize: 12.5.sp, fontWeight: FontWeight.w700)),
+                  Text(
+                    actionLabel!,
+                    style: TextStyle(
+                      fontSize: 12.5.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   Icon(Icons.chevron_right_rounded, size: 18.sp),
                 ],
               ),

@@ -11,6 +11,7 @@ import '../../members/views/members_view.dart';
 import '../../profile/views/profile_view.dart';
 import '../controllers/shell_controller.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/lazy_indexed_stack.dart';
 
 /// ຖານຫຼັກຂອງແອັບ - ບັນຈຸ 5 ໜ້າຫຼັກດ້ວຍ UI ຮ່ວມກັນ
 /// ການເຫັນຂໍ້ມູ້ອຍູ່ໃນແຕ່ລະໜ້າແຍກຕາມ role (admin / member)
@@ -22,46 +23,52 @@ class ShellView extends GetView<ShellController> {
     final chatController = Get.find<ChatController>();
 
     return Scaffold(
-      body: Obx(
-        () => Column(
-          children: [
-            // ແຈ້ງເຕືອນເມື່ອອອບລາຍ
-            Obx(
-              () => ConnectivityService.to.isOnline.value
-                  ? const SizedBox.shrink()
-                  : Container(
-                      width: double.infinity,
-                      color: AppColors.warning,
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.wifi_off_rounded, color: Colors.white, size: 15),
-                          SizedBox(width: 8),
-                          Text(
-                            'ທ່ານກຳລັງໃຊ້ງານແບບອອບລາຍ - ຂໍ້ມູນຈະຊິ້ງເມື່ອມີເນັດ',
-                            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+      body: Column(
+        children: [
+          // ແຈ້ງເຕືອນເມື່ອອອບລາຍ
+          Obx(
+            () => ConnectivityService.to.isOnline.value
+                ? const SizedBox.shrink()
+                : Container(
+                    width: double.infinity,
+                    color: AppColors.warning,
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.wifi_off_rounded,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'ທ່ານກຳລັງໃຊ້ງານແບບອອບລາຍ - ຂໍ້ມູນຈະຊິ້ງເມື່ອມີເນັດ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-            ),
-            Expanded(
-              child: Obx(
-                () => IndexedStack(
-                  index: controller.currentIndex.value,
-                  children: const [
-                    HomeView(),
-                    FamilyTreeView(),
-                    MembersView(),
-                    ChatView(),
-                    ProfileView(),
-                  ],
-                ),
+                  ),
+          ),
+          Expanded(
+            child: Obx(
+              () => LazyIndexedStack(
+                index: controller.currentIndex.value,
+                children: const [
+                  HomeView(),
+                  FamilyTreeView(),
+                  MembersView(),
+                  ChatView(),
+                  ProfileView(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: Obx(
         () => StreamBuilder<int>(

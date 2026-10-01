@@ -36,10 +36,7 @@ class AppUser {
   final String? surname;
   final DateTime? birthDate;
   final String? gender;
-
-  /// ຜູກກັບ node ໃນຜັງໄມ້ຄອບຄົວ (ຖ້າມີ)
   final String? memberId;
-
   final List<AuthProviderType> providers;
   final String? fcmToken;
   final bool isActive;
@@ -59,10 +56,19 @@ class AppUser {
     return '${parts.first.characters_first}${parts.last.characters_first}';
   }
 
+  // ===== FIX หลัก: รองรับทั้ง Timestamp, String, DateTime =====
+  static DateTime? _parseDate(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    return null;
+  }
+
   factory AppUser.fromMap(String uid, Map<String, dynamic> map) {
     return AppUser(
       uid: uid,
-      displayName: (map['displayName'] ?? map['name'] ?? '') as String,
+      displayName: (map['displayName'] ?? map['name'] ?? '').toString(),
       email: map['email'] as String?,
       phone: map['phone'] as String?,
       whatsapp: map['whatsapp'] as String?,
@@ -70,17 +76,17 @@ class AppUser {
       role: UserRole.fromString(map['role'] as String?),
       familyId: map['familyId'] as String?,
       surname: map['surname'] as String?,
-      birthDate: (map['birthDate'] as Timestamp?)?.toDate(),
+      birthDate: _parseDate(map['birthDate']),
       gender: map['gender'] as String?,
       memberId: map['memberId'] as String?,
       providers: (map['providers'] as List<dynamic>? ?? const [])
-          .map((e) => AuthProviderType.fromString(e as String?))
+          .map((e) => AuthProviderType.fromString(e.toString()))
           .toList(),
       fcmToken: map['fcmToken'] as String?,
       isActive: map['isActive'] as bool? ?? true,
-      createdAt: (map['createdAt'] as Timestamp?)?.toDate(),
-      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate(),
-      lastSeenAt: (map['lastSeenAt'] as Timestamp?)?.toDate(),
+      createdAt: _parseDate(map['createdAt']),
+      updatedAt: _parseDate(map['updatedAt']),
+      lastSeenAt: _parseDate(map['lastSeenAt']),
     );
   }
 
@@ -88,25 +94,25 @@ class AppUser {
       AppUser.fromMap(doc.id, doc.data() ?? const {});
 
   Map<String, dynamic> toMap() => {
-        'uid': uid,
-        'displayName': displayName,
-        'email': email,
-        'phone': phone,
-        'whatsapp': whatsapp,
-        'avatarUrl': avatarUrl,
-        'role': role.value,
-        'familyId': familyId,
-        'surname': surname,
-        if (birthDate != null) 'birthDate': Timestamp.fromDate(birthDate!),
-        'gender': gender,
-        'memberId': memberId,
-        'providers': providers.map((e) => e.value).toList(),
-        'fcmToken': fcmToken,
-        'isActive': isActive,
-        if (createdAt != null) 'createdAt': Timestamp.fromDate(createdAt!),
-        if (updatedAt != null) 'updatedAt': Timestamp.fromDate(updatedAt!),
-        if (lastSeenAt != null) 'lastSeenAt': Timestamp.fromDate(lastSeenAt!),
-      };
+    'uid': uid,
+    'displayName': displayName,
+    'email': email,
+    'phone': phone,
+    'whatsapp': whatsapp,
+    'avatarUrl': avatarUrl,
+    'role': role.value,
+    'familyId': familyId,
+    'surname': surname,
+    if (birthDate != null) 'birthDate': Timestamp.fromDate(birthDate!),
+    'gender': gender,
+    'memberId': memberId,
+    'providers': providers.map((e) => e.value).toList(),
+    'fcmToken': fcmToken,
+    'isActive': isActive,
+    if (createdAt != null) 'createdAt': Timestamp.fromDate(createdAt!),
+    if (updatedAt != null) 'updatedAt': Timestamp.fromDate(updatedAt!),
+    if (lastSeenAt != null) 'lastSeenAt': Timestamp.fromDate(lastSeenAt!),
+  };
 
   AppUser copyWith({
     String? displayName,
@@ -149,6 +155,5 @@ class AppUser {
 }
 
 extension on String {
-  /// ຕົວອັກສອນທຳອິດຂອງຊື່ (ຮອງຮັບ Unicode/ລາວ)
   String get characters_first => isEmpty ? '?' : substring(0, 1).toUpperCase();
 }

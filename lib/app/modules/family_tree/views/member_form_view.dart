@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,8 +22,9 @@ class MemberFormView extends GetView<MemberFormController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title:
-            Text(controller.isEdit ? AppStrings.editNode : AppStrings.addNode),
+        title: Text(
+          controller.isEdit ? AppStrings.editNode : AppStrings.addNode,
+        ),
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: const Icon(Icons.close_rounded),
@@ -73,15 +72,15 @@ class MemberFormView extends GetView<MemberFormController> {
                             values: const [
                               Gender.male,
                               Gender.female,
-                              Gender.other
+                              Gender.other,
                             ],
                             selected: controller.gender.value,
                             labelOf: (g) => g.label,
                             iconOf: (g) => g == Gender.female
                                 ? Icons.female_rounded
                                 : g == Gender.male
-                                    ? Icons.male_rounded
-                                    : Icons.transgender_rounded,
+                                ? Icons.male_rounded
+                                : Icons.transgender_rounded,
                             onChanged: (value) =>
                                 controller.gender.value = value,
                           ),
@@ -106,7 +105,9 @@ class MemberFormView extends GetView<MemberFormController> {
                         Text(
                           'ແນະນຳ: ລຸ້ນຈະຖືກຄຳນວນອັດຕະໂນມັດ ເມື່ອກຳນົດພໍ່ແມ່ (ລູກ = ລຸ້ນພໍ່ແມ່ + 1)',
                           style: TextStyle(
-                              fontSize: 11.sp, color: AppColors.textHint),
+                            fontSize: 11.sp,
+                            color: AppColors.textHint,
+                          ),
                         ),
                       ],
                     ),
@@ -123,8 +124,8 @@ class MemberFormView extends GetView<MemberFormController> {
                             iconOf: (s) => s == MemberStatus.alive
                                 ? Icons.favorite_rounded
                                 : s == MemberStatus.deceased
-                                    ? Icons.spa_rounded
-                                    : Icons.heart_broken_rounded,
+                                ? Icons.spa_rounded
+                                : Icons.heart_broken_rounded,
                             onChanged: (value) =>
                                 controller.status.value = value,
                           ),
@@ -191,8 +192,7 @@ class MemberFormView extends GetView<MemberFormController> {
                                 members: controller.childCandidates,
                                 selectedIds: controller.childIds,
                                 onToggle: controller.toggleChild,
-                                emptyHint:
-                                    'ຕ້ອງມີສະມາຊິກລຸ້ນຖັດໄປກ່ອນ ຫຼື ປັບລຸ້ນຂອງຄົນນີ້',
+                                emptyHint: 'ຕ້ອງມີສະມາຊິກລຸ້ນຖັດໄປກ່ອນ ຫຼື ປັບລຸ້ນຂອງຄົນນີ້',
                               ),
                               SizedBox(height: 14.h),
                               RelationMultiPicker(
@@ -277,46 +277,54 @@ class MemberFormView extends GetView<MemberFormController> {
                       icon: Icons.link_rounded,
                       children: [
                         Obx(
-                          () => Column(
-                            children: [
-                              for (final account in controller.accounts)
-                                RadioListTile<String?>(
-                                  value: account.uid,
-                                  groupValue: controller.linkedUserId.value,
-                                  onChanged: (value) =>
-                                      controller.linkedUserId.value = value,
-                                  contentPadding: EdgeInsets.zero,
-                                  dense: true,
-                                  activeColor: AppColors.primary,
-                                  title: Text(
-                                    account.displayName,
-                                    style: TextStyle(
+                          () => RadioGroup<String?>(
+                            groupValue: controller.linkedUserId.value,
+                            onChanged: (value) =>
+                                controller.linkedUserId.value = value,
+                            child: Column(
+                              children: [
+                                for (final account in controller.accounts)
+                                  Material(
+                                    type: MaterialType.transparency,
+                                    child: RadioListTile<String?>(
+                                      value: account.uid,
+                                      contentPadding: EdgeInsets.zero,
+                                      dense: true,
+                                      activeColor: AppColors.primary,
+                                      title: Text(
+                                        account.displayName,
+                                        style: TextStyle(
+                                          fontSize: 13.5.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        account.email ?? account.phone ?? '',
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                Material(
+                                  type: MaterialType.transparency,
+                                  child: RadioListTile<String?>(
+                                    value: null,
+                                    contentPadding: EdgeInsets.zero,
+                                    dense: true,
+                                    activeColor: AppColors.primary,
+                                    title: Text(
+                                      'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
+                                      style: TextStyle(
                                         fontSize: 13.5.sp,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: Text(
-                                    account.email ?? account.phone ?? '',
-                                    style: TextStyle(
-                                        fontSize: 11.sp,
-                                        color: AppColors.textSecondary),
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              RadioListTile<String?>(
-                                value: null,
-                                groupValue: controller.linkedUserId.value,
-                                onChanged: (value) =>
-                                    controller.linkedUserId.value = null,
-                                contentPadding: EdgeInsets.zero,
-                                dense: true,
-                                activeColor: AppColors.primary,
-                                title: Text(
-                                  'ບໍ່ຜູກບັນຊີ (ບຸກຄົນໃນຜັງເທົ່ານັ້ນ)',
-                                  style: TextStyle(
-                                      fontSize: 13.5.sp,
-                                      color: AppColors.textSecondary),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -348,7 +356,8 @@ class MemberFormView extends GetView<MemberFormController> {
                         child: OutlinedButton(
                           onPressed: () => Get.back(),
                           style: OutlinedButton.styleFrom(
-                              minimumSize: Size.fromHeight(52.h)),
+                            minimumSize: Size.fromHeight(52.h),
+                          ),
                           child: const Text(AppStrings.cancel),
                         ),
                       ),
@@ -364,12 +373,16 @@ class MemberFormView extends GetView<MemberFormController> {
                                   width: 18.w,
                                   height: 18.w,
                                   child: const CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white),
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
                                 )
                               : const Icon(Icons.check_rounded, size: 20),
-                          label: Text(controller.isEdit
-                              ? AppStrings.update
-                              : AppStrings.save),
+                          label: Text(
+                            controller.isEdit
+                                ? AppStrings.update
+                                : AppStrings.save,
+                          ),
                           style: FilledButton.styleFrom(
                             minimumSize: Size.fromHeight(52.h),
                             backgroundColor: AppColors.primary,
@@ -388,50 +401,55 @@ class MemberFormView extends GetView<MemberFormController> {
 
   /// ເລືອກລຳດັບຊົ່ວຄົນ (Generation 1, 2, 3...)
   Widget _generationField() => Obx(
-        () => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _label(AppStrings.generation, isRequired: true),
-            SizedBox(height: 7.h),
-            InkWell(
-              onTap: _pickGeneration,
+    () => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _label(AppStrings.generation, isRequired: true),
+        SizedBox(height: 7.h),
+        InkWell(
+          onTap: _pickGeneration,
+          borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+          child: Container(
+            height: AppSizes.inputHeight.h,
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceAlt,
               borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-              child: Container(
-                height: AppSizes.inputHeight.h,
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceAlt,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-                  border: Border.all(color: AppColors.divider),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(30.r),
-                      ),
-                      child: Text(
-                        'ລຸ້ນທີ ${controller.generation.value}',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(Icons.unfold_more_rounded,
-                        size: 20.sp, color: AppColors.textHint),
-                  ],
-                ),
-              ),
+              border: Border.all(color: AppColors.divider),
             ),
-          ],
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                  child: Text(
+                    'ລຸ້ນທີ ${controller.generation.value}',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.unfold_more_rounded,
+                  size: 20.sp,
+                  color: AppColors.textHint,
+                ),
+              ],
+            ),
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   Widget _avatarPicker() {
     return Center(
@@ -447,7 +465,7 @@ class MemberFormView extends GetView<MemberFormController> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(30.r),
                       child: Image.file(
-                        controller.pickedImage.value! as File,
+                        controller.pickedImage.value!,
                         width: 104.w,
                         height: 104.w,
                         fit: BoxFit.cover,
@@ -473,8 +491,11 @@ class MemberFormView extends GetView<MemberFormController> {
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 2),
                       ),
-                      child: Icon(Icons.camera_alt_rounded,
-                          size: 15.sp, color: Colors.white),
+                      child: Icon(
+                        Icons.camera_alt_rounded,
+                        size: 15.sp,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -492,64 +513,75 @@ class MemberFormView extends GetView<MemberFormController> {
     );
   }
 
-  Widget _card(
-      {required String title,
-      required IconData icon,
-      required List<Widget> children}) {
+  Widget _card({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
     return Container(
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-        border: Border.all(color: AppColors.divider),
         boxShadow: AppSizes.softShadow,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: Material(
+        color: Colors.white,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+          side: const BorderSide(color: AppColors.divider),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(icon, size: 16.sp, color: AppColors.primary),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primarySoft,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Icon(icon, size: 16.sp, color: AppColors.primary),
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: 10.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.5.sp,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
+              SizedBox(height: 16.h),
+              ...children,
             ],
           ),
-          SizedBox(height: 16.h),
-          ...children,
-        ],
+        ),
       ),
     );
   }
 
   Widget _label(String text, {bool isRequired = false}) => Row(
-        children: [
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          if (isRequired)
-            Text(' *',
-                style: TextStyle(color: AppColors.danger, fontSize: 13.sp)),
-        ],
-      );
+    children: [
+      Text(
+        text,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textSecondary,
+        ),
+      ),
+      if (isRequired)
+        Text(
+          ' *',
+          style: TextStyle(color: AppColors.danger, fontSize: 13.sp),
+        ),
+    ],
+  );
 
   Widget _segmented<T>({
     required List<T> values,
@@ -626,8 +658,7 @@ class MemberFormView extends GetView<MemberFormController> {
       confirmText: 'ຕົກລົງ',
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(context)
-              .colorScheme
+          colorScheme: Theme.of(context).colorScheme
               .copyWith(primary: AppColors.primary),
         ),
         child: child!,
@@ -659,7 +690,9 @@ class MemberFormView extends GetView<MemberFormController> {
                     borderRadius: BorderRadius.circular(30.r),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 18.w, vertical: 11.h),
+                        horizontal: 18.w,
+                        vertical: 11.h,
+                      ),
                       decoration: BoxDecoration(
                         color: controller.generation.value == i
                             ? AppColors.primary

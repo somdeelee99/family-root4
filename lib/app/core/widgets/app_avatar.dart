@@ -90,8 +90,11 @@ class AppAvatar extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
               ),
               child: status == MemberStatus.deceased
-                  ? Icon(Icons.close_rounded,
-                      size: size * 0.16, color: Colors.white)
+                  ? Icon(
+                      Icons.close_rounded,
+                      size: size * 0.16,
+                      color: Colors.white,
+                    )
                   : null,
             ),
           ),
@@ -113,8 +116,11 @@ class AppAvatar extends StatelessWidget {
                 gradient: AppColors.goldGradient,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.verified_rounded,
-                  size: size * 0.22, color: Colors.white),
+              child: Icon(
+                Icons.verified_rounded,
+                size: size * 0.22,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -122,41 +128,40 @@ class AppAvatar extends StatelessWidget {
     }
 
     if (onTap == null) return avatar;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: radius,
-      child: avatar,
-    );
+    return InkWell(onTap: onTap, borderRadius: radius, child: avatar);
   }
 
   Widget _initialsBox() => Container(
-        width: size.w,
-        height: size.w,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              _fallbackColor.withValues(alpha: 0.85),
-              _fallbackColor.withValues(alpha: 0.55),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          _initials,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: size * 0.36,
-          ),
-        ),
-      );
+    width: size.w,
+    height: size.w,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          _fallbackColor.withValues(alpha: 0.85),
+          _fallbackColor.withValues(alpha: 0.55),
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+    ),
+    alignment: Alignment.center,
+    child: Text(
+      _initials,
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w700,
+        fontSize: size * 0.36,
+      ),
+    ),
+  );
 
   Widget _placeholder() => Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: Container(
-            color: Colors.grey.shade300, width: size.w, height: size.w),
-      );
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade100,
+    child: Container(
+      color: Colors.grey.shade300,
+      width: size.w,
+      height: size.w,
+    ),
+  );
 }

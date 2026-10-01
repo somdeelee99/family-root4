@@ -1,0 +1,43 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "members",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "generation",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "fullName",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "chats",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "participants",
+                    "arrayConfig": "CONTAINS"
+                },
+                {
+                    "fieldPath": "lastMessageAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "messages",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

@@ -40,6 +40,7 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
       floatingActionButton: Obx(
         () => controller.isAdmin
             ? FloatingActionButton.extended(
+                heroTag: 'family_tree_fab',
                 onPressed: () => Get.toNamed(Routes.MEMBER_FORM),
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,

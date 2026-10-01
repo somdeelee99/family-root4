@@ -16,7 +16,9 @@ class RoleBadge extends StatelessWidget {
     final isAdmin = role.isAdmin;
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: compact ? 8.w : 10.w, vertical: compact ? 3.h : 5.h),
+        horizontal: compact ? 8.w : 10.w,
+        vertical: compact ? 3.h : 5.h,
+      ),
       decoration: BoxDecoration(
         color: isAdmin ? AppColors.accentSoft : AppColors.primarySoft,
         borderRadius: BorderRadius.circular(30.r),
@@ -93,7 +95,10 @@ class StatusBadge extends StatelessWidget {
           Text(
             status.shortLabel,
             style: TextStyle(
-                fontSize: 10.5.sp, fontWeight: FontWeight.w700, color: _color),
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w700,
+              color: _color,
+            ),
           ),
         ],
       ),
@@ -128,7 +133,10 @@ class GenderBadge extends StatelessWidget {
           Text(
             gender.label,
             style: TextStyle(
-                fontSize: 10.5.sp, fontWeight: FontWeight.w700, color: color),
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
         ],
       ),

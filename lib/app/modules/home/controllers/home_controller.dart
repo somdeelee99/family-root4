@@ -37,21 +37,21 @@ class HomeController extends GetxController {
       return;
     }
 
-    _membersSub = _memberRepo.membersStream(fid).listen(
-      (list) {
-        members.assignAll(list);
-        stats.value = MemberRepository.calculateStats(list);
-        isLoading.value = false;
-      },
-      onError: (Object e) => isLoading.value = false,
-    );
+    _membersSub = _memberRepo.membersStream(fid).listen((list) {
+      members.assignAll(list);
+      stats.value = MemberRepository.calculateStats(list);
+      isLoading.value = false;
+    }, onError: (Object e) => isLoading.value = false);
 
-    _familySub = _familyRepo.familyStream(fid).listen((value) => family.value = value);
+    _familySub = _familyRepo
+        .familyStream(fid)
+        .listen((value) => family.value = value);
   }
 
   /// ສະມາຊິກຫຼ້າສຸດ (ສຳລັບລາຍການໃນໜ້າຫຼັກ)
   List<FamilyMember> get recentMembers {
-    final list = [...members]..sort((a, b) {
+    final list = [...members]
+      ..sort((a, b) {
         final ad = a.createdAt?.millisecondsSinceEpoch ?? 0;
         final bd = b.createdAt?.millisecondsSinceEpoch ?? 0;
         return bd.compareTo(ad);
@@ -61,9 +61,9 @@ class HomeController extends GetxController {
 
   /// ຂໍ້ມູນສຳລັບກາຟເພດ (donut)
   Map<String, double> get genderChart => {
-        'male': stats.value.male.toDouble(),
-        'female': stats.value.female.toDouble(),
-      };
+    'male': stats.value.male.toDouble(),
+    'female': stats.value.female.toDouble(),
+  };
 
   /// ຂໍ້ມູນສຳລັບກາຟແຕ່ລະລຸ້ນ (bar)
   List<MapEntry<int, int>> get generationChart {

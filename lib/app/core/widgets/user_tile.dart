@@ -43,8 +43,9 @@ class UserTile extends StatelessWidget {
                 imageUrl: user.avatarUrl,
                 name: user.displayName,
                 size: 52,
-                gender:
-                    user.gender == null ? null : Gender.fromString(user.gender),
+                gender: user.gender == null
+                    ? null
+                    : Gender.fromString(user.gender),
                 isAdmin: user.isAdmin,
               ),
               SizedBox(width: 12.w),
@@ -80,14 +81,18 @@ class UserTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: 12.sp, color: AppColors.textSecondary),
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     if (user.lastSeenAt != null) ...[
                       SizedBox(height: 3.h),
                       Text(
                         'ເຂົ້າໃຊ້ຫຼ້າສຸດ ${AppDateUtils.relative(user.lastSeenAt)}',
                         style: TextStyle(
-                            fontSize: 10.5.sp, color: AppColors.textHint),
+                          fontSize: 10.5.sp,
+                          color: AppColors.textHint,
+                        ),
                       ),
                     ],
                   ],
@@ -103,8 +108,11 @@ class UserTile extends StatelessWidget {
                       color: AppColors.primarySoft,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.chat_bubble_outline_rounded,
-                        size: 17.sp, color: AppColors.primary),
+                    child: Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 17.sp,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
               if (trailing != null) trailing!,
