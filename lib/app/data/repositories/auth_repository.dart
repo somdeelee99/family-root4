@@ -198,12 +198,19 @@ class AuthRepository {
 
   Future<void> signOut() async {
     try {
-      if (_googleInitialized) await GoogleSignIn.instance.signOut();
+      if (_googleInitialized) {
+        await GoogleSignIn.instance.signOut().timeout(
+          const Duration(seconds: 2),
+        );
+      }
     } catch (_) {}
     try {
-      await FacebookLogin().logOut();
+      await FacebookLogin().logOut().timeout(const Duration(seconds: 2));
     } catch (_) {}
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+    } catch (_) {}
+    _googleInitialized = false;
   }
 
   // ========================= ຂໍ້ມູນຜູ້ໃຊ້ =========================

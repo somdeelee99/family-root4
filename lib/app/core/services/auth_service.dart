@@ -111,14 +111,25 @@ class AuthService extends GetxService {
 
   Future<void> signOut() async {
     try {
+      _profileSub?.cancel();
+      _profileSub = null;
+
       final family = familyId;
-      if (family.isNotEmpty)
-        await NotificationService.instance.unsubscribeFromFamily(family);
-      await _authRepo.signOut();
-    } catch (e) {
-      _log.w('ອອກຈາກລະບົບມີຂໍ້ຜິດພາດ: $e');
+      if (family.isNotEmpty) {
+        try {
+          await NotificationService.instance
+              .unsubscribeFromFamily(family)
+              .timeout(const Duration(seconds: 2));
+        } catch (_) {}
+      }
     } finally {
-      user.value = null;
+      try {
+        await _authRepo.signOut();
+      } catch (e) {
+        _log.w('signOut repo error: $e');
+      } finally {
+        user.value = null;
+      }
     }
   }
 
