@@ -14,15 +14,18 @@ import 'package:uuid/uuid.dart';
 /// families/{familyId}/chat/{roomId}/{file}.jpg
 class StorageRepository {
   StorageRepository({FirebaseStorage? storage})
-      : _storage = storage ?? FirebaseStorage.instance;
+    : _storage = storage ?? FirebaseStorage.instance;
 
   final FirebaseStorage _storage;
   final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
   final Uuid _uuid = const Uuid();
 
   /// ບີບອັດຮູບກ່ອນອັບໂຫຼດ (ຫຼຸດຂະໜາດ ແລະ ຄຸນນະພາບ)
-  Future<File> compress(File file,
-      {int quality = 78, int maxWidth = 1280}) async {
+  Future<File> compress(
+    File file, {
+    int quality = 78,
+    int maxWidth = 1280,
+  }) async {
     try {
       final dir = await getTemporaryDirectory();
       final target = '${dir.path}/${_uuid.v4()}.jpg';
@@ -48,17 +51,24 @@ class StorageRepository {
   }
 
   Future<String> uploadMemberPhoto(
-      File file, String familyId, String memberId) async {
+    File file,
+    String familyId,
+    String memberId,
+  ) async {
     final compressed = await compress(file);
     final ref = _storage.ref('families/$familyId/members/$memberId.jpg');
     return _upload(ref, compressed);
   }
 
   Future<String> uploadChatImage(
-      File file, String familyId, String roomId) async {
+    File file,
+    String familyId,
+    String roomId,
+  ) async {
     final compressed = await compress(file, maxWidth: 1080);
-    final ref =
-        _storage.ref('families/$familyId/chat/$roomId/${_uuid.v4()}.jpg');
+    final ref = _storage.ref(
+      'families/$familyId/chat/$roomId/${_uuid.v4()}.jpg',
+    );
     return _upload(ref, compressed);
   }
 
