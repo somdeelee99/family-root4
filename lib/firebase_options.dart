@@ -51,24 +51,22 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyChrya5vCXLCs7mfkZyxGuIQ7VlXCzW--4',
-    appId: '1:949919542824:android:65b24aec7dc5b48b878f1d',
-    messagingSenderId: '949919542824',
-    projectId: 'familytree-b4d81',
-    storageBucket: 'familytree-b4d81.firebasestorage.app',
+    apiKey: 'AIzaSyCCKHHmPE80ljU-N0dSYWuXrlkEoxvc9cc',
+    appId: '1:183688357375:android:5973baae52397eed27f3ca',
+    messagingSenderId: '183688357375',
+    projectId: 'familyroot-26df8',
+    storageBucket: 'familyroot-26df8.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDnDb_bNcTp7E-u8YyZHKV7XXYWWOIMXF0',
-    appId: '1:949919542824:ios:cdc175dec8c955d9878f1d',
-    messagingSenderId: '949919542824',
-    projectId: 'familytree-b4d81',
-    storageBucket: 'familytree-b4d81.firebasestorage.app',
-    androidClientId: '949919542824-pcvvgdc5ssd59obdjomq17eh8dkei927.apps.googleusercontent.com',
-    iosClientId: '949919542824-vf9c0tgn4dofjddegp2stf0etrl5rqrb.apps.googleusercontent.com',
-    iosBundleId: 'com.familyrootsdl2026.familyRoot',
+    apiKey: 'AIzaSyCkMjf3eqMLz73izYPHRf-7jZBXUjnFgrY',
+    appId: '1:183688357375:ios:4bd476c0e9aa8e9e27f3ca',
+    messagingSenderId: '183688357375',
+    projectId: 'familyroot-26df8',
+    storageBucket: 'familyroot-26df8.firebasestorage.app',
+    androidClientId: '183688357375-2ncomgs94in409vvh7d4lh3psp43413r.apps.googleusercontent.com',
+    iosClientId: '183688357375-r9lkuejo0aui71m7odcgj3mbeuit4n8u.apps.googleusercontent.com',
+    iosBundleId: 'com.sdlfamilyroot2026',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDnDb_bNcTp7E-u8YyZHKV7XXYWWOIMXF0',
     appId: '1:949919542824:ios:cdc175dec8c955d9878f1d',
