@@ -281,6 +281,7 @@ class AuthRepository {
     String? gender,
     String? familyId,
     String? memberId,
+    String? role,
   }) async {
     if (uid == null) return;
     await _firestore.doc(FirestorePaths.userDoc(uid!)).set({
@@ -293,6 +294,7 @@ class AuthRepository {
       if (gender != null) 'gender': gender,
       if (familyId != null) 'familyId': familyId,
       if (memberId != null) 'memberId': memberId,
+      if (role != null) 'role': role,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
     if (displayName != null && displayName.trim().isNotEmpty) {

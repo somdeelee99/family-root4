@@ -69,7 +69,8 @@ class FamilySetupController extends GetxController {
             ownerId: auth.uid,
           );
 
-      await auth.attachFamily(familyId, surname: surname);
+      // ຖ້ານາມສະກຸນຊ້ຳ (existing != null) => ເຂົ້າຮ່ວມເປັນສະມາຊິກທຳມະດາ
+      await auth.attachFamily(familyId, surname: surname, asMember: existing != null);
 
       // ສ້າງ node ຂອງ admin ເອງໃນຜັງ (ລຸ້ນທີ 1)
       if (auth.user.value != null) {

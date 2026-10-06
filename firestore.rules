@@ -7,103 +7,212 @@ rules_version = '2';
 //   2. ຂໍ້ມູນຄອບຄົວ (families) ເຂົ້າເຖິງໄດ້ສະເພາະສະມາຊິກຂອງຄອບຄົວນັ້ນ
 //   3. ການເພີ່ມ/ແກ້ໄຂ/ລຶບ ສະມາຊິກໃນຜັງ ແລະ ບັນຊີ  => ສະເພາະ role == 'admin'
 //   4. ການສົນທະນາ: ສະມາຊິກຄອບຄົວດຽວກັນເຫັນໄດ້, ລຶບຂໍ້ຄວາມບໍ່ໄດ້ (allow delete: false)
+//
+// Paths actually used by the Flutter app and Cloud Functions:
+//   users/{uid}
+//   families/{familyId}
+//   families/{familyId}/members/{memberId}
+//   families/{familyId}/chats/{roomId}
+//   families/{familyId}/chats/{roomId}/messages/{messageId}
+//   families/{familyId}/activity/{logId}
+//
+// Notes:
+//   - Authority = users/{uid}.role. You may NEVER grant yourself 'admin'.
+//   - Attaching to a family you don't own is only allowed as a regular 'member'.
+//     The family creator (families/{familyId}.ownerId) keeps the 'admin' role.
 // =============================================================
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ------------------------- helpers -------------------------
+
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function userDoc() {
+    function myUser() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
     function isAdmin() {
-      return isSignedIn() && userDoc().role == 'admin';
+      return isSignedIn() && myUser().role == 'admin';
     }
 
+    // ໃຊ້ sentinel ເພື່ອບໍ່ໃຫ້ຄົນທີ່ບໍ່ມີຄອບຄົວ ອ່ານເອກະສານ familyId == null ຂອງຄົນອື່ນ
     function myFamilyId() {
-      return isSignedIn() ? userDoc().familyId : null;
+      return isSignedIn() && myUser().familyId != null
+        ? myUser().familyId
+        : '__no_family__';
     }
 
     function inSameFamily(familyId) {
-      return isSignedIn() && myFamilyId() == familyId;
+      return isSignedIn() && familyId != null && myFamilyId() == familyId;
     }
 
-    // ------------------------- users -------------------------
+    function familyOwnerId(familyId) {
+      return get(/databases/$(database)/documents/families/$(familyId)).data.ownerId;
+    }
+
+    function validRole(role) {
+      return role in ['admin', 'member'];
+    }
+
+    // ------------------------- users --------------------------
     match /users/{uid} {
       // ຜູ້ໃຊ້ເຫັນຂໍ້ມູນຕົນເອງ ຫຼື ສະມາຊິກຄອບຄົວດຽວກັນ (ໃຊ້ໃນໜ້າສະມາຊິກ/ແຊັດ)
       allow read: if isSignedIn() && (
         request.auth.uid == uid ||
-        (resource != null && resource.data.familyId != null && resource.data.familyId == myFamilyId())
+        resource.data.familyId == myFamilyId()
       );
 
       // ສ້າງເອກະສານຂອງຕົນເອງ (ຕອນເຂົ້າລະບົບຄັ້ງທຳອິດ)
-      allow create: if isSignedIn() && request.auth.uid == uid;
-
-      // ອັບເດດ: ຕົນເອງ (ບໍ່ສາມາດປ່ຽນ role ຂອງຕົນເອງ) ຫຼື admin ຂອງຄອບຄົວດຽວກັນ
-      allow update: if isSignedIn() && (
-        (request.auth.uid == uid &&
-          request.resource.data.role == resource.data.role) ||
-        (isAdmin() && resource.data.familyId == myFamilyId())
+      // ຕ້ອງບໍ່ມີຄອບຄົວ ເພື່ອກັນການໃສ່ familyId ຂອງຄົນອື່ນຕັ້ງແຕ່ຕອນສ້າງ
+      allow create: if (
+        (isSignedIn() &&
+          request.auth.uid == uid &&
+          request.resource.data.uid == uid &&
+          validRole(request.resource.data.role) &&
+          request.resource.data.familyId == null &&
+          request.resource.data.displayName is string &&
+          request.resource.data.displayName.size() <= 100)
+        ||
+        // ບັນຊີສະມາຊິກທີ່ admin ຂອງຄອບຄົວນັ້ນສ້າງ (ວິທີສຳຮອງເມື່ອ Cloud Function ບໍ່ພ້ອມ)
+        (isAdmin() &&
+          uid != request.auth.uid &&
+          request.resource.data.uid == uid &&
+          validRole(request.resource.data.role) &&
+          request.resource.data.familyId == myFamilyId() &&
+          request.resource.data.displayName is string &&
+          request.resource.data.displayName.size() <= 100)
       );
 
-      // ລຶບ: ສະເພາະ admin ຂອງຄອບຄົວດຽວກັນ (ບໍ່ລວມການລຶບບັນຊີຕົນເອງ)
-      allow delete: if isAdmin() && resource.data.familyId == myFamilyId();
+      // ອັບເດດ: ຕົນເອງ ຫຼື admin ຂອງຄອບຄົວດຽວກັນ
+      allow update: if (
+        // ---- ຕົນເອງ ----
+        (isSignedIn() && request.auth.uid == uid && (
+          // ອັບເດດໂປຣໄຟລ໌ປົກກະຕິ (ບໍ່ປ່ຽນ role / familyId)
+          (request.resource.data.role == resource.data.role &&
+            request.resource.data.familyId == resource.data.familyId)
+          // ອອກຈາກຄອບຄົວ (ບໍ່ປ່ຽນ role)
+          || (request.resource.data.role == resource.data.role &&
+            request.resource.data.familyId == null)
+          // ເຂົ້າຮ່ວມຄອບຄົວທີ່ຕົນເອງສ້າງ (ຍັງເປັນ admin)
+          || (request.resource.data.role == resource.data.role &&
+            request.resource.data.familyId != null &&
+            familyOwnerId(request.resource.data.familyId) == request.auth.uid)
+          // ເຂົ້າຮ່ວມຄອບຄົວຂອງຄົນອື່ນ => ຕ້ອງເປັນສະມາຊິກທຳມະດາເທົ່ານັ້ນ
+          || (request.resource.data.role == 'member' &&
+            request.resource.data.familyId != null &&
+            familyOwnerId(request.resource.data.familyId) != request.auth.uid)
+        ))
+        ||
+        // ---- admin ຂອງຄອບຄົວດຽວກັນ (ຈັດການບັນຊີສະມາຊິກ) ----
+        (isAdmin() &&
+          uid != request.auth.uid &&
+          resource.data.familyId != null &&
+          resource.data.familyId == myFamilyId() &&
+          request.resource.data.familyId == resource.data.familyId &&
+          validRole(request.resource.data.role))
+      );
+
+      // ລຶບ: admin ຂອງຄອບຄົວດຽວກັນ (ບໍ່ລວມການລຶບບັນຊີຕົນເອງ)
+      allow delete: if isAdmin() &&
+        uid != request.auth.uid &&
+        resource.data.familyId != null &&
+        resource.data.familyId == myFamilyId();
     }
 
-    // ------------------------ families -----------------------
+    // ------------------------ families ------------------------
     match /families/{familyId} {
-      allow read: if inSameFamily(familyId);
+      // ອ່ານເອກະສານດຽວ: ສະເພາະສະມາຊິກຄອບຄົວ
+      allow get: if inSameFamily(familyId);
 
-      // admin ທີ່ຍັງບໍ່ມີຄອບຄົວ ສ້າງຄອບຄົວໃໝ່ໄດ້
-      allow create: if isAdmin();
+      // ຄົ້ນຫາດ້ວຍນາມສະກຸນ (findFamilyIdBySurname / surnameExists) ຕ້ອງໃຫ້ list
+      allow list: if isSignedIn();
 
-      allow update: if isAdmin() && inSameFamily(familyId);
+      // admin ສ້າງຄອບຄົວ ແລະ ຕົ້ນສະບັບ ownerId ຕ້ອງເປັນຕົນເອງ
+      allow create: if isAdmin() &&
+        request.resource.data.ownerId == request.auth.uid &&
+        request.resource.data.surname is string &&
+        request.resource.data.surname.size() > 0 &&
+        request.resource.data.surname.size() <= 100;
+
+      // ຫ້າມປ່ຽນເຈົ້າຂອງຄອບຄົວ
+      allow update: if isAdmin() &&
+        inSameFamily(familyId) &&
+        request.resource.data.ownerId == resource.data.ownerId;
+
       allow delete: if false; // ບໍ່ອະນຸຍາດໃຫ້ລຶບຄອບຄົວຈາກແອັບ
 
       // ------------------- ສະມາຊິກໃນຜັງ -------------------
       match /members/{memberId} {
         allow read: if inSameFamily(familyId);
         allow create, update, delete: if isAdmin() && inSameFamily(familyId);
+      }
 
-        // ---------------- ການສົນທະນາ ----------------
-        match /chats/{roomId} {
-          function isParticipant() {
-            return request.auth.uid in resource.data.participants;
+      // ---------------- ການສົນທະນາ (1:1) ----------------
+      match /chats/{roomId} {
+        function isParticipant() {
+          return isSignedIn() && request.auth.uid in resource.data.participants;
+        }
+
+        // ເຫັນໄດ້ສະເພາະຜູ້ເຂົ້າຮ່ວມຫ້ອງ
+        // resource == null = ຍັງບໍ່ມີຫ້ອງ (openRoom ກວດກ່ອນສ້າງ)
+        allow read: if inSameFamily(familyId) && (resource == null || isParticipant());
+
+        // ສ້າງຫ້ອງ 1:1 ທີ່ມີຕົນເອງເປັນຜູ້ເຂົ້າຮ່ວມ
+        allow create: if inSameFamily(familyId) &&
+          request.resource.data.participants is list &&
+          request.resource.data.participants.size() == 2 &&
+          request.auth.uid in request.resource.data.participants;
+
+        // ອັບເດດໄດ້ສະເພາະ ຂໍ້ຄວາມຫຼ້າສຸດ / unread (ປ່ຽນຜູ້ເຂົ້າຮ່ວມບໍ່ໄດ້)
+        allow update: if inSameFamily(familyId) &&
+          isParticipant() &&
+          request.resource.data.participants == resource.data.participants &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['lastMessage', 'lastMessageAt', 'lastSenderId', 'lastSenderName', 'unread']);
+
+        // ບໍ່ອະນຸຍາດໃຫ້ລຶບປະຫວັດການສົນທະນາ
+        allow delete: if false;
+
+        match /messages/{messageId} {
+          function room() {
+            return get(/databases/$(database)/documents/families/$(familyId)/chats/$(roomId)).data;
           }
 
-          allow read: if inSameFamily(familyId) && isParticipant();
+          function isRoomParticipant() {
+            return isSignedIn() && request.auth.uid in room().participants;
+          }
 
+          // ອ່ານໄດ້ສະເພາະຜູ້ເຂົ້າຮ່ວມຫ້ອງນັ້ນ
+          allow read: if inSameFamily(familyId) && isRoomParticipant();
+
+          // ສົ່ງຂໍ້ຄວາມ: ຕ້ອງເປັນຜູ້ເຂົ້າຮ່ວມ ແລະ senderId ຕ້ອງເປັນຕົນເອງ
           allow create: if inSameFamily(familyId) &&
-            request.auth.uid in request.resource.data.participants;
+            isRoomParticipant() &&
+            request.resource.data.senderId == request.auth.uid;
 
-          // ອັບເດດໄດ້ສະເພາະຜູ້ເຂົ້າຮ່ວມຫ້ອງ (unread / ຂໍ້ຄວາມຫຼ້າສຸດ)
-          allow update: if inSameFamily(familyId) && isParticipant();
+          // ອະນຸຍາດອັບເດດສະເພາະ readBy (ເພີ່ມຜູ້ອ່ານເທົ່ານັ້ນ)
+          allow update: if inSameFamily(familyId) &&
+            isRoomParticipant() &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']) &&
+            request.resource.data.readBy.hasAll(resource.data.readBy);
 
-          // ບໍ່ອະນຸຍາດໃຫ້ລຶບປະຫວັດການສົນທະນາ
+          // ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້
           allow delete: if false;
-
-          match /messages/{messageId} {
-            allow read: if inSameFamily(familyId);
-            allow create: if inSameFamily(familyId) &&
-              request.resource.data.senderId == request.auth.uid;
-            // ອະນຸຍາດອັບເດດສະເພາະ readBy
-            allow update: if inSameFamily(familyId) &&
-              request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']);
-            // ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້
-            allow delete: if false;
-          }
         }
+      }
 
-        // ---------------- activity log ----------------
-        match /activity/{logId} {
-          allow read: if inSameFamily(familyId);
-          allow create: if inSameFamily(familyId);
-          allow update, delete: if false;
-        }
+      // ---------------- activity log ----------------
+      match /activity/{logId} {
+        allow read: if inSameFamily(familyId);
+        allow create: if inSameFamily(familyId) &&
+          request.resource.data.userId == request.auth.uid &&
+          request.resource.data.action is string &&
+          request.resource.data.action.size() <= 200;
+        allow update, delete: if false;
       }
     }
   }
