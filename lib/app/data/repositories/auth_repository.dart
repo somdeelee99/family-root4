@@ -39,7 +39,7 @@ class AuthRepository {
   // Client ID
 
   static const String _googleServerClientId =
-      '949919542824-pb5ll5mbvse9jkj75l0jj5n9rof496sr.apps.googleusercontent.com';
+      '183688357375-27ub99qd7th1ms7kiplucpt1cgei0a0v.apps.googleusercontent.com';
 
   Future<void> _ensureGoogleInitialized() async {
     if (_googleInitialized) return;
