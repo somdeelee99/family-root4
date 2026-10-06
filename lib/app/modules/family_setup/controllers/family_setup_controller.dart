@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/notification_service.dart';
@@ -24,24 +25,27 @@ class FamilySetupController extends GetxController {
 
   final RxBool isSubmitting = false.obs;
   final RxString surnameError = ''.obs;
-
-  /// ປຸ່ມ "ສ້າງ" ຈະສະແດງກໍ່ຕໍ່ເມື່ອປ້ອນນາມສະກຸນແລ້ວ
-  bool get canSubmit =>
-      surnameController.text.trim().isNotEmpty && !isSubmitting.value;
+  final RxBool canSubmit = false.obs; // <-- ແກ້ຈຸດນີ້ ໃຫ້ເປັນ Rx
 
   @override
   void onInit() {
     super.onInit();
-    surnameController.addListener(() {
+    surnameController.addListener(_updateCanSubmit);
+    ever(isSubmitting, (_) => _updateCanSubmit());
+    _updateCanSubmit();
+  }
+
+  void _updateCanSubmit() {
+    canSubmit.value =
+        surnameController.text.trim().isNotEmpty && !isSubmitting.value;
+    if (surnameController.text.trim().isNotEmpty) {
       surnameError.value = '';
-      update(['submit']);
-    });
+    }
   }
 
   Future<void> createFamily() async {
     if (surnameController.text.trim().isEmpty) {
       surnameError.value = AppStrings.surnameRequired;
-      update(['submit']);
       return;
     }
     if (!(formKey.currentState?.validate() ?? false)) return;
@@ -55,7 +59,8 @@ class FamilySetupController extends GetxController {
 
       // ຖ້ານາມສະກຸນຊ້ຳກັບຄອບຄົວທີ່ມີຢູ່ -> ເຂົ້າຮ່ວມຄອບຄົວນັ້ນ
       final existing = await _familyRepo.findFamilyIdBySurname(surname);
-      final familyId = existing ??
+      final familyId =
+          existing ??
           await _familyRepo.createFamily(
             surname: surname,
             name: nameController.text.trim(),
@@ -105,6 +110,7 @@ class FamilySetupController extends GetxController {
 
   @override
   void onClose() {
+    surnameController.removeListener(_updateCanSubmit);
     surnameController.dispose();
     nameController.dispose();
     descriptionController.dispose();

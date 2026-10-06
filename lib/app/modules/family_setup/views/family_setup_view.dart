@@ -218,17 +218,19 @@ class FamilySetupView extends GetView<FamilySetupController> {
               ),
               SizedBox(height: 22.h),
 
-              // ---------- ປຸ່ມສ້າງ (ສະແດງເມື່ອມີນາມສະກຸນ) ----------
-              Obx(
-                () => AnimatedSwitcher(
+              // ---------- ປຸ່ມສ້າງ (ແກ້ແລ້ວ) ----------
+              Obx(() {
+                final canSubmit = controller.canSubmit.value;
+                final isSubmitting = controller.isSubmitting.value;
+                return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 280),
-                  child: controller.canSubmit
+                  child: canSubmit
                       ? AppButton(
                           key: const ValueKey('create'),
                           label: AppStrings.createFamily,
                           icon: Icons.check_rounded,
                           gradient: true,
-                          isLoading: controller.isSubmitting.value,
+                          isLoading: isSubmitting,
                           onPressed: controller.createFamily,
                         )
                       : Container(
@@ -263,8 +265,8 @@ class FamilySetupView extends GetView<FamilySetupController> {
                             ],
                           ),
                         ),
-                ),
-              ),
+                );
+              }),
             ],
           ),
         ),
