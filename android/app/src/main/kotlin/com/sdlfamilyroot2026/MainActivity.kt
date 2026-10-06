@@ -1,4 +1,4 @@
-package com.familyrootsdl2026.family_root
+package com.sdlfamilyroot2026
 
 import io.flutter.embedding.android.FlutterActivity
 
