@@ -49,7 +49,9 @@ class ChatRoomController extends GetxController {
       otherUid = (args['otherUid'] ?? '') as String;
     } else if (args is String) {
       roomId = args;
-      otherUid = args.split('__').firstWhere((id) => id != myUid, orElse: () => '');
+      otherUid = args
+          .split('__')
+          .firstWhere((id) => id != myUid, orElse: () => '');
     }
 
     _listen();
@@ -62,18 +64,20 @@ class ChatRoomController extends GetxController {
       isLoading.value = false;
       return;
     }
-    _messagesSub = _chatRepo.messagesStream(familyId, roomId).listen(
-      (list) {
-        messages.assignAll(list);
-        isLoading.value = false;
-        _scrollToBottom();
-        _markRead();
-      },
-      onError: (Object e) {
-        isLoading.value = false;
-        UiHelpers.error(UiHelpers.mapError(e));
-      },
-    );
+    _messagesSub = _chatRepo
+        .messagesStream(familyId, roomId)
+        .listen(
+          (list) {
+            messages.assignAll(list);
+            isLoading.value = false;
+            _scrollToBottom();
+            _markRead();
+          },
+          onError: (Object e) {
+            isLoading.value = false;
+            UiHelpers.error(UiHelpers.mapError(e));
+          },
+        );
   }
 
   Future<void> _loadOtherUser() async {
@@ -84,7 +88,11 @@ class ChatRoomController extends GetxController {
   Future<void> _markRead() async {
     if (roomId.isEmpty) return;
     try {
-      await _chatRepo.markAsRead(familyId: familyId, roomId: roomId, uid: myUid);
+      await _chatRepo.markAsRead(
+        familyId: familyId,
+        roomId: roomId,
+        uid: myUid,
+      );
     } catch (_) {
       // ຂ້າມຖ້າບໍ່ສຳເລັດ
     }
@@ -123,13 +131,20 @@ class ChatRoomController extends GetxController {
     final user = AuthService.to.user.value;
     if (user == null) return;
 
-    final XFile? picked = await _picker.pickImage(source: source, imageQuality: 85);
+    final XFile? picked = await _picker.pickImage(
+      source: source,
+      imageQuality: 85,
+    );
     if (picked == null) return;
 
     isSending.value = true;
     UiHelpers.loading(message: 'ກຳລັງອັບໂຫຼດຮູບ...');
     try {
-      final url = await _storageRepo.uploadChatImage(File(picked.path), familyId, roomId);
+      final url = await _storageRepo.uploadChatImage(
+        File(picked.path),
+        familyId,
+        roomId,
+      );
       await _chatRepo.sendMessage(
         familyId: familyId,
         roomId: roomId,
@@ -159,7 +174,9 @@ class ChatRoomController extends GetxController {
 
   /// ບໍ່ອະນຸຍາດໃຫ້ລຶບຂໍ້ຄວາມ (ຕາມຂໍ້ກຳນົດຂອງລະບົບ)
   void tryDeleteMessage(ChatMessage message) {
-    UiHelpers.warning('ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້ - ປະຫວັດການສົນທະນາຈະຖືກເກັບຮັກສາໄວ້');
+    UiHelpers.warning(
+      'ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້ - ປະຫວັດການສົນທະນາຈະຖືກເກັບຮັກສາໄວ້',
+    );
   }
 
   void _scrollToBottom() {
