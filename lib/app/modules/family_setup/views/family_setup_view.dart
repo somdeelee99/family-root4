@@ -80,7 +80,9 @@ class FamilySetupView extends GetView<FamilySetupController> {
                               SizedBox(height: 6.h),
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 9.w, vertical: 3.h),
+                                  horizontal: 9.w,
+                                  vertical: 3.h,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.18),
                                   borderRadius: BorderRadius.circular(30.r),
@@ -115,91 +117,96 @@ class FamilySetupView extends GetView<FamilySetupController> {
 
               // ---------- ຟອມ ----------
               Container(
-                padding: EdgeInsets.all(18.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-                  border: Border.all(color: AppColors.divider),
-                  boxShadow: AppSizes.softShadow,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                    padding: EdgeInsets.all(18.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+                      border: Border.all(color: AppColors.divider),
+                      boxShadow: AppSizes.softShadow,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: EdgeInsets.all(9.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.primarySoft,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(Icons.family_restroom_rounded,
-                              size: 18.sp, color: AppColors.primary),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(9.w),
+                              decoration: BoxDecoration(
+                                color: AppColors.primarySoft,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Icon(
+                                Icons.family_restroom_rounded,
+                                size: 18.sp,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            SizedBox(width: 10.w),
+                            Text(
+                              'ຂໍ້ມູນຄອບຄົວ',
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          'ຂໍ້ມູນຄອບຄົວ',
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                          ),
+                        SizedBox(height: 18.h),
+                        AppTextField(
+                          controller: controller.surnameController,
+                          label: AppStrings.surname,
+                          hint: AppStrings.surnameHint,
+                          prefixIcon: Icons.badge_outlined,
+                          isRequired: true,
+                          textCapitalization: TextCapitalization.words,
+                          validator: (v) =>
+                              Validators.required(v, field: 'ນາມສະກຸນ'),
+                        ),
+                        Obx(
+                          () => controller.surnameError.value.isEmpty
+                              ? const SizedBox.shrink()
+                              : Padding(
+                                  padding: EdgeInsets.only(top: 6.h),
+                                  child: Text(
+                                    controller.surnameError.value,
+                                    style: TextStyle(
+                                      color: AppColors.danger,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                        SizedBox(height: 14.h),
+                        AppTextField(
+                          controller: controller.nameController,
+                          label: AppStrings.familyName,
+                          hint: 'ຕົວຢ່າງ: ຄອບຄົວວົງສະຫວັນ',
+                          prefixIcon: Icons.home_outlined,
+                          isOptional: true,
+                          textCapitalization: TextCapitalization.words,
+                        ),
+                        SizedBox(height: 14.h),
+                        AppTextField(
+                          controller: controller.provinceController,
+                          label: AppStrings.province,
+                          hint: 'ຕົວຢ່າງ: ນະຄອນຫຼວງວຽງຈັນ',
+                          prefixIcon: Icons.location_on_outlined,
+                          isOptional: true,
+                        ),
+                        SizedBox(height: 14.h),
+                        AppTextField(
+                          controller: controller.descriptionController,
+                          label: AppStrings.familyDescription,
+                          hint: AppStrings.descriptionHint,
+                          prefixIcon: Icons.notes_rounded,
+                          isOptional: true,
+                          maxLines: 3,
+                          maxLength: 300,
                         ),
                       ],
                     ),
-                    SizedBox(height: 18.h),
-                    AppTextField(
-                      controller: controller.surnameController,
-                      label: AppStrings.surname,
-                      hint: AppStrings.surnameHint,
-                      prefixIcon: Icons.badge_outlined,
-                      isRequired: true,
-                      textCapitalization: TextCapitalization.words,
-                      validator: (v) =>
-                          Validators.required(v, field: 'ນາມສະກຸນ'),
-                    ),
-                    Obx(
-                      () => controller.surnameError.value.isEmpty
-                          ? const SizedBox.shrink()
-                          : Padding(
-                              padding: EdgeInsets.only(top: 6.h),
-                              child: Text(
-                                controller.surnameError.value,
-                                style: TextStyle(
-                                    color: AppColors.danger, fontSize: 12.sp),
-                              ),
-                            ),
-                    ),
-                    SizedBox(height: 14.h),
-                    AppTextField(
-                      controller: controller.nameController,
-                      label: AppStrings.familyName,
-                      hint: 'ຕົວຢ່າງ: ຄອບຄົວວົງສະຫວັນ',
-                      prefixIcon: Icons.home_outlined,
-                      isOptional: true,
-                      textCapitalization: TextCapitalization.words,
-                    ),
-                    SizedBox(height: 14.h),
-                    AppTextField(
-                      controller: controller.provinceController,
-                      label: AppStrings.province,
-                      hint: 'ຕົວຢ່າງ: ນະຄອນຫຼວງວຽງຈັນ',
-                      prefixIcon: Icons.location_on_outlined,
-                      isOptional: true,
-                    ),
-                    SizedBox(height: 14.h),
-                    AppTextField(
-                      controller: controller.descriptionController,
-                      label: AppStrings.familyDescription,
-                      hint: AppStrings.descriptionHint,
-                      prefixIcon: Icons.notes_rounded,
-                      isOptional: true,
-                      maxLines: 3,
-                      maxLength: 300,
-                    ),
-                  ],
-                ),
-              )
+                  )
                   .animate()
                   .fadeIn(delay: 120.ms, duration: 450.ms)
                   .slideY(begin: 0.1, end: 0),
@@ -230,22 +237,27 @@ class FamilySetupView extends GetView<FamilySetupController> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: AppColors.surfaceAlt,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusMd.r),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd.r,
+                            ),
                             border: Border.all(color: AppColors.divider),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.lock_outline_rounded,
-                                  size: 17.sp, color: AppColors.textHint),
+                              Icon(
+                                Icons.lock_outline_rounded,
+                                size: 17.sp,
+                                color: AppColors.textHint,
+                              ),
                               SizedBox(width: 8.w),
                               Flexible(
                                 child: Text(
                                   'ກະລຸນາປ້ອນນາມສະກຸນ ເພື່ອສ້າງຄອບຄົວ',
                                   style: TextStyle(
-                                      fontSize: 13.sp,
-                                      color: AppColors.textHint),
+                                    fontSize: 13.sp,
+                                    color: AppColors.textHint,
+                                  ),
                                 ),
                               ),
                             ],
@@ -261,27 +273,31 @@ class FamilySetupView extends GetView<FamilySetupController> {
   }
 
   Widget _tip(String text) => Container(
-        padding: EdgeInsets.all(13.w),
-        decoration: BoxDecoration(
-          color: AppColors.info.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+    padding: EdgeInsets.all(13.w),
+    decoration: BoxDecoration(
+      color: AppColors.info.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.lightbulb_outline_rounded,
+          size: 17.sp,
+          color: AppColors.info,
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(Icons.lightbulb_outline_rounded,
-                size: 17.sp, color: AppColors.info),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
-                    height: 1.45),
-              ),
+        SizedBox(width: 10.w),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.textSecondary,
+              height: 1.45,
             ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }
