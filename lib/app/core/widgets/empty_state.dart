@@ -27,7 +27,9 @@ class EmptyState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: 32.w, vertical: compact ? 20.h : 40.h),
+          horizontal: 32.w,
+          vertical: compact ? 20.h : 40.h,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -37,8 +39,11 @@ class EmptyState extends StatelessWidget {
                 color: AppColors.primarySoft,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon,
-                  size: compact ? 30.sp : 42.sp, color: AppColors.primary),
+              child: Icon(
+                icon,
+                size: compact ? 30.sp : 42.sp,
+                color: AppColors.primary,
+              ),
             ),
             SizedBox(height: 16.h),
             Text(
@@ -56,9 +61,10 @@ class EmptyState extends StatelessWidget {
                 description!,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12.5.sp,
-                    color: AppColors.textSecondary,
-                    height: 1.4),
+                  fontSize: 12.5.sp,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
               ),
             ],
             if (actionLabel != null) ...[
@@ -70,10 +76,13 @@ class EmptyState extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 12.h,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r)),
+                    borderRadius: BorderRadius.circular(14.r),
+                  ),
                 ),
               ),
             ],

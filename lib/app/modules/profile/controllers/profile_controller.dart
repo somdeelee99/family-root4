@@ -38,8 +38,9 @@ class ProfileController extends GetxController {
   void _listen() {
     final fid = auth.familyId;
     if (fid.isEmpty) return;
-    _familySub =
-        _familyRepo.familyStream(fid).listen((value) => family.value = value);
+    _familySub = _familyRepo
+        .familyStream(fid)
+        .listen((value) => family.value = value);
     _membersSub = _memberRepo
         .membersStream(fid)
         .listen((list) => members.assignAll(list));
@@ -76,9 +77,18 @@ class ProfileController extends GetxController {
       isDanger: true,
       icon: Icons.logout_rounded,
     );
-    if (!confirmed) return;
-    await auth.signOut();
-    Get.offAllNamed(Routes.AUTH);
+    if (confirmed != true) return; // <--- สำคัญ
+
+    try {
+      await _familySub?.cancel();
+      await _membersSub?.cancel();
+    } catch (_) {}
+
+    try {
+      await auth.signOut();
+    } finally {
+      Get.offAllNamed(Routes.AUTH);
+    }
   }
 
   /// ປ່ຽນ role ຂອງຕົນເອງບໍ່ໄດ້ - ສະເພາະ Admin ອື່ນກຳນົດໃຫ້

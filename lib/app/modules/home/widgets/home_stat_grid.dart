@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -7,7 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../controllers/home_controller.dart';
 
-/// ກາດສະຖິຕິ 4 ຫຼັກ (ສະແດງໃຫ້ທັງ admin ແລະ member ເໝືອນກັນ)
+/// ກາດສະຖິຕິ 6 ຫຼັກ (ສະແດງໃຫ້ທັງ admin ແລະ member ເໝືອນກັນ)
 class HomeStatGrid extends GetView<HomeController> {
   const HomeStatGrid({super.key});
 
@@ -54,30 +53,29 @@ class HomeStatGrid extends GetView<HomeController> {
         ),
       ];
 
-      return GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: cards.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12.h,
-          crossAxisSpacing: 12.w,
-          childAspectRatio: 1.42,
-        ),
-        itemBuilder: (context, index) => StatCard(
-          label: cards[index].label,
-          value: cards[index].value,
-          icon: cards[index].icon,
-          color: cards[index].color,
-          index: index,
-        ),
+      return StatCardGrid(
+        cards: [
+          for (var i = 0; i < cards.length; i++)
+            StatCard(
+              label: cards[i].label,
+              value: cards[i].value,
+              icon: cards[i].icon,
+              color: cards[i].color,
+              index: i,
+            ),
+        ],
       );
     });
   }
 }
 
 class _StatData {
-  const _StatData({required this.label, required this.value, required this.icon, required this.color});
+  const _StatData({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
   final String label;
   final int value;
   final IconData icon;

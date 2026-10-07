@@ -19,7 +19,8 @@ class FirestorePaths {
 
   static String userDoc(String uid) => '$users/$uid';
   static String familyDoc(String familyId) => '$families/$familyId';
-  static String familyMembers(String familyId) => '$families/$familyId/$members';
+  static String familyMembers(String familyId) =>
+      '$families/$familyId/$members';
   static String memberDoc(String familyId, String memberId) =>
       '$families/$familyId/$members/$memberId';
   static String familyChats(String familyId) => '$families/$familyId/$chats';

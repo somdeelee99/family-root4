@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:logger/logger.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/constants/firestore_paths.dart';
@@ -16,8 +15,8 @@ import '../models/app_user.dart';
 import '../models/enums.dart';
 
 /// ຈັດການການເຂົ້າລະບົບ
-/// - Google / Facebook / Apple  => ສະເພາະ Admin ຂອງຄອບຄົວ
-/// - ອີແມວ + ລະຫັດຜ່ານ        => ສະເພາະ Member ທີ່ admin ສ້າງບັນຊີໃຫ້
+/// - Google / Facebook / Apple => ສະເພາະ Admin ຂອງຄອບຄົວ
+/// - ອີແມວ + ລະຫັດຜ່ານ => ສະເພາະ Member ທີ່ admin ສ້າງບັນຊີໃຫ້
 class AuthRepository {
   AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
     : _auth = auth ?? FirebaseAuth.instance,
@@ -25,7 +24,6 @@ class AuthRepository {
 
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
-  final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
   static const _secure = FlutterSecureStorage();
 
@@ -37,13 +35,23 @@ class AuthRepository {
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   // ============================ Google ============================
-  // google_sign_in 7.x ໃຊ້ singleton + ຕ້ອງ initialize() ກ່ອນ
-  static const String _googleServerClientId = String.fromEnvironment(
-    'GOOGLE_SERVER_CLIENT_ID',
-  );
+
+  // Client ID
+
+  static const String _googleServerClientId =
+      '183688357375-27ub99qd7th1ms7kiplucpt1cgei0a0v.apps.googleusercontent.com';
 
   Future<void> _ensureGoogleInitialized() async {
     if (_googleInitialized) return;
+
+    if (_googleServerClientId.isEmpty ||
+        !_googleServerClientId.contains('.apps.googleusercontent.com')) {
+      throw FirebaseAuthException(
+        code: 'missing-server-client-id',
+        message: 'ກະລຸນາໃສ່ Web Client ID ใน _googleServerClientId',
+      );
+    }
+
     await GoogleSignIn.instance.initialize(
       serverClientId: _googleServerClientId,
     );
@@ -54,30 +62,20 @@ class AuthRepository {
     await _ensureGoogleInitialized();
 
     try {
-      // 1) ການພິສູດຕົວຕົນ (Authentication)
       final GoogleSignInAccount account = await GoogleSignIn.instance
           .authenticate(scopeHint: const ['email', 'profile']);
 
-      // 2) ການຂໍສິດ (Authorization) ເພື່ອເອົາ accessToken
-      String? accessToken;
-      try {
-        final clientAuth = account.authorizationClient;
-        final authorization =
-            await clientAuth.authorizationForScopes(const [
-              'email',
-              'profile',
-            ]) ??
-            await clientAuth.authorizeScopes(const ['email', 'profile']);
-        accessToken = authorization.accessToken;
-      } catch (_) {
-        // ບາງແພລດຟອມບໍ່ຈຳເປັນຕ້ອງມີ accessToken (idToken ພຽງພໍສຳລັບ Firebase)
+      final GoogleSignInAuthentication auth = account.authentication;
+
+      if (auth.idToken == null) {
+        throw FirebaseAuthException(
+          code: 'no-id-token',
+          message: 'ไม่พบ idToken จาก Google',
+        );
       }
 
-      final GoogleSignInAuthentication auth = account.authentication;
-      final credential = GoogleAuthProvider.credential(
-        idToken: auth.idToken,
-        accessToken: accessToken,
-      );
+      // สำหรับ Firebase ใช้แค่ idToken ก็พอ ไม่ต้องขอ accessToken
+      final credential = GoogleAuthProvider.credential(idToken: auth.idToken);
 
       final result = await _auth.signInWithCredential(credential);
       await _ensureAdminProfile(
@@ -182,7 +180,6 @@ class AuthRepository {
   }
 
   // ====================== Email / Password ======================
-  /// ສະເພາະ member ທີ່ admin ສ້າງບັນຊີໃຫ້ (ບໍ່ມີຟັງຊັນສະໝັກສະມາຊິກເອງ)
   Future<UserCredential> signInWithEmail({
     required String email,
     required String password,
@@ -201,16 +198,19 @@ class AuthRepository {
 
   Future<void> signOut() async {
     try {
-      if (_googleInitialized) await GoogleSignIn.instance.signOut();
-    } catch (_) {
-      // ບໍ່ສຳຄັນ ຖ້າຜູ້ໃຫ້ບໍລິການບໍ່ມີ session
-    }
+      if (_googleInitialized) {
+        await GoogleSignIn.instance.signOut().timeout(
+          const Duration(seconds: 2),
+        );
+      }
+    } catch (_) {}
     try {
-      await FacebookLogin().logOut();
-    } catch (_) {
-      // ບໍ່ສຳຄັນ
-    }
-    await _auth.signOut();
+      await FacebookLogin().logOut().timeout(const Duration(seconds: 2));
+    } catch (_) {}
+    try {
+      await _auth.signOut();
+    } catch (_) {}
+    _googleInitialized = false;
   }
 
   // ========================= ຂໍ້ມູນຜູ້ໃຊ້ =========================
@@ -223,7 +223,6 @@ class AuthRepository {
     final snapshot = await ref.get();
 
     if (!snapshot.exists) {
-      // ຜູ້ໃຊ້ໃໝ່ທີ່ເຂົ້າຜ່ານໂຊເຊຍ => ເປັນ admin
       final data = AppUser(
         uid: user.uid,
         displayName: (user.displayName ?? fallbackName).trim(),
@@ -237,7 +236,6 @@ class AuthRepository {
       ).toMap();
       await ref.set(data, SetOptions(merge: true));
     } else {
-      // ບັນຊີເກົ່າ: ບໍ່ບັງຄັບປ່ຽນ role ຖ້າ admin ກຳນົດໄວ້ແລ້ວ
       await _registerProvider(provider);
       await ref.set({
         'lastSeenAt': FieldValue.serverTimestamp(),
@@ -283,6 +281,7 @@ class AuthRepository {
     String? gender,
     String? familyId,
     String? memberId,
+    String? role,
   }) async {
     if (uid == null) return;
     await _firestore.doc(FirestorePaths.userDoc(uid!)).set({
@@ -295,6 +294,7 @@ class AuthRepository {
       if (gender != null) 'gender': gender,
       if (familyId != null) 'familyId': familyId,
       if (memberId != null) 'memberId': memberId,
+      if (role != null) 'role': role,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
     if (displayName != null && displayName.trim().isNotEmpty) {
@@ -319,7 +319,6 @@ class AuthRepository {
     }, SetOptions(merge: true));
   }
 
-  // ================== ຕົວຊ່ວຍ Apple nonce ==================
   String _generateNonce([int length = 32]) {
     const charset =
         '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
@@ -335,7 +334,6 @@ class AuthRepository {
     return sha256.convert(bytes).toString();
   }
 
-  /// ບັນທຶກວ່າຜູ້ໃຊ້ເຄີຍຕິດຕັ້ງ/ເຂົ້າໃຊ້ຄັ້ງທຳອິດ
   static Future<void> markFirstLaunch() =>
       _secure.write(key: 'first_launch', value: 'done');
   static Future<bool> isFirstLaunch() async =>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -25,8 +26,10 @@ class ChatRoomView extends GetView<ChatRoomController> {
             onTap: () {
               final user = controller.otherUser.value;
               if (user != null) {
-                Get.toNamed(Routes.MEMBER_DETAIL,
-                    arguments: {'uid': user.uid, 'type': 'account'});
+                Get.toNamed(
+                  Routes.MEMBER_DETAIL,
+                  arguments: {'uid': user.uid, 'type': 'account'},
+                );
               }
             },
             child: Row(
@@ -55,14 +58,18 @@ class ChatRoomView extends GetView<ChatRoomController> {
                       Text(
                         'ກົດເພື່ອເບິ່ງລາຍລະອຽດ',
                         style: TextStyle(
-                            fontSize: 10.5.sp, color: AppColors.textHint),
+                          fontSize: 10.5.sp,
+                          color: AppColors.textHint,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (controller.otherUser.value != null)
                   RoleBadge(
-                      role: controller.otherUser.value!.role, compact: true),
+                    role: controller.otherUser.value!.role,
+                    compact: true,
+                  ),
                 SizedBox(width: 10.w),
               ],
             ),
@@ -78,14 +85,19 @@ class ChatRoomView extends GetView<ChatRoomController> {
             padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 16.w),
             child: Row(
               children: [
-                Icon(Icons.lock_outline_rounded,
-                    size: 13.sp, color: const Color(0xFF9A6A11)),
+                Icon(
+                  Icons.lock_outline_rounded,
+                  size: 13.sp,
+                  color: const Color(0xFF9A6A11),
+                ),
                 SizedBox(width: 7.w),
                 Expanded(
                   child: Text(
                     'ປະຫວັດການສົນທະນາຖືກເກັບຮັກສາໄວ້ ແລະ ບໍ່ສາມາດລຶບໄດ້',
                     style: TextStyle(
-                        fontSize: 10.5.sp, color: const Color(0xFF9A6A11)),
+                      fontSize: 10.5.sp,
+                      color: const Color(0xFF9A6A11),
+                    ),
                   ),
                 ),
               ],
@@ -110,15 +122,18 @@ class ChatRoomView extends GetView<ChatRoomController> {
                 itemCount: controller.messages.length,
                 itemBuilder: (context, index) {
                   final message = controller.messages[index];
-                  final previous =
-                      index > 0 ? controller.messages[index - 1] : null;
+                  final previous = index > 0
+                      ? controller.messages[index - 1]
+                      : null;
                   final isMine = message.senderId == controller.myUid;
 
-                  final showDivider = previous == null ||
+                  final showDivider =
+                      previous == null ||
                       previous.createdAt == null ||
                       message.createdAt == null ||
                       !_sameDay(previous.createdAt!, message.createdAt!);
-                  final showAvatar = previous == null ||
+                  final showAvatar =
+                      previous == null ||
                       previous.senderId != message.senderId ||
                       showDivider;
 

@@ -145,10 +145,10 @@ class MemberDetailView extends GetView<MemberDetailController> {
               color: Colors.white,
             ),
           ),
-          if ((subtitle ?? '').isNotEmpty) ...[
+          if (subtitle.isNotEmpty) ...[
             SizedBox(height: 5.h),
             Text(
-              subtitle!,
+              subtitle,
               style: TextStyle(
                   fontSize: 12.5.sp,
                   color: Colors.white.withValues(alpha: 0.85)),

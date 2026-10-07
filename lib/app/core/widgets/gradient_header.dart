@@ -43,8 +43,10 @@ class GradientHeader extends StatelessWidget {
               if (showBack)
                 IconButton(
                   onPressed: onBack ?? () => Navigator.of(context).maybePop(),
-                  icon:
-                      const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                  ),
                   padding: EdgeInsets.zero,
                   alignment: Alignment.centerLeft,
                 ),
@@ -81,10 +83,7 @@ class GradientHeader extends StatelessWidget {
                   if (trailing != null) trailing!,
                 ],
               ),
-              if (child != null) ...[
-                SizedBox(height: 18.h),
-                child!,
-              ],
+              if (child != null) ...[SizedBox(height: 18.h), child!],
             ],
           ),
         ),

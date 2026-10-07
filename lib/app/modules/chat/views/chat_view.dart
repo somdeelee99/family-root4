@@ -43,22 +43,28 @@ class ChatView extends GetView<ChatController> {
                       ),
                       for (var i = 0; i < controller.filteredRooms.length; i++)
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10.h),
-                          child: ChatRoomTile(
-                            room: controller.filteredRooms[i],
-                            other: controller.userOf(controller.filteredRooms[i].otherParty(controller.myUid)),
-                            myUid: controller.myUid,
-                            onTap: () => Get.toNamed(
-                              Routes.CHAT_ROOM,
-                              arguments: {
-                                'roomId': controller.filteredRooms[i].id,
-                                'otherUid':
-                                    controller.filteredRooms[i].otherParty(controller.myUid),
-                              },
-                            ),
-                            onLongPress: () => controller.deleteRoom(controller.filteredRooms[i]),
-                          ),
-                        )
+                              padding: EdgeInsets.only(bottom: 10.h),
+                              child: ChatRoomTile(
+                                room: controller.filteredRooms[i],
+                                other: controller.userOf(
+                                  controller.filteredRooms[i].otherParty(
+                                    controller.myUid,
+                                  ),
+                                ),
+                                myUid: controller.myUid,
+                                onTap: () => Get.toNamed(
+                                  Routes.CHAT_ROOM,
+                                  arguments: {
+                                    'roomId': controller.filteredRooms[i].id,
+                                    'otherUid': controller.filteredRooms[i]
+                                        .otherParty(controller.myUid),
+                                  },
+                                ),
+                                onLongPress: () => controller.deleteRoom(
+                                  controller.filteredRooms[i],
+                                ),
+                              ),
+                            )
                             .animate(delay: (i * 50).ms)
                             .fadeIn(duration: 320.ms)
                             .slideX(begin: 0.05, end: 0),
@@ -112,7 +118,11 @@ class ChatView extends GetView<ChatController> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.forum_rounded, size: 18.sp, color: Colors.white),
+                child: Icon(
+                  Icons.forum_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(width: 11.w),
               Expanded(
@@ -129,7 +139,10 @@ class ChatView extends GetView<ChatController> {
                     ),
                     Text(
                       'ສົນທະນາກັບສະມາຊິກໃນຄອບຄົວ',
-                      style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 11.5.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),

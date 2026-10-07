@@ -34,7 +34,9 @@ class ChatController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    searchController.addListener(() => query.value = searchController.text.trim().toLowerCase());
+    searchController.addListener(
+      () => query.value = searchController.text.trim().toLowerCase(),
+    );
     _listen();
   }
 
@@ -45,16 +47,15 @@ class ChatController extends GetxController {
       return;
     }
 
-    _roomsSub = _chatRepo.roomsStream(fid, myUid).listen(
-      (list) {
-        rooms.assignAll(list);
-        isLoading.value = false;
-      },
-      onError: (Object e) => isLoading.value = false,
-    );
+    _roomsSub = _chatRepo.roomsStream(fid, myUid).listen((list) {
+      rooms.assignAll(list);
+      isLoading.value = false;
+    }, onError: (Object e) => isLoading.value = false);
 
     // ບໍ່ສະແດງຂໍ້ມູນຂອງຕົນເອງ
-    _usersSub = _userRepo.othersStream(fid, myUid).listen((list) => others.assignAll(list));
+    _usersSub = _userRepo
+        .othersStream(fid, myUid)
+        .listen((list) => others.assignAll(list));
   }
 
   /// ລາຍການຫ້ອງສົນທະນາຕາມການຄົ້ນຫາ
@@ -62,7 +63,8 @@ class ChatController extends GetxController {
     if (query.value.isEmpty) return rooms;
     return rooms.where((room) {
       final name = nameOf(room.otherParty(myUid)).toLowerCase();
-      return name.contains(query.value) || room.lastMessage.toLowerCase().contains(query.value);
+      return name.contains(query.value) ||
+          room.lastMessage.toLowerCase().contains(query.value);
     }).toList();
   }
 
@@ -76,7 +78,8 @@ class ChatController extends GetxController {
   String nameOf(String uid) => userOf(uid)?.displayName ?? 'ສະມາຊິກ';
 
   /// ຈຳນວນຂໍ້ຄວາມທີ່ຍັງບໍ່ອ່ານທັງໝົດ
-  Stream<int> totalUnreadStream() => _chatRepo.totalUnreadStream(familyId, myUid);
+  Stream<int> totalUnreadStream() =>
+      _chatRepo.totalUnreadStream(familyId, myUid);
 
   Future<void> openRoomWith(AppUser user) async {
     if (user.uid == myUid) {
@@ -89,14 +92,20 @@ class ChatController extends GetxController {
         myUid: myUid,
         otherUid: user.uid,
       );
-      Get.toNamed(Routes.CHAT_ROOM, arguments: {'roomId': roomId, 'otherUid': user.uid});
+      Get.toNamed(
+        Routes.CHAT_ROOM,
+        arguments: {'roomId': roomId, 'otherUid': user.uid},
+      );
     } catch (e) {
       UiHelpers.error(UiHelpers.mapError(e));
     }
   }
 
   void openDetail(AppUser user) {
-    Get.toNamed(Routes.MEMBER_DETAIL, arguments: {'uid': user.uid, 'type': 'account'});
+    Get.toNamed(
+      Routes.MEMBER_DETAIL,
+      arguments: {'uid': user.uid, 'type': 'account'},
+    );
   }
 
   Future<void> deleteRoom(ChatRoom room) async {

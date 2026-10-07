@@ -18,58 +18,85 @@ class AuthController extends GetxController {
   final RxBool obscure = true.obs;
   final RxBool showEmailForm = true.obs;
 
+  // === ໂຕໃໝ່: ບອກວ່າ Social ໂຕໃດກຳລັງໂຫຼດ ===
+  final Rxn<AuthProviderType> socialLoading = Rxn<AuthProviderType>();
+
   bool get isBusy => _auth.isBusy.value;
+
+  // เช็คแยกแต่ละตัว
+  bool get isGoogleLoading =>
+      _auth.isBusy.value && socialLoading.value == AuthProviderType.google;
+  bool get isFacebookLoading =>
+      _auth.isBusy.value && socialLoading.value == AuthProviderType.facebook;
+  bool get isAppleLoading =>
+      _auth.isBusy.value && socialLoading.value == AuthProviderType.apple;
+  bool get isEmailLoading => _auth.isBusy.value && socialLoading.value == null;
 
   void toggleObscure() => obscure.value = !obscure.value;
 
   Future<void> signInWithgoogle(AuthProviderType provider) async {
-    final ok = await _auth.signInWithProvider(provider);
-    if (!ok) {
-      UiHelpers.error(
-        _auth.errorMessage.value.isEmpty
-            ? AppStrings.error
-            : _auth.errorMessage.value,
-      );
-      return;
+    socialLoading.value = provider; // <- ล็อคว่ากำลังโหลด Google
+    try {
+      final ok = await _auth.signInWithProvider(provider);
+      if (!ok) {
+        UiHelpers.error(
+          _auth.errorMessage.value.isEmpty
+              ? AppStrings.error
+              : _auth.errorMessage.value,
+        );
+        return;
+      }
+      UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      _routeAfterLogin();
+    } finally {
+      socialLoading.value = null; // <- จบแล้วเคลียร์
     }
-    UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-    _routeAfterLogin();
   }
 
   Future<void> signInWithFacebook() async {
-    final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
-    if (!ok) {
-      UiHelpers.error(
-        _auth.errorMessage.value.isEmpty
-            ? AppStrings.error
-            : _auth.errorMessage.value,
-      );
-      return;
+    socialLoading.value = AuthProviderType.facebook; // <- ล็อคว่า Facebook
+    try {
+      final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
+      if (!ok) {
+        UiHelpers.error(
+          _auth.errorMessage.value.isEmpty
+              ? AppStrings.error
+              : _auth.errorMessage.value,
+        );
+        return;
+      }
+      UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      _routeAfterLogin();
+    } finally {
+      socialLoading.value = null;
     }
-    UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-    _routeAfterLogin();
   }
 
   Future<void> signInWithApple() async {
-    final ok = await _auth.signInWithProvider(AuthProviderType.apple);
-    if (!ok) {
-      UiHelpers.error(
-        _auth.errorMessage.value.isEmpty
-            ? AppStrings.error
-            : _auth.errorMessage.value,
-      );
-      return;
+    socialLoading.value = AuthProviderType.apple;
+    try {
+      final ok = await _auth.signInWithProvider(AuthProviderType.apple);
+      if (!ok) {
+        UiHelpers.error(
+          _auth.errorMessage.value.isEmpty
+              ? AppStrings.error
+              : _auth.errorMessage.value,
+        );
+        return;
+      }
+      UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      _routeAfterLogin();
+    } finally {
+      socialLoading.value = null;
     }
-    UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
-    await Future<void>.delayed(const Duration(milliseconds: 400));
-    _routeAfterLogin();
   }
 
   Future<void> signInWithEmail() async {
     if (!(formKey.currentState?.validate() ?? false)) return;
-
+    // Email ไม่ต้อง set socialLoading, มันจะเป็น null เอง = isEmailLoading = true
     final ok = await _auth.signInWithEmail(
       email: emailController.text.trim(),
       password: passwordController.text,

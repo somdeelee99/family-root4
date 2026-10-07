@@ -16,16 +16,9 @@ class Family {
   });
 
   final String id;
-
-  /// ນາມສະກຸນ (ຈຳເປັນຕ້ອງມີ)
   final String surname;
-
-  /// ຊື່ຄອບຄົວ
   final String name;
-
-  /// ລາຍລະອຽດຄອບຄົວ
   final String description;
-
   final String? province;
   final String? coverUrl;
   final String? ownerId;
@@ -35,33 +28,50 @@ class Family {
 
   String get displayName => name.trim().isNotEmpty ? name : 'ຄອບຄົວ $surname';
 
+  // ตัวช่วย แปลงทุกอย่างให้เป็น DateTime ได้
+  static DateTime? _parseDate(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    if (value is String) {
+      return DateTime.tryParse(value); // รองรับ '2024-01-01T...'
+    }
+    if (value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+    if (value is num) {
+      return DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    }
+    return null;
+  }
+
   factory Family.fromMap(String id, Map<String, dynamic> map) => Family(
-        id: id,
-        surname: (map['surname'] ?? '') as String,
-        name: (map['name'] ?? '') as String,
-        description: (map['description'] ?? '') as String,
-        province: map['province'] as String?,
-        coverUrl: map['coverUrl'] as String?,
-        ownerId: map['ownerId'] as String?,
-        memberCount: (map['memberCount'] as num?)?.toInt() ?? 0,
-        createdAt: (map['createdAt'] as Timestamp?)?.toDate(),
-        updatedAt: (map['updatedAt'] as Timestamp?)?.toDate(),
-      );
+    id: id,
+    surname: (map['surname'] as String?)?.trim() ?? '',
+    name: (map['name'] as String?) ?? '',
+    description: (map['description'] as String?) ?? '',
+    province: map['province'] as String?,
+    coverUrl: map['coverUrl'] as String?,
+    ownerId: map['ownerId'] as String?,
+    memberCount: (map['memberCount'] as num?)?.toInt() ?? 0,
+    createdAt: _parseDate(map['createdAt']),
+    updatedAt: _parseDate(map['updatedAt']),
+  );
 
   factory Family.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) =>
       Family.fromMap(doc.id, doc.data() ?? const {});
 
   Map<String, dynamic> toMap() => {
-        'surname': surname,
-        'name': name,
-        'description': description,
-        'province': province,
-        'coverUrl': coverUrl,
-        'ownerId': ownerId,
-        'memberCount': memberCount,
-        'createdAt': createdAt == null
-            ? FieldValue.serverTimestamp()
-            : Timestamp.fromDate(createdAt!),
-        'updatedAt': FieldValue.serverTimestamp(),
-      };
+    'surname': surname,
+    'name': name,
+    'description': description,
+    'province': province,
+    'coverUrl': coverUrl,
+    'ownerId': ownerId,
+    'memberCount': memberCount,
+    'createdAt': createdAt == null
+        ? FieldValue.serverTimestamp()
+        : Timestamp.fromDate(createdAt!),
+    'updatedAt': FieldValue.serverTimestamp(),
+  };
 }

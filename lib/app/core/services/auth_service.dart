@@ -111,14 +111,25 @@ class AuthService extends GetxService {
 
   Future<void> signOut() async {
     try {
+      _profileSub?.cancel();
+      _profileSub = null;
+
       final family = familyId;
-      if (family.isNotEmpty)
-        await NotificationService.instance.unsubscribeFromFamily(family);
-      await _authRepo.signOut();
-    } catch (e) {
-      _log.w('ອອກຈາກລະບົບມີຂໍ້ຜິດພາດ: $e');
+      if (family.isNotEmpty) {
+        try {
+          await NotificationService.instance
+              .unsubscribeFromFamily(family)
+              .timeout(const Duration(seconds: 2));
+        } catch (_) {}
+      }
     } finally {
-      user.value = null;
+      try {
+        await _authRepo.signOut();
+      } catch (e) {
+        _log.w('signOut repo error: $e');
+      } finally {
+        user.value = null;
+      }
     }
   }
 
@@ -158,14 +169,26 @@ class AuthService extends GetxService {
     }
   }
 
-  /// ຕັ້ງຄ່າຄອບຄົວຄັ້ງທຳອິດ (Admin ເທົ່ານັ້ນ - ຕ້ອງປ້ອນນາມສະກຸນ)
-  Future<bool> attachFamily(String newFamilyId, {String? surname}) async {
+  /// ຕັ້ງຄ່າຄອບຄົວຄັ້ງທຳອິດ
+  ///
+  /// - [asMember] = false -> ຄົນທີ່ສ້າງຄອບຄົວໃໝ່ (ຍັງເປັນ admin)
+  /// - [asMember] = true  -> ເຂົ້າຮ່ວມຄອບຄົວທີ່ມີຢູ່ແລ້ວ (ຕ້ອງເປັນສະມາຊິກທຳມະດາ)
+  Future<bool> attachFamily(
+    String newFamilyId, {
+    String? surname,
+    bool asMember = false,
+  }) async {
     if (uid.isEmpty) return false;
     try {
-      await _authRepo.updateProfile(familyId: newFamilyId, surname: surname);
+      await _authRepo.updateProfile(
+        familyId: newFamilyId,
+        surname: surname,
+        role: asMember ? UserRole.member.value : null,
+      );
       user.value = user.value?.copyWith(
         familyId: newFamilyId,
         surname: surname,
+        role: asMember ? UserRole.member : null,
       );
       return true;
     } catch (e) {

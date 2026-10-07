@@ -34,7 +34,10 @@ class UiHelpers {
       messageText: Text(
         message,
         style: const TextStyle(
-            color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.5),
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 13.5,
+        ),
       ),
       duration: const Duration(seconds: 3),
     );
@@ -57,9 +60,13 @@ class UiHelpers {
               children: [
                 const CircularProgressIndicator(strokeWidth: 2.6),
                 const SizedBox(height: 16),
-                Text(message,
-                    style: const TextStyle(
-                        fontSize: 13.5, fontWeight: FontWeight.w600)),
+                Text(
+                  message,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ),
@@ -91,19 +98,27 @@ class UiHelpers {
                       .withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon,
-                    color: isDanger ? AppColors.danger : AppColors.primary),
+                child: Icon(
+                  icon,
+                  color: isDanger ? AppColors.danger : AppColors.primary,
+                ),
               )
             : null,
-        title: Text(title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
         content: message == null
             ? null
-            : Text(message,
+            : Text(
+                message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 14, color: AppColors.textSecondary)),
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+              ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           OutlinedButton(

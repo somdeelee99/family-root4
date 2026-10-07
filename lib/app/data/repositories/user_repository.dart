@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
 
 import '../../core/constants/firestore_paths.dart';
 import '../../core/services/cloud_function_service.dart';
@@ -15,10 +14,9 @@ import '../models/enums.dart';
 /// ຈັດການບັນຊີສະມາຊິກ (ໜ້າສະມາຊິກ - ສຳລັບ admin ສ້າງບັນຊີ)
 class UserRepository {
   UserRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
-  final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
 
   CollectionReference<Map<String, dynamic>> get _users =>
       _firestore.collection(FirestorePaths.users);
@@ -26,16 +24,15 @@ class UserRepository {
   /// ລາຍຊື່ຜູ້ໃຊ້ທັງໝົດໃນຄອບຄົວດຽວກັນ
   Stream<List<AppUser>> usersStream(String familyId) {
     if (familyId.isEmpty) return Stream.value(const []);
-    return _users
-        .where('familyId', isEqualTo: familyId)
-        .snapshots()
-        .map((snap) {
+    return _users.where('familyId', isEqualTo: familyId).snapshots().map((
+      snap,
+    ) {
       final list = snap.docs.map(AppUser.fromDoc).toList();
       list.sort((a, b) {
         if (a.role != b.role) return a.role.isAdmin ? -1 : 1;
-        return a.displayName
-            .toLowerCase()
-            .compareTo(b.displayName.toLowerCase());
+        return a.displayName.toLowerCase().compareTo(
+          b.displayName.toLowerCase(),
+        );
       });
       return list;
     });
@@ -44,14 +41,18 @@ class UserRepository {
   /// ຜູ້ໃຊ້ອື່ນໆ ທັງໝົດ ຍົກເວັ້ນຕົນເອງ (ໃຊ້ໃນໜ້າແຊັດ ແລະ ລາຍຊື່)
   Stream<List<AppUser>> othersStream(String familyId, String myUid) {
     if (familyId.isEmpty) return Stream.value(const []);
-    return _users
-        .where('familyId', isEqualTo: familyId)
-        .where('uid', isNotEqualTo: myUid)
-        .snapshots()
-        .map((snap) {
-      final list = snap.docs.map(AppUser.fromDoc).toList();
-      list.sort((a, b) =>
-          a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()));
+    // ຢ່າໃຊ້ isNotEqualTo
+    return _users.where('familyId', isEqualTo: familyId).snapshots().map((
+      snap,
+    ) {
+      final list = snap.docs
+          .map(AppUser.fromDoc)
+          .where((u) => u.uid != myUid)
+          .toList();
+      list.sort(
+        (a, b) =>
+            a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
+      );
       return list;
     });
   }
@@ -66,8 +67,9 @@ class UserRepository {
     final result = <String, AppUser>{};
     for (var i = 0; i < uids.length; i += 10) {
       final chunk = uids.sublist(i, min(i + 10, uids.length));
-      final snap =
-          await _users.where(FieldPath.documentId, whereIn: chunk).get();
+      final snap = await _users
+          .where(FieldPath.documentId, whereIn: chunk)
+          .get();
       for (final doc in snap.docs) {
         result[doc.id] = AppUser.fromDoc(doc);
       }
@@ -176,7 +178,9 @@ class UserRepository {
       if (avatarUrl != null) await credential.user!.updatePhotoURL(avatarUrl);
 
       // ຂຽນຂໍ້ມູນຜູ້ໃຊ້ດ້ວຍ session ຂອງ admin ທີ່ຍັງຄົງຢູ່
-      await _users.doc(newUid).set(
+      await _users
+          .doc(newUid)
+          .set(
             AppUser(
               uid: newUid,
               displayName: displayName.trim(),

@@ -1,5 +1,0 @@
-package com.familyrootsdl2026.family_root
-
-import io.flutter.embedding.android.FlutterActivity
-
-class MainActivity : FlutterActivity()
