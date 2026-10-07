@@ -102,10 +102,7 @@ class AuthRepository {
   Future<UserCredential> signInWithFacebook() async {
     final fb = FacebookLogin();
     final result = await fb.logIn(
-      permissions: const [
-        FacebookPermission.publicProfile,
-        FacebookPermission.email,
-      ],
+      permissions: const [FacebookPermission.publicProfile],
     );
 
     if (result.status == FacebookLoginStatus.cancel) {
@@ -136,6 +133,43 @@ class AuthRepository {
     );
     return userCredential;
   }
+  // Future<UserCredential> signInWithFacebook() async {
+  //   final fb = FacebookLogin();
+  //   final result = await fb.logIn(
+  //     permissions: const [
+  //       FacebookPermission.publicProfile,
+  //       FacebookPermission.email,
+  //     ],
+  //   );
+
+  //   if (result.status == FacebookLoginStatus.cancel) {
+  //     throw FirebaseAuthException(
+  //       code: 'aborted-by-user',
+  //       message: 'ຍົກເລີກການເຂົ້າລະບົບ',
+  //     );
+  //   }
+  //   if (result.status != FacebookLoginStatus.success ||
+  //       result.accessToken == null) {
+  //     throw FirebaseAuthException(
+  //       code: 'facebook-error',
+  //       message:
+  //           result.error?.localizedDescription ??
+  //           result.error?.developerMessage ??
+  //           'ເຂົ້າລະບົບດ້ວຍ Facebook ບໍ່ສຳເລັດ',
+  //     );
+  //   }
+
+  //   final credential = FacebookAuthProvider.credential(
+  //     result.accessToken!.token,
+  //   );
+  //   final userCredential = await _auth.signInWithCredential(credential);
+  //   await _ensureAdminProfile(
+  //     user: userCredential.user!,
+  //     provider: AuthProviderType.facebook,
+  //     fallbackName: userCredential.user!.displayName ?? 'Admin',
+  //   );
+  //   return userCredential;
+  // }
 
   // =========================== Apple ============================
   Future<UserCredential> signInWithApple() async {

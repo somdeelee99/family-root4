@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Family Root</string>
+
+    <!-- Facebook App ID -->
+    <string name="facebook_app_id">1096827296513225</string>
+
+    <!-- Facebook Client Token -->
+    <string name="facebook_client_token">693d9251deeee737856c52b18d092594</string>
+
+    <!-- Facebook Login Protocol Scheme (ເອົາ fb ມາຕໍ່ໃສ່ທາງໜ້າ App ID) -->
+    <string name="fb_login_protocol_scheme">fb1096827296513225</string>
+</resources>

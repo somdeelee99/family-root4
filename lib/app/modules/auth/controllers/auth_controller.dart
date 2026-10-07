@@ -18,12 +18,12 @@ class AuthController extends GetxController {
   final RxBool obscure = true.obs;
   final RxBool showEmailForm = true.obs;
 
-  // === ໂຕໃໝ່: ບອກວ່າ Social ໂຕໃດກຳລັງໂຫຼດ ===
+  // ✅ เพิ่มใหม่ - จำว่ากำลังโหลด Social ตัวไหน
   final Rxn<AuthProviderType> socialLoading = Rxn<AuthProviderType>();
 
   bool get isBusy => _auth.isBusy.value;
 
-  // เช็คแยกแต่ละตัว
+  // ✅ เพิ่มใหม่ - เช็คแยกแต่ละปุ่ม
   bool get isGoogleLoading =>
       _auth.isBusy.value && socialLoading.value == AuthProviderType.google;
   bool get isFacebookLoading =>
@@ -35,7 +35,7 @@ class AuthController extends GetxController {
   void toggleObscure() => obscure.value = !obscure.value;
 
   Future<void> signInWithgoogle(AuthProviderType provider) async {
-    socialLoading.value = provider; // <- ล็อคว่ากำลังโหลด Google
+    socialLoading.value = AuthProviderType.google; // ✅ เพิ่ม
     try {
       final ok = await _auth.signInWithProvider(provider);
       if (!ok) {
@@ -50,12 +50,12 @@ class AuthController extends GetxController {
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null; // <- จบแล้วเคลียร์
+      socialLoading.value = null; // ✅ เพิ่ม
     }
   }
 
   Future<void> signInWithFacebook() async {
-    socialLoading.value = AuthProviderType.facebook; // <- ล็อคว่า Facebook
+    socialLoading.value = AuthProviderType.facebook; // ✅ เพิ่ม
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
       if (!ok) {
@@ -70,12 +70,12 @@ class AuthController extends GetxController {
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null;
+      socialLoading.value = null; // ✅ เพิ่ม
     }
   }
 
   Future<void> signInWithApple() async {
-    socialLoading.value = AuthProviderType.apple;
+    socialLoading.value = AuthProviderType.apple; // ✅ เพิ่ม
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.apple);
       if (!ok) {
@@ -90,18 +90,16 @@ class AuthController extends GetxController {
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null;
+      socialLoading.value = null; // ✅ เพิ่ม
     }
   }
 
   Future<void> signInWithEmail() async {
     if (!(formKey.currentState?.validate() ?? false)) return;
-    // Email ไม่ต้อง set socialLoading, มันจะเป็น null เอง = isEmailLoading = true
     final ok = await _auth.signInWithEmail(
       email: emailController.text.trim(),
       password: passwordController.text,
     );
-
     if (!ok) {
       UiHelpers.error(
         _auth.errorMessage.value.isEmpty
@@ -110,20 +108,17 @@ class AuthController extends GetxController {
       );
       return;
     }
-
     final user = await _auth.fetchFresh();
     if (user == null) {
       UiHelpers.error('ບໍ່ພົບຂໍ້ມູນບັນຊີ ກະລຸນາຕິດຕໍ່ Admin ຂອງຄອບຄົວ');
       await _auth.signOut();
       return;
     }
-
     if (!user.isActive) {
       UiHelpers.error('ບັນຊີນີ້ຖືກປິດການໃຊ້ງານ');
       await _auth.signOut();
       return;
     }
-
     UiHelpers.success('ຍິນດີຕ້ອນຮັບ ${user.displayName}');
     await Future<void>.delayed(const Duration(milliseconds: 350));
     _routeAfterLogin();
