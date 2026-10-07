@@ -18,12 +18,10 @@ class AuthController extends GetxController {
   final RxBool obscure = true.obs;
   final RxBool showEmailForm = true.obs;
 
-  // ✅ เพิ่มใหม่ - จำว่ากำลังโหลด Social ตัวไหน
+  // ✅ จำว่ากำลังโหลดปุ่มไหน
   final Rxn<AuthProviderType> socialLoading = Rxn<AuthProviderType>();
 
   bool get isBusy => _auth.isBusy.value;
-
-  // ✅ เพิ่มใหม่ - เช็คแยกแต่ละปุ่ม
   bool get isGoogleLoading =>
       _auth.isBusy.value && socialLoading.value == AuthProviderType.google;
   bool get isFacebookLoading =>
@@ -35,62 +33,56 @@ class AuthController extends GetxController {
   void toggleObscure() => obscure.value = !obscure.value;
 
   Future<void> signInWithgoogle(AuthProviderType provider) async {
-    socialLoading.value = AuthProviderType.google; // ✅ เพิ่ม
+    socialLoading.value = AuthProviderType.google;
     try {
       final ok = await _auth.signInWithProvider(provider);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null; // ✅ เพิ่ม
+      socialLoading.value = null;
     }
   }
 
   Future<void> signInWithFacebook() async {
-    socialLoading.value = AuthProviderType.facebook; // ✅ เพิ่ม
+    socialLoading.value = AuthProviderType.facebook;
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null; // ✅ เพิ่ม
+      socialLoading.value = null;
     }
   }
 
   Future<void> signInWithApple() async {
-    socialLoading.value = AuthProviderType.apple; // ✅ เพิ่ม
+    socialLoading.value = AuthProviderType.apple;
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.apple);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null; // ✅ เพิ่ม
+      socialLoading.value = null;
     }
   }
 
