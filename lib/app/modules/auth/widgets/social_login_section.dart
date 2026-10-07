@@ -9,7 +9,6 @@ import '../../../core/widgets/app_button.dart';
 import '../../../data/models/enums.dart';
 import '../controllers/auth_controller.dart';
 
-/// ພາກເຂົ້າລະບົບຜ່ານ Facebook / Google / Apple (ສຳລັບ Admin)
 class SocialLoginSection extends GetView<AuthController> {
   const SocialLoginSection({super.key});
 
@@ -41,53 +40,41 @@ class SocialLoginSection extends GetView<AuthController> {
             ],
           ),
           SizedBox(height: 14.h),
-          Obx(
-            () => Column(
-              children: [
-                SocialLoginButton(
-                  label: AppStrings.continueWithGoogle,
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF3C4043),
-                  borderColor: AppColors.divider,
-                  icon: CustomPaint(
-                    size: Size(24.w, 24.w),
-                    painter: _GoogleLogoPainter(),
-                  ),
-                  isLoading: controller.isBusy,
-                  onPressed: () =>
-                      controller.signInWithgoogle(AuthProviderType.google),
-                ),
-                SizedBox(height: 10.h),
-                SocialLoginButton(
-                  label: AppStrings.continueWithFacebook,
-                  backgroundColor: const Color(0xFF1877F2),
-                  foregroundColor: Colors.white,
-                  icon: Icon(
-                    Icons.facebook_rounded,
-                    size: 26.sp,
-                    color: Colors.white,
-                  ),
-                  isLoading: controller.isBusy,
-                  onPressed: () => controller.signInWithFacebook(),
-                ),
-                SizedBox(height: 10.h),
 
-                // if (GetPlatform.isIOS || GetPlatform.isMacOS) ...[
-                //   SizedBox(height: 10.h),
-                //   SocialLoginButton(
-                //     label: AppStrings.continueWithApple,
-                //     backgroundColor: Colors.black,
-                //     foregroundColor: Colors.white,
-                //     icon: Icon(
-                //       Icons.apple_rounded,
-                //       size: 27.sp,
-                //       color: Colors.white,
-                //     ),
-                //     isLoading: controller.isBusy,
-                //     onPressed: () => controller.signInWithApple(),
-                //   ),
-                // ],
-              ],
+          // Google
+          Obx(
+            () => SocialLoginButton(
+              label: AppStrings.continueWithGoogle,
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFF3C4043),
+              borderColor: AppColors.divider,
+              icon: CustomPaint(
+                size: Size(24.w, 24.w),
+                painter: _GoogleLogoPainter(),
+              ),
+              isLoading: controller.isGoogleLoading,
+              onPressed: controller.isBusy
+                  ? null
+                  : () => controller.signInWithgoogle(AuthProviderType.google),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // Facebook
+          Obx(
+            () => SocialLoginButton(
+              label: AppStrings.continueWithFacebook,
+              backgroundColor: const Color(0xFF1877F2),
+              foregroundColor: Colors.white,
+              icon: Icon(
+                Icons.facebook_rounded,
+                size: 26.sp,
+                color: Colors.white,
+              ),
+              isLoading: controller.isFacebookLoading,
+              onPressed: controller.isBusy
+                  ? null
+                  : controller.signInWithFacebook,
             ),
           ),
         ],
@@ -127,7 +114,6 @@ class _GoogleLogoPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.width * 0.21
       ..strokeCap = StrokeCap.butt;
-
     const segments = [
       (2.7, 4.5, Color(0xFFEA4335)),
       (4.5, 5.6, Color(0xFF4285F4)),

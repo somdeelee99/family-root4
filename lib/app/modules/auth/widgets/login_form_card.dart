@@ -114,7 +114,7 @@ class LoginFormCard extends GetView<AuthController> {
                 label: AppStrings.login,
                 icon: Icons.login_rounded,
                 gradient: true,
-                isLoading: controller.isBusy,
+                isLoading: controller.isEmailLoading, // <- เปลี่ยนตรงนี้
                 onPressed: controller.isBusy
                     ? null
                     : controller.signInWithEmail,
