@@ -205,7 +205,7 @@ class ProfileView extends GetView<ProfileController> {
                       onTap: controller.goToFamilyInfo,
                     ),
                     // ---------- ການເຊື່ອມຕໍ່ (Admin) ----------
-                    if (controller.isAdmin) _loginConnections(),
+                    // if (controller.isAdmin) _loginConnections(),
                   ]),
                 ],
               ),
@@ -222,24 +222,24 @@ class ProfileView extends GetView<ProfileController> {
                     icon: Icons.settings_outlined,
                   ),
                   _menuCard([
-                    Obx(
-                      () => _switchItem(
-                        icon: Icons.dark_mode_outlined,
-                        title: AppStrings.darkMode,
-                        subtitle: 'ປ່ຽນໂໝດການສະແດງຜົນ',
-                        value: ThemeService.to.isDark.value,
-                        onChanged: (_) => controller.toggleTheme(),
-                      ),
-                    ),
-                    Obx(
-                      () => _switchItem(
-                        icon: Icons.notifications_none_rounded,
-                        title: AppStrings.notifications,
-                        subtitle: 'ແຈ້ງເຕືອນເມື່ອມີຂໍ້ຄວາມໃໝ່',
-                        value: controller.notificationsEnabled.value,
-                        onChanged: (_) => controller.toggleNotifications(),
-                      ),
-                    ),
+                    // Obx(
+                    //   () => _switchItem(
+                    //     icon: Icons.dark_mode_outlined,
+                    //     title: AppStrings.darkMode,
+                    //     subtitle: 'ປ່ຽນໂໝດການສະແດງຜົນ',
+                    //     value: ThemeService.to.isDark.value,
+                    //     onChanged: (_) => controller.toggleTheme(),
+                    //   ),
+                    // ),
+                    // Obx(
+                    //   () => _switchItem(
+                    //     icon: Icons.notifications_none_rounded,
+                    //     title: AppStrings.notifications,
+                    //     subtitle: 'ແຈ້ງເຕືອນເມື່ອມີຂໍ້ຄວາມໃໝ່',
+                    //     value: controller.notificationsEnabled.value,
+                    //     onChanged: (_) => controller.toggleNotifications(),
+                    //   ),
+                    // ),
                     _menuItem(
                       icon: Icons.info_outline_rounded,
                       title: AppStrings.about,
@@ -402,86 +402,86 @@ class ProfileView extends GetView<ProfileController> {
   );
 
   /// ສະແດງການເຊື່ອມຕໍ່ການເຂົ້າລະບົບ ຂອງ Admin
-  Widget _loginConnections() {
-    final user = AuthService.to.user.value;
-    final providers = user?.providers ?? const <AuthProviderType>[];
-    final all = AuthProviderType.values.where(
-      (p) => p != AuthProviderType.password,
-    );
+  // Widget _loginConnections() {
+  //   final user = AuthService.to.user.value;
+  //   final providers = user?.providers ?? const <AuthProviderType>[];
+  //   final all = AuthProviderType.values.where(
+  //     (p) => p != AuthProviderType.password,
+  //   );
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 14.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.link_rounded,
-                size: 15.sp,
-                color: AppColors.textSecondary,
-              ),
-              SizedBox(width: 7.w),
-              Text(
-                AppStrings.loginConnections,
-                style: TextStyle(
-                  fontSize: 12.5.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              for (final provider in all) ...[
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    decoration: BoxDecoration(
-                      color: providers.contains(provider)
-                          ? AppColors.primarySoft
-                          : AppColors.surfaceAlt,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: providers.contains(provider)
-                            ? AppColors.primary
-                            : AppColors.divider,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          _providerIcon(provider),
-                          size: 20.sp,
-                          color: providers.contains(provider)
-                              ? AppColors.primary
-                              : AppColors.textHint,
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          provider.label,
-                          style: TextStyle(
-                            fontSize: 10.5.sp,
-                            fontWeight: FontWeight.w700,
-                            color: providers.contains(provider)
-                                ? AppColors.primary
-                                : AppColors.textHint,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (provider != all.last) SizedBox(width: 8.w),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Padding(
+  //     padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 14.h),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           children: [
+  //             Icon(
+  //               Icons.link_rounded,
+  //               size: 15.sp,
+  //               color: AppColors.textSecondary,
+  //             ),
+  //             SizedBox(width: 7.w),
+  //             Text(
+  //               AppStrings.loginConnections,
+  //               style: TextStyle(
+  //                 fontSize: 12.5.sp,
+  //                 fontWeight: FontWeight.w700,
+  //                 color: AppColors.textSecondary,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 10.h),
+  //         Row(
+  //           children: [
+  //             for (final provider in all) ...[
+  //               Expanded(
+  //                 child: Container(
+  //                   padding: EdgeInsets.symmetric(vertical: 10.h),
+  //                   decoration: BoxDecoration(
+  //                     color: providers.contains(provider)
+  //                         ? AppColors.primarySoft
+  //                         : AppColors.surfaceAlt,
+  //                     borderRadius: BorderRadius.circular(12.r),
+  //                     border: Border.all(
+  //                       color: providers.contains(provider)
+  //                           ? AppColors.primary
+  //                           : AppColors.divider,
+  //                     ),
+  //                   ),
+  //                   child: Column(
+  //                     children: [
+  //                       Icon(
+  //                         _providerIcon(provider),
+  //                         size: 20.sp,
+  //                         color: providers.contains(provider)
+  //                             ? AppColors.primary
+  //                             : AppColors.textHint,
+  //                       ),
+  //                       SizedBox(height: 4.h),
+  //                       Text(
+  //                         provider.label,
+  //                         style: TextStyle(
+  //                           fontSize: 10.5.sp,
+  //                           fontWeight: FontWeight.w700,
+  //                           color: providers.contains(provider)
+  //                               ? AppColors.primary
+  //                               : AppColors.textHint,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //               if (provider != all.last) SizedBox(width: 8.w),
+  //             ],
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   IconData _providerIcon(AuthProviderType provider) {
     switch (provider) {
