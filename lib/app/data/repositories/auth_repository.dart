@@ -102,10 +102,7 @@ class AuthRepository {
   Future<UserCredential> signInWithFacebook() async {
     final fb = FacebookLogin();
     final result = await fb.logIn(
-      permissions: const [
-        FacebookPermission.publicProfile,
-        FacebookPermission.email,
-      ],
+      permissions: const [FacebookPermission.publicProfile],
     );
 
     if (result.status == FacebookLoginStatus.cancel) {

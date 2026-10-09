@@ -18,12 +18,10 @@ class AuthController extends GetxController {
   final RxBool obscure = true.obs;
   final RxBool showEmailForm = true.obs;
 
-  // === ໂຕໃໝ່: ບອກວ່າ Social ໂຕໃດກຳລັງໂຫຼດ ===
+  // ✅ จำว่ากำลังโหลดปุ่มไหน
   final Rxn<AuthProviderType> socialLoading = Rxn<AuthProviderType>();
 
   bool get isBusy => _auth.isBusy.value;
-
-  // เช็คแยกแต่ละตัว
   bool get isGoogleLoading =>
       _auth.isBusy.value && socialLoading.value == AuthProviderType.google;
   bool get isFacebookLoading =>
@@ -35,35 +33,31 @@ class AuthController extends GetxController {
   void toggleObscure() => obscure.value = !obscure.value;
 
   Future<void> signInWithgoogle(AuthProviderType provider) async {
-    socialLoading.value = provider; // <- ล็อคว่ากำลังโหลด Google
+    socialLoading.value = AuthProviderType.google;
     try {
       final ok = await _auth.signInWithProvider(provider);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
-      socialLoading.value = null; // <- จบแล้วเคลียร์
+      socialLoading.value = null;
     }
   }
 
   Future<void> signInWithFacebook() async {
-    socialLoading.value = AuthProviderType.facebook; // <- ล็อคว่า Facebook
+    socialLoading.value = AuthProviderType.facebook;
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.facebook);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
@@ -79,11 +73,9 @@ class AuthController extends GetxController {
     try {
       final ok = await _auth.signInWithProvider(AuthProviderType.apple);
       if (!ok) {
-        UiHelpers.error(
-          _auth.errorMessage.value.isEmpty
-              ? AppStrings.error
-              : _auth.errorMessage.value,
-        );
+        final msg = _auth.errorMessage.value;
+        if (msg.contains('aborted-by-user') || msg.contains('ຍົກເລີກ')) return;
+        UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
       UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
@@ -96,12 +88,10 @@ class AuthController extends GetxController {
 
   Future<void> signInWithEmail() async {
     if (!(formKey.currentState?.validate() ?? false)) return;
-    // Email ไม่ต้อง set socialLoading, มันจะเป็น null เอง = isEmailLoading = true
     final ok = await _auth.signInWithEmail(
       email: emailController.text.trim(),
       password: passwordController.text,
     );
-
     if (!ok) {
       UiHelpers.error(
         _auth.errorMessage.value.isEmpty
@@ -110,20 +100,17 @@ class AuthController extends GetxController {
       );
       return;
     }
-
     final user = await _auth.fetchFresh();
     if (user == null) {
       UiHelpers.error('ບໍ່ພົບຂໍ້ມູນບັນຊີ ກະລຸນາຕິດຕໍ່ Admin ຂອງຄອບຄົວ');
       await _auth.signOut();
       return;
     }
-
     if (!user.isActive) {
       UiHelpers.error('ບັນຊີນີ້ຖືກປິດການໃຊ້ງານ');
       await _auth.signOut();
       return;
     }
-
     UiHelpers.success('ຍິນດີຕ້ອນຮັບ ${user.displayName}');
     await Future<void>.delayed(const Duration(milliseconds: 350));
     _routeAfterLogin();

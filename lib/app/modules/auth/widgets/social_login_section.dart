@@ -41,7 +41,7 @@ class SocialLoginSection extends GetView<AuthController> {
           ),
           SizedBox(height: 14.h),
 
-          // Google
+          // ✅ Google - มี Obx ของตัวเอง
           Obx(
             () => SocialLoginButton(
               label: AppStrings.continueWithGoogle,
@@ -52,7 +52,7 @@ class SocialLoginSection extends GetView<AuthController> {
                 size: Size(24.w, 24.w),
                 painter: _GoogleLogoPainter(),
               ),
-              isLoading: controller.isGoogleLoading,
+              isLoading: controller.isGoogleLoading, // ✅ แก้จาก isBusy
               onPressed: controller.isBusy
                   ? null
                   : () => controller.signInWithgoogle(AuthProviderType.google),
@@ -60,7 +60,7 @@ class SocialLoginSection extends GetView<AuthController> {
           ),
           SizedBox(height: 10.h),
 
-          // Facebook
+          // ✅ Facebook - มี Obx ของตัวเอง
           Obx(
             () => SocialLoginButton(
               label: AppStrings.continueWithFacebook,
@@ -71,7 +71,7 @@ class SocialLoginSection extends GetView<AuthController> {
                 size: 26.sp,
                 color: Colors.white,
               ),
-              isLoading: controller.isFacebookLoading,
+              isLoading: controller.isFacebookLoading, // ✅ แก้จาก isBusy
               onPressed: controller.isBusy
                   ? null
                   : controller.signInWithFacebook,
