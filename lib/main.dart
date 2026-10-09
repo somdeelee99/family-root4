@@ -25,10 +25,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ---- Firebase ----
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  // ---- Crashlytics: ຈັບຂໍ້ຜິດພາດທັງໝົດ ----
+  // ---- Crashlytics: ຕິດຕັ້ງກ່ອນ Firebase ເພື່ອຈັບ error ໄດ້ແຕ່ນາທີທຳອິດ ----
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     FirebaseCrashlytics.instance.recordFlutterFatalError(details);
@@ -37,21 +34,44 @@ Future<void> main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-    !kDebugMode,
-  );
+
+  // ---- Firebase ----
+  // ຖ້າ init ລ้มລ้มໃນ build mode (ເຊັ່ນ google-services.json ບໍ່ຖືກກັນ/ຫາຍໄປ),
+  // ແອັບຈະ crash ທັນທີ → ໜ້າດຳ. ດັ່ງນັ້ນຕ້ອງ try/catch ແລະ ໃຫ້ແອັບເປີດຂຶ້ນໄດ້ສະເໝີ.
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+      !kDebugMode,
+    );
+  } catch (e, s) {
+    debugPrint('Firebase.initializeApp ລ้มລ้ม: $e\n$s');
+  }
 
   // ---- ແຈ້ງເຕືອນ ----
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await NotificationService.instance.init();
+  try {
+    if (Firebase.apps.isNotEmpty) {
+      FirebaseMessaging.onBackgroundMessage(
+        _firebaseMessagingBackgroundHandler,
+      );
+      await NotificationService.instance.init();
+    }
+  } catch (e, s) {
+    debugPrint('NotificationService.init ລ้มລ้ม: $e\n$s');
+  }
 
   // ---- ຕັ້ງຄ່າໜ້າຈໍ ----
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   // ---- Services ----
-  await Get.putAsync(() => ThemeService().init());
-  await Get.putAsync(() => ConnectivityService().init());
-  await Get.putAsync(() => AuthService().init());
+  try {
+    await Get.putAsync(() => ThemeService().init());
+    await Get.putAsync(() => ConnectivityService().init());
+    await Get.putAsync(() => AuthService().init());
+  } catch (e, s) {
+    debugPrint('Service init ລ้มລ้ม: $e\n$s');
+  }
 
   runApp(const FamilyRootApp());
 }

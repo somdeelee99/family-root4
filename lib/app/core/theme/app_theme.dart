@@ -22,7 +22,7 @@ class AppTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.background,
       splashFactory: InkSparkle.splashFactory,
-      fontFamily: 'Phetsarath',
+      fontFamily: 'NotoSansLao',
     );
 
     return base.copyWith(
@@ -105,16 +105,19 @@ class AppTheme {
         unselectedItemColor: AppColors.textHint,
         type: BottomNavigationBarType.fixed,
         showUnselectedLabels: true,
-        selectedLabelStyle:
-            TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700),
+        selectedLabelStyle: TextStyle(
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w700,
+        ),
         unselectedLabelStyle: TextStyle(fontSize: 11.sp),
       ),
       chipTheme: base.chipTheme.copyWith(
         backgroundColor: AppColors.surfaceAlt,
         side: BorderSide.none,
         labelStyle: TextStyle(fontSize: 12.sp, color: AppColors.textSecondary),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.r),
+        ),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
@@ -131,18 +134,21 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(22.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22.r),
+        ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.textPrimary,
         contentTextStyle: TextStyle(fontSize: 13.5.sp, color: Colors.white),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14.r),
+        ),
       ),
-      progressIndicatorTheme:
-          const ProgressIndicatorThemeData(color: AppColors.primary),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+      ),
       textTheme: base.textTheme.apply(
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
@@ -163,7 +169,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.darkBackground,
-      fontFamily: 'Phetsarath',
+      fontFamily: 'NotoSansLao',
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -193,8 +199,10 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-          borderSide:
-              const BorderSide(color: AppColors.primaryLight, width: 1.6),
+          borderSide: const BorderSide(
+            color: AppColors.primaryLight,
+            width: 1.6,
+          ),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
@@ -215,9 +223,9 @@ class AppTheme {
       ),
       dividerTheme: const DividerThemeData(color: AppColors.darkDivider),
       textTheme: ThemeData.dark().textTheme.apply(
-            bodyColor: AppColors.darkTextPrimary,
-            displayColor: AppColors.darkTextPrimary,
-          ),
+        bodyColor: AppColors.darkTextPrimary,
+        displayColor: AppColors.darkTextPrimary,
+      ),
     );
   }
 }
