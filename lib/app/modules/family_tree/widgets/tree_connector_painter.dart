@@ -7,10 +7,7 @@ import '../controllers/family_tree_controller.dart';
 /// - ພໍ່ແມ່ -> ລູກ (ເສັ້ນຕັ້ງ + ເສັ້ນນອນ)
 /// - ຜົວ/ເມຍ (ເສັ້ນນອນ + ຫົວໃຈ)
 class TreeConnectorPainter extends CustomPainter {
-  TreeConnectorPainter({
-    required this.nodes,
-    required this.selectedId,
-  });
+  TreeConnectorPainter({required this.nodes, required this.selectedId});
 
   final List<TreeNodePosition> nodes;
   final String? selectedId;
@@ -57,8 +54,11 @@ class TreeConnectorPainter extends CustomPainter {
       }
 
       // ຈຸດເຊື່ອມ
-      canvas.drawCircle(childTop, 2.6,
-          Paint()..color = AppColors.primary.withValues(alpha: 0.55));
+      canvas.drawCircle(
+        childTop,
+        2.6,
+        Paint()..color = AppColors.primary.withValues(alpha: 0.55),
+      );
     }
 
     // ---------- ເສັ້ນຜົວ/ເມຍ ----------
@@ -92,8 +92,10 @@ class TreeConnectorPainter extends CustomPainter {
           } else {
             // ຢູ່ລຸ້ນດຽວກັນແຕ່ບໍ່ຕິດກັນ - ວາດເສັ້ນໂຄ້ງ
             final path = Path()
-              ..moveTo(a.dx + FamilyTreeController.nodeWidth / 2,
-                  a.dy + FamilyTreeController.nodeHeight)
+              ..moveTo(
+                a.dx + FamilyTreeController.nodeWidth / 2,
+                a.dy + FamilyTreeController.nodeHeight,
+              )
               ..quadraticBezierTo(
                 (a.dx + b.dx) / 2 + FamilyTreeController.nodeWidth / 2,
                 a.dy + FamilyTreeController.nodeHeight + 26,
@@ -105,10 +107,14 @@ class TreeConnectorPainter extends CustomPainter {
         } else {
           final upper = a.dy < b.dy ? a : b;
           final lower = a.dy < b.dy ? b : a;
-          final from = Offset(upper.dx + FamilyTreeController.nodeWidth / 2,
-              upper.dy + FamilyTreeController.nodeHeight);
-          final to =
-              Offset(lower.dx + FamilyTreeController.nodeWidth / 2, lower.dy);
+          final from = Offset(
+            upper.dx + FamilyTreeController.nodeWidth / 2,
+            upper.dy + FamilyTreeController.nodeHeight,
+          );
+          final to = Offset(
+            lower.dx + FamilyTreeController.nodeWidth / 2,
+            lower.dy,
+          );
           final path = Path()
             ..moveTo(from.dx, from.dy)
             ..cubicTo(from.dx, from.dy + 30, to.dx, to.dy - 30, to.dx, to.dy);
@@ -123,10 +129,22 @@ class TreeConnectorPainter extends CustomPainter {
     final path = Path();
     const s = 4.6;
     path.moveTo(center.dx, center.dy + s * 0.9);
-    path.cubicTo(center.dx - s * 1.6, center.dy - s * 0.35, center.dx - s * 0.5,
-        center.dy - s * 1.3, center.dx, center.dy - s * 0.35);
-    path.cubicTo(center.dx + s * 0.5, center.dy - s * 1.3, center.dx + s * 1.6,
-        center.dy - s * 0.35, center.dx, center.dy + s * 0.9);
+    path.cubicTo(
+      center.dx - s * 1.6,
+      center.dy - s * 0.35,
+      center.dx - s * 0.5,
+      center.dy - s * 1.3,
+      center.dx,
+      center.dy - s * 0.35,
+    );
+    path.cubicTo(
+      center.dx + s * 0.5,
+      center.dy - s * 1.3,
+      center.dx + s * 1.6,
+      center.dy - s * 0.35,
+      center.dx,
+      center.dy + s * 0.9,
+    );
     canvas.drawPath(path, paint);
   }
 

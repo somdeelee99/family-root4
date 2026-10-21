@@ -73,19 +73,27 @@ class RelationSinglePicker extends StatelessWidget {
                       members.isEmpty
                           ? 'ບໍ່ມີສະມາຊິກໃຫ້ເລືອກ'
                           : 'ເລືອກຈາກລາຍຊື່ທີ່ມີຢູ່',
-                      style:
-                          TextStyle(fontSize: 13.sp, color: AppColors.textHint),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppColors.textHint,
+                      ),
                     ),
                   ),
                 if (selected != null)
                   IconButton(
                     onPressed: () => onChanged(null),
                     visualDensity: VisualDensity.compact,
-                    icon: Icon(Icons.close_rounded,
-                        size: 18.sp, color: AppColors.textHint),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      size: 18.sp,
+                      color: AppColors.textHint,
+                    ),
                   ),
-                Icon(Icons.unfold_more_rounded,
-                    size: 19.sp, color: AppColors.textHint),
+                Icon(
+                  Icons.unfold_more_rounded,
+                  size: 19.sp,
+                  color: AppColors.textHint,
+                ),
               ],
             ),
           ),
@@ -115,24 +123,24 @@ class RelationSinglePicker extends StatelessWidget {
   }
 
   Widget _labelRow(String label, IconData icon) => Row(
-        children: [
-          Icon(icon, size: 16.sp, color: AppColors.textSecondary),
-          SizedBox(width: 7.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          SizedBox(width: 6.w),
-          Text(
-            'ເລືອກຈາກລາຍຊື່ທີ່ມີຢູ່',
-            style: TextStyle(fontSize: 10.5.sp, color: AppColors.textHint),
-          ),
-        ],
-      );
+    children: [
+      Icon(icon, size: 16.sp, color: AppColors.textSecondary),
+      SizedBox(width: 7.w),
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 13.sp,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textSecondary,
+        ),
+      ),
+      SizedBox(width: 6.w),
+      Text(
+        'ເລືອກຈາກລາຍຊື່ທີ່ມີຢູ່',
+        style: TextStyle(fontSize: 10.5.sp, color: AppColors.textHint),
+      ),
+    ],
+  );
 }
 
 /// ເລືອກຄວາມສຳພັນແບບຫຼາຍຄົນ (ຜົວ/ເມຍ, ລູກ, ອ້າຍເອື້ອຍນ້ອງ)
@@ -184,9 +192,10 @@ class RelationMultiPicker extends StatelessWidget {
                 child: Text(
                   '${selectedIds.length}',
                   style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white),
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -202,8 +211,11 @@ class RelationMultiPicker extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.add_rounded,
-                        size: 14.sp, color: AppColors.primary),
+                    Icon(
+                      Icons.add_rounded,
+                      size: 14.sp,
+                      color: AppColors.primary,
+                    ),
                     SizedBox(width: 3.w),
                     Text(
                       'ເພີ່ມ',
@@ -244,8 +256,10 @@ class RelationMultiPicker extends StatelessWidget {
                     gender: member.gender,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  label: Text(member.fullName,
-                      style: TextStyle(fontSize: 11.5.sp)),
+                  label: Text(
+                    member.fullName,
+                    style: TextStyle(fontSize: 11.5.sp),
+                  ),
                   labelPadding: EdgeInsets.only(right: 4.w),
                   deleteIcon: Icon(Icons.close_rounded, size: 15.sp),
                   onDeleted: () => onToggle(member.id),
@@ -321,13 +335,16 @@ class _MemberPickSheet extends StatelessWidget {
             ),
             Text(
               'ເລືອກຈາກສະມາຊິກທີ່ມີຢູ່ໃນຜັງ ຫຼື ສ້າງໃໝ່ກ່ອນແລ້ວກັບມາເລືອກ',
-              style:
-                  TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+              style: TextStyle(
+                fontSize: 11.5.sp,
+                color: AppColors.textSecondary,
+              ),
             ),
             SizedBox(height: 12.h),
             ConstrainedBox(
               constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.5),
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: members.length,
@@ -347,23 +364,28 @@ class _MemberPickSheet extends StatelessWidget {
                     title: Text(
                       member.fullName,
                       style: TextStyle(
-                          fontSize: 13.5.sp, fontWeight: FontWeight.w600),
+                        fontSize: 13.5.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     subtitle: Text(
                       member.generationLabel,
                       style: TextStyle(
-                          fontSize: 11.sp, color: AppColors.textSecondary),
+                        fontSize: 11.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     trailing: Icon(
                       isSelected
                           ? (multi
-                              ? Icons.check_circle_rounded
-                              : Icons.radio_button_checked_rounded)
+                                ? Icons.check_circle_rounded
+                                : Icons.radio_button_checked_rounded)
                           : (multi
-                              ? Icons.circle_outlined
-                              : Icons.radio_button_unchecked_rounded),
-                      color:
-                          isSelected ? AppColors.primary : AppColors.textHint,
+                                ? Icons.circle_outlined
+                                : Icons.radio_button_unchecked_rounded),
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textHint,
                     ),
                   );
                 },

@@ -123,8 +123,9 @@ class _MemberDetailBody extends StatelessWidget {
                             Text(
                               'ຊື່ຫຼິ້ນ: ${member.nickname}',
                               style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: AppColors.textSecondary),
+                                fontSize: 12.sp,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ],
                           SizedBox(height: 8.h),
@@ -136,7 +137,9 @@ class _MemberDetailBody extends StatelessWidget {
                               StatusBadge(status: member.status),
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 9.w, vertical: 4.h),
+                                  horizontal: 9.w,
+                                  vertical: 4.h,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.primarySoft,
                                   borderRadius: BorderRadius.circular(30.r),
@@ -165,26 +168,39 @@ class _MemberDetailBody extends StatelessWidget {
                   icon: Icons.badge_outlined,
                   children: [
                     _row(
-                        Icons.cake_outlined,
-                        'ວັນເກີດ',
-                        member.birthDate == null
-                            ? '-'
-                            : AppDateUtils.format(member.birthDate)),
+                      Icons.cake_outlined,
+                      'ວັນເກີດ',
+                      member.birthDate == null
+                          ? '-'
+                          : AppDateUtils.format(member.birthDate),
+                    ),
                     if (member.birthDate != null)
                       _row(
-                          Icons.timelapse_rounded,
-                          'ອາຍຸ',
-                          AppDateUtils.ageLabel(member.birthDate,
-                              deathDate: member.deathDate)),
+                        Icons.timelapse_rounded,
+                        'ອາຍຸ',
+                        AppDateUtils.ageLabel(
+                          member.birthDate,
+                          deathDate: member.deathDate,
+                        ),
+                      ),
                     if (member.deathDate != null)
-                      _row(Icons.spa_rounded, 'ວັນເສຍຊີວິດ',
-                          AppDateUtils.format(member.deathDate)),
+                      _row(
+                        Icons.spa_rounded,
+                        'ວັນເສຍຊີວິດ',
+                        AppDateUtils.format(member.deathDate),
+                      ),
                     if ((member.occupation ?? '').isNotEmpty)
-                      _row(Icons.work_outline_rounded, 'ອາຊີບ',
-                          member.occupation!),
+                      _row(
+                        Icons.work_outline_rounded,
+                        'ອາຊີບ',
+                        member.occupation!,
+                      ),
                     if ((member.address ?? '').isNotEmpty)
-                      _row(Icons.location_on_outlined, 'ທີ່ຢູ່',
-                          member.address!),
+                      _row(
+                        Icons.location_on_outlined,
+                        'ທີ່ຢູ່',
+                        member.address!,
+                      ),
                     if ((member.note ?? '').isNotEmpty)
                       _row(Icons.notes_rounded, 'ໝາຍເຫດ', member.note!),
                   ],
@@ -212,7 +228,8 @@ class _MemberDetailBody extends StatelessWidget {
                           value: member.whatsapp!,
                           color: const Color(0xFF25D366),
                           onTap: () => _launch(
-                              'https://wa.me/${Validators.toWhatsApp(member.whatsapp!)}'),
+                            'https://wa.me/${Validators.toWhatsApp(member.whatsapp!)}',
+                          ),
                         ),
                     ],
                   ),
@@ -227,28 +244,36 @@ class _MemberDetailBody extends StatelessWidget {
                   children: [
                     if (member.fatherId != null &&
                         byId[member.fatherId] != null)
-                      _relationRow(Icons.man_rounded, AppStrings.father,
-                          byId[member.fatherId]!),
+                      _relationRow(
+                        Icons.man_rounded,
+                        AppStrings.father,
+                        byId[member.fatherId]!,
+                      ),
                     if (member.motherId != null &&
                         byId[member.motherId] != null)
-                      _relationRow(Icons.woman_rounded, AppStrings.mother,
-                          byId[member.motherId]!),
+                      _relationRow(
+                        Icons.woman_rounded,
+                        AppStrings.mother,
+                        byId[member.motherId]!,
+                      ),
                     if (member.spouseIds.isNotEmpty)
                       _relationsRow(
-                          Icons.favorite_rounded,
-                          AppStrings.spouse,
-                          member.spouseIds
-                              .map((id) => byId[id])
-                              .whereType<FamilyMember>()
-                              .toList()),
+                        Icons.favorite_rounded,
+                        AppStrings.spouse,
+                        member.spouseIds
+                            .map((id) => byId[id])
+                            .whereType<FamilyMember>()
+                            .toList(),
+                      ),
                     if (member.childIds.isNotEmpty)
                       _relationsRow(
-                          Icons.child_care_rounded,
-                          AppStrings.children,
-                          member.childIds
-                              .map((id) => byId[id])
-                              .whereType<FamilyMember>()
-                              .toList()),
+                        Icons.child_care_rounded,
+                        AppStrings.children,
+                        member.childIds
+                            .map((id) => byId[id])
+                            .whereType<FamilyMember>()
+                            .toList(),
+                      ),
                     if (fatherMissing(byId) &&
                         member.fatherId == null &&
                         member.motherId == null)
@@ -257,7 +282,9 @@ class _MemberDetailBody extends StatelessWidget {
                         child: Text(
                           'ບໍ່ມີຂໍ້ມູນພໍ່ແມ່ (ອາດເປັນຮາກຂອງຄອບຄົວ)',
                           style: TextStyle(
-                              fontSize: 12.sp, color: AppColors.textHint),
+                            fontSize: 12.sp,
+                            color: AppColors.textHint,
+                          ),
                         ),
                       ),
                   ],
@@ -290,22 +317,25 @@ class _MemberDetailBody extends StatelessWidget {
                               Routes.MEMBER_FORM,
                               arguments: {
                                 'memberId': member.id,
-                                'familyId': member.familyId
+                                'familyId': member.familyId,
                               },
                             );
                           },
                           icon: const Icon(Icons.edit_rounded, size: 18),
                           label: const Text(AppStrings.editNode),
                           style: FilledButton.styleFrom(
-                              minimumSize: Size.fromHeight(50.h)),
+                            minimumSize: Size.fromHeight(50.h),
+                          ),
                         ),
                       ),
                       SizedBox(width: 10.w),
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () => _deleteMember(context),
-                          icon: const Icon(Icons.delete_outline_rounded,
-                              size: 18),
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            size: 18,
+                          ),
                           label: const Text(AppStrings.deleteNode),
                           style: OutlinedButton.styleFrom(
                             minimumSize: Size.fromHeight(50.h),
@@ -325,15 +355,19 @@ class _MemberDetailBody extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.visibility_outlined,
-                            size: 16.sp, color: AppColors.textSecondary),
+                        Icon(
+                          Icons.visibility_outlined,
+                          size: 16.sp,
+                          color: AppColors.textSecondary,
+                        ),
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
                             AppStrings.readOnlyBanner,
                             style: TextStyle(
-                                fontSize: 12.sp,
-                                color: AppColors.textSecondary),
+                              fontSize: 12.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
@@ -388,45 +422,48 @@ class _MemberDetailBody extends StatelessWidget {
   }
 
   Widget _linkedAccountCard(AppUser user) => Container(
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: AppColors.primarySoft,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.link_rounded, size: 17.sp, color: AppColors.primary),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ຜູກກັບບັນຊີເຂົ້າລະບົບ',
-                    style: TextStyle(
-                        fontSize: 11.sp, color: AppColors.textSecondary),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    user.displayName,
-                    style: TextStyle(
-                      fontSize: 13.5.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
+    padding: EdgeInsets.all(12.w),
+    decoration: BoxDecoration(
+      color: AppColors.primarySoft,
+      borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.link_rounded, size: 17.sp, color: AppColors.primary),
+        SizedBox(width: 10.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'ຜູກກັບບັນຊີເຂົ້າລະບົບ',
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: AppColors.textSecondary,
+                ),
               ),
-            ),
-            RoleBadge(role: user.role, compact: true),
-          ],
+              SizedBox(height: 2.h),
+              Text(
+                user.displayName,
+                style: TextStyle(
+                  fontSize: 13.5.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
-      );
+        RoleBadge(role: user.role, compact: true),
+      ],
+    ),
+  );
 
-  Widget _sectionCard(
-      {required String title,
-      required IconData icon,
-      required List<Widget> children}) {
+  Widget _sectionCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: EdgeInsets.all(15.w),
       decoration: BoxDecoration(
@@ -459,31 +496,32 @@ class _MemberDetailBody extends StatelessWidget {
   }
 
   Widget _row(IconData icon, String label, String value) => Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.h),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 15.sp, color: AppColors.textHint),
-            SizedBox(width: 10.w),
-            SizedBox(
-              width: 90.w,
-              child: Text(label,
-                  style: TextStyle(
-                      fontSize: 12.5.sp, color: AppColors.textSecondary)),
-            ),
-            Expanded(
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 12.5.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ),
-          ],
+    padding: EdgeInsets.symmetric(vertical: 5.h),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15.sp, color: AppColors.textHint),
+        SizedBox(width: 10.w),
+        SizedBox(
+          width: 90.w,
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 12.5.sp, color: AppColors.textSecondary),
+          ),
         ),
-      );
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 12.5.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _actionRow({
     required IconData icon,
@@ -491,45 +529,51 @@ class _MemberDetailBody extends StatelessWidget {
     required String value,
     required VoidCallback onTap,
     Color color = AppColors.primary,
-  }) =>
-      InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10.r),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 7.h),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(7.w),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(9.r),
-                ),
-                child: Icon(icon, size: 14.sp, color: color),
-              ),
-              SizedBox(width: 11.w),
-              SizedBox(
-                width: 74.w,
-                child: Text(label,
-                    style: TextStyle(
-                        fontSize: 12.5.sp, color: AppColors.textSecondary)),
-              ),
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 12.5.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              Icon(Icons.open_in_new_rounded,
-                  size: 14.sp, color: AppColors.textHint),
-            ],
+  }) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(10.r),
+    child: Padding(
+      padding: EdgeInsets.symmetric(vertical: 7.h),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(7.w),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(9.r),
+            ),
+            child: Icon(icon, size: 14.sp, color: color),
           ),
-        ),
-      );
+          SizedBox(width: 11.w),
+          SizedBox(
+            width: 74.w,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.open_in_new_rounded,
+            size: 14.sp,
+            color: AppColors.textHint,
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _relationRow(IconData icon, String label, FamilyMember person) =>
       Padding(
@@ -540,9 +584,13 @@ class _MemberDetailBody extends StatelessWidget {
             SizedBox(width: 10.w),
             SizedBox(
               width: 90.w,
-              child: Text(label,
-                  style: TextStyle(
-                      fontSize: 12.5.sp, color: AppColors.textSecondary)),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5.sp,
+                  color: AppColors.textSecondary,
+                ),
+              ),
             ),
             AppAvatar(
               imageUrl: person.avatarUrl,
@@ -566,45 +614,50 @@ class _MemberDetailBody extends StatelessWidget {
       );
 
   Widget _relationsRow(
-          IconData icon, String label, List<FamilyMember> people) =>
-      Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    IconData icon,
+    String label,
+    List<FamilyMember> people,
+  ) => Padding(
+    padding: EdgeInsets.symmetric(vertical: 5.h),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Icon(icon, size: 15.sp, color: AppColors.textHint),
-                SizedBox(width: 10.w),
-                Text(
-                  '$label (${people.length})',
-                  style: TextStyle(
-                      fontSize: 12.5.sp, color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-            SizedBox(height: 6.h),
-            Wrap(
-              spacing: 6.w,
-              runSpacing: 6.h,
-              children: [
-                for (final person in people)
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceAlt,
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    child: Text(
-                      person.fullName,
-                      style: TextStyle(
-                          fontSize: 11.5.sp, color: AppColors.textPrimary),
-                    ),
-                  ),
-              ],
+            Icon(icon, size: 15.sp, color: AppColors.textHint),
+            SizedBox(width: 10.w),
+            Text(
+              '$label (${people.length})',
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),
-      );
+        SizedBox(height: 6.h),
+        Wrap(
+          spacing: 6.w,
+          runSpacing: 6.h,
+          children: [
+            for (final person in people)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceAlt,
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+                child: Text(
+                  person.fullName,
+                  style: TextStyle(
+                    fontSize: 11.5.sp,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    ),
+  );
 }

@@ -49,8 +49,8 @@ class TreeNodeCard extends StatelessWidget {
             color: isHighlighted
                 ? AppColors.accent
                 : isSelected
-                    ? AppColors.primary
-                    : AppColors.divider,
+                ? AppColors.primary
+                : AppColors.divider,
             width: isSelected || isHighlighted ? 2.2 : 1,
           ),
           boxShadow: [
@@ -84,8 +84,11 @@ class TreeNodeCard extends StatelessWidget {
                         color: AppColors.deceased.withValues(alpha: 0.28),
                         borderRadius: BorderRadius.circular(16.r),
                       ),
-                      child: Icon(Icons.spa_rounded,
-                          color: Colors.white, size: 20.sp),
+                      child: Icon(
+                        Icons.spa_rounded,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
                     ),
                   ),
               ],
@@ -101,8 +104,9 @@ class TreeNodeCard extends StatelessWidget {
                 fontWeight: FontWeight.w800,
                 height: 1.2,
                 color: AppColors.textPrimary,
-                decoration:
-                    member.isDeceased ? TextDecoration.lineThrough : null,
+                decoration: member.isDeceased
+                    ? TextDecoration.lineThrough
+                    : null,
               ),
             ),
             SizedBox(height: 4.h),
@@ -110,8 +114,10 @@ class TreeNodeCard extends StatelessWidget {
               member.birthDate == null
                   ? member.generationLabel
                   : '${AppDateUtils.age(member.birthDate, deathDate: member.deathDate)} ປີ',
-              style:
-                  TextStyle(fontSize: 9.5.sp, color: AppColors.textSecondary),
+              style: TextStyle(
+                fontSize: 9.5.sp,
+                color: AppColors.textSecondary,
+              ),
             ),
             const Spacer(),
             Container(
@@ -134,9 +140,10 @@ class TreeNodeCard extends StatelessWidget {
                   Text(
                     member.status.shortLabel,
                     style: TextStyle(
-                        fontSize: 8.5.sp,
-                        fontWeight: FontWeight.w700,
-                        color: _accent),
+                      fontSize: 8.5.sp,
+                      fontWeight: FontWeight.w700,
+                      color: _accent,
+                    ),
                   ),
                 ],
               ),

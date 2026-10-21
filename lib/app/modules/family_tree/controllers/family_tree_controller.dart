@@ -25,7 +25,12 @@ class TreeNodePosition {
   final Offset offset;
   final bool isHighlighted;
 
-  Rect get rect => Rect.fromLTWH(offset.dx, offset.dy, FamilyTreeController.nodeWidth, FamilyTreeController.nodeHeight);
+  Rect get rect => Rect.fromLTWH(
+    offset.dx,
+    offset.dy,
+    FamilyTreeController.nodeWidth,
+    FamilyTreeController.nodeHeight,
+  );
 }
 
 /// ຄວບຄຸມຜັງໄມ້ຄອບຄົວ
@@ -62,7 +67,9 @@ class FamilyTreeController extends GetxController {
   void onInit() {
     super.onInit();
     _listen();
-    searchController.addListener(() => query.value = searchController.text.trim());
+    searchController.addListener(
+      () => query.value = searchController.text.trim(),
+    );
   }
 
   void _listen() {
@@ -71,21 +78,25 @@ class FamilyTreeController extends GetxController {
       isLoading.value = false;
       return;
     }
-    _sub = _memberRepo.membersStream(fid).listen(
-      (list) {
-        members.assignAll(list);
-        _layout();
-        isLoading.value = false;
-        if (selected.value != null) {
-          final match = list.where((m) => m.id == selected.value!.id).toList();
-          selected.value = match.isEmpty ? null : match.first;
-        }
-      },
-      onError: (Object e) {
-        isLoading.value = false;
-        UiHelpers.error(UiHelpers.mapError(e));
-      },
-    );
+    _sub = _memberRepo
+        .membersStream(fid)
+        .listen(
+          (list) {
+            members.assignAll(list);
+            _layout();
+            isLoading.value = false;
+            if (selected.value != null) {
+              final match = list
+                  .where((m) => m.id == selected.value!.id)
+                  .toList();
+              selected.value = match.isEmpty ? null : match.first;
+            }
+          },
+          onError: (Object e) {
+            isLoading.value = false;
+            UiHelpers.error(UiHelpers.mapError(e));
+          },
+        );
     _familyRepo.familyStream(fid).listen((value) => family.value = value);
   }
 
@@ -99,7 +110,9 @@ class FamilyTreeController extends GetxController {
     }
 
     final byId = {for (final m in members) m.id: m};
-    final maxGeneration = members.map((m) => m.generation).reduce((a, b) => a > b ? a : b);
+    final maxGeneration = members
+        .map((m) => m.generation)
+        .reduce((a, b) => a > b ? a : b);
 
     // ຈັດລຳດັບພາຍໃນແຕ່ລະລຸ້ນ
     final ordered = <int, List<FamilyMember>>{};
@@ -108,8 +121,19 @@ class FamilyTreeController extends GetxController {
     }
 
     // ລຸ້ນທີ 1: ຜູ້ທີ່ບໍ່ມີພໍ່ແມ່ (ຮາກຂອງຄອບຄົວ)
-    final roots = members.where((m) => m.generation <= 1 || (m.fatherId == null && m.motherId == null)).toList()
-      ..sort((a, b) => (a.birthDate?.year ?? 9999).compareTo(b.birthDate?.year ?? 9999));
+    final roots =
+        members
+            .where(
+              (m) =>
+                  m.generation <= 1 ||
+                  (m.fatherId == null && m.motherId == null),
+            )
+            .toList()
+          ..sort(
+            (a, b) => (a.birthDate?.year ?? 9999).compareTo(
+              b.birthDate?.year ?? 9999,
+            ),
+          );
     ordered[1] = roots;
 
     final placed = <String>{for (final r in roots) r.id};
@@ -126,7 +150,9 @@ class FamilyTreeController extends GetxController {
         }
       }
       // ຜູ້ທີ່ຍັງບໍ່ຖືກຈັດ (ບໍ່ມີຂໍ້ມູນພໍ່ແມ່)
-      for (final m in members.where((m) => m.generation == gen && !placed.contains(m.id))) {
+      for (final m in members.where(
+        (m) => m.generation == gen && !placed.contains(m.id),
+      )) {
         list.add(m);
         placed.add(m.id);
       }
@@ -136,7 +162,10 @@ class FamilyTreeController extends GetxController {
     // ຜູ້ທີ່ຍັງເຫຼືອ (generation ຜິດປົກກະຕິ)
     final leftovers = members.where((m) => !placed.contains(m.id)).toList();
     if (leftovers.isNotEmpty) {
-      ordered[maxGeneration] = [...(ordered[maxGeneration] ?? []), ...leftovers];
+      ordered[maxGeneration] = [
+        ...(ordered[maxGeneration] ?? []),
+        ...leftovers,
+      ];
     }
 
     // ຄຳນວນຕຳແໜ່ງ
@@ -160,7 +189,8 @@ class FamilyTreeController extends GetxController {
 
       for (var i = 0; i < row.length; i++) {
         final m = row[i];
-        final isMatch = highlighted.isNotEmpty &&
+        final isMatch =
+            highlighted.isNotEmpty &&
             (m.fullName.toLowerCase().contains(highlighted) ||
                 (m.nickname ?? '').toLowerCase().contains(highlighted));
         result.add(
@@ -208,7 +238,8 @@ class FamilyTreeController extends GetxController {
       viewportCenterY - y * scale,
       0,
     );
-    transformation.value = translation * Matrix4.diagonal3Values(scale, scale, 1);
+    transformation.value =
+        translation * Matrix4.diagonal3Values(scale, scale, 1);
   }
 
   /// ເອີ້ນຫຼັງຈາກມີການລຶບ/ແກ້ໄຂ ເພື່ອລ້າງການເລືອກທີ່ອາດອ້າງອີງເຖິງຂໍ້ມູນເກົ່າ
@@ -276,7 +307,10 @@ class FamilyTreeController extends GetxController {
   Future<Uint8List?> buildPdf() async {
     isExporting.value = true;
     try {
-      final image = await ExportService.captureWidget(boundaryKey, pixelRatio: 1.6);
+      final image = await ExportService.captureWidget(
+        boundaryKey,
+        pixelRatio: 1.6,
+      );
       final bytes = await ExportService.buildTreePdf(
         familyName: family.value?.displayName ?? 'ຄອບຄົວ',
         surname: family.value?.surname ?? '',
@@ -295,24 +329,43 @@ class FamilyTreeController extends GetxController {
   Future<void> exportPdf() async {
     final bytes = await buildPdf();
     if (bytes == null) return;
-    await ExportService.printPdf(bytes, name: 'family-tree-${family.value?.surname ?? 'root'}');
+    await ExportService.printPdf(
+      bytes,
+      name: 'family-tree-${family.value?.surname ?? 'root'}',
+    );
   }
 
   Future<void> sharePdf() async {
     final bytes = await buildPdf();
     if (bytes == null) return;
-    await ExportService.sharePdf(bytes, name: 'family-tree-${family.value?.surname ?? 'root'}');
+    await ExportService.sharePdf(
+      bytes,
+      name: 'family-tree-${family.value?.surname ?? 'root'}',
+    );
   }
 
-  Future<Uint8List?> captureImage() => ExportService.captureWidget(boundaryKey, pixelRatio: 2.0);
+  Future<Uint8List?> captureImage() =>
+      ExportService.captureWidget(boundaryKey, pixelRatio: 2.0);
 
   /// ສະມາຊິກທີ່ສາມາດເປັນພໍ່ແມ່ໄດ້ (ລຸ້ນກ່ອນໜ້າ ຫຼື ເທົ່າກັນ)
-  List<FamilyMember> possibleParents({int generation = 99, String? excludeId}) => members
-      .where((m) => m.id != excludeId && m.generation < generation && m.status != MemberStatus.deceased)
+  List<FamilyMember> possibleParents({
+    int generation = 99,
+    String? excludeId,
+  }) => members
+      .where(
+        (m) =>
+            m.id != excludeId &&
+            m.generation < generation &&
+            m.status != MemberStatus.deceased,
+      )
       .toList();
 
-  List<FamilyMember> possibleSpouses({int generation = 99, String? excludeId}) =>
-      members.where((m) => m.id != excludeId && m.generation == generation).toList();
+  List<FamilyMember> possibleSpouses({
+    int generation = 99,
+    String? excludeId,
+  }) => members
+      .where((m) => m.id != excludeId && m.generation == generation)
+      .toList();
 
   /// ລາຍຊື່ສະມາຊິກແຍກຕາມລຸ້ນ (ສຳລັບໂໝດລາຍການ)
   Map<int, List<FamilyMember>> get groupedByGeneration {

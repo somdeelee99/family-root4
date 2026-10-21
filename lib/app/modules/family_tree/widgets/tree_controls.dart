@@ -35,20 +35,20 @@ class TreeControls extends StatelessWidget {
   }
 
   Widget _button(IconData icon, VoidCallback onTap) => Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        elevation: 2,
-        shadowColor: AppColors.primaryDark.withValues(alpha: 0.2),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: SizedBox(
-            width: 38.w,
-            height: 38.w,
-            child: Icon(icon, size: 19.sp, color: AppColors.primary),
-          ),
-        ),
-      );
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12.r),
+    elevation: 2,
+    shadowColor: AppColors.primaryDark.withValues(alpha: 0.2),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: SizedBox(
+        width: 38.w,
+        height: 38.w,
+        child: Icon(icon, size: 19.sp, color: AppColors.primary),
+      ),
+    ),
+  );
 }
 
 /// ຄຳອະທິບາຍສັນຍະລັກຂອງຜັງ
@@ -80,17 +80,18 @@ class TreeLegend extends StatelessWidget {
   }
 
   Widget _item(Color color, String label) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 8.w,
-            height: 8.w,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-          SizedBox(width: 5.w),
-          Text(label,
-              style:
-                  TextStyle(fontSize: 10.sp, color: AppColors.textSecondary)),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 8.w,
+        height: 8.w,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+      SizedBox(width: 5.w),
+      Text(
+        label,
+        style: TextStyle(fontSize: 10.sp, color: AppColors.textSecondary),
+      ),
+    ],
+  );
 }

@@ -118,16 +118,19 @@ class MemberFormController extends GetxController {
   /// ແນະນຳລຸ້ນອັດຕະໂນມັດ (ລຸ້ນສູງສຸດ + 1)
   int _suggestGeneration() {
     if (allMembers.isEmpty) return 1;
-    final max =
-        allMembers.map((m) => m.generation).reduce((a, b) => a > b ? a : b);
+    final max = allMembers
+        .map((m) => m.generation)
+        .reduce((a, b) => a > b ? a : b);
     return max >= 1 ? max + 1 : 1;
   }
 
   // ==================== ເລືອກຮູບ ====================
   Future<void> pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
-      final XFile? picked =
-          await _picker.pickImage(source: source, imageQuality: 90);
+      final XFile? picked = await _picker.pickImage(
+        source: source,
+        imageQuality: 90,
+      );
       if (picked == null) return;
 
       final cropped = await ImageCropper().cropImage(
@@ -140,10 +143,7 @@ class MemberFormController extends GetxController {
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),
-          IOSUiSettings(
-            title: 'ປັບຮູບໂປຣໄຟລ໌',
-            aspectRatioLockEnabled: true,
-          ),
+          IOSUiSettings(title: 'ປັບຮູບໂປຣໄຟລ໌', aspectRatioLockEnabled: true),
         ],
       );
 
@@ -178,10 +178,14 @@ class MemberFormController extends GetxController {
             ),
             if (avatarUrl.value != null)
               ListTile(
-                leading:
-                    const Icon(Icons.delete_outline_rounded, color: Colors.red),
-                title:
-                    const Text('ລຶບຮູບ', style: TextStyle(color: Colors.red)),
+                leading: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.red,
+                ),
+                title: const Text(
+                  'ລຶບຮູບ',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onTap: () {
                   Get.back();
                   pickedImage.value = null;
@@ -208,10 +212,13 @@ class MemberFormController extends GetxController {
   }
 
   /// ຜູ້ທີ່ສາມາດເປັນພໍ່ແມ່ (ລຸ້ນກ່ອນໜ້າ)
-  List<FamilyMember> get parentCandidates => allMembers
-      .where((m) => m.id != memberId.value && m.generation < generation.value)
-      .toList()
-    ..sort((a, b) => a.generation.compareTo(b.generation));
+  List<FamilyMember> get parentCandidates =>
+      allMembers
+          .where(
+            (m) => m.id != memberId.value && m.generation < generation.value,
+          )
+          .toList()
+        ..sort((a, b) => a.generation.compareTo(b.generation));
 
   /// ຜູ້ທີ່ສາມາດເປັນຄູ່ສົມລົດ / ອ້າຍເອື້ອຍນ້ອງ (ລຸ້ນດຽວກັນ)
   List<FamilyMember> get sameGenerationCandidates => allMembers
@@ -239,7 +246,8 @@ class MemberFormController extends GetxController {
 
     isSaving.value = true;
     UiHelpers.loading(
-        message: isEdit ? 'ກຳລັງອັບເດດ...' : 'ກຳລັງເພີ່ມສະມາຊິກ...');
+      message: isEdit ? 'ກຳລັງອັບເດດ...' : 'ກຳລັງເພີ່ມສະມາຊິກ...',
+    );
 
     try {
       var finalAvatar = avatarUrl.value;
@@ -264,8 +272,9 @@ class MemberFormController extends GetxController {
           status: status.value,
           generation: generation.value,
           birthDate: birthDate.value,
-          deathDate:
-              status.value == MemberStatus.deceased ? deathDate.value : null,
+          deathDate: status.value == MemberStatus.deceased
+              ? deathDate.value
+              : null,
           phone: phoneController.text.trim(),
           whatsapp: whatsappController.text.trim(),
           email: emailController.text.trim(),
@@ -290,8 +299,9 @@ class MemberFormController extends GetxController {
           status: status.value,
           generation: generation.value,
           birthDate: birthDate.value,
-          deathDate:
-              status.value == MemberStatus.deceased ? deathDate.value : null,
+          deathDate: status.value == MemberStatus.deceased
+              ? deathDate.value
+              : null,
           phone: phoneController.text.trim(),
           whatsapp: whatsappController.text.trim(),
           email: emailController.text.trim(),

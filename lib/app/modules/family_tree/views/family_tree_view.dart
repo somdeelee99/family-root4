@@ -32,7 +32,9 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
           children: [
             _header(),
             Obx(
-              () => controller.isTreeMode.value ? Expanded(child: _treeCanvas()) : Expanded(child: _listView()),
+              () => controller.isTreeMode.value
+                  ? Expanded(child: _treeCanvas())
+                  : Expanded(child: _listView()),
             ),
           ],
         ),
@@ -76,7 +78,11 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.account_tree_rounded, size: 18.sp, color: Colors.white),
+                child: Icon(
+                  Icons.account_tree_rounded,
+                  size: 18.sp,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(width: 11.w),
               Expanded(
@@ -94,7 +100,10 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                     Obx(
                       () => Text(
                         '${controller.members.length} ຄົນ • ${controller.family.value?.surname ?? ''}',
-                        style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 11.5.sp,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ],
@@ -108,8 +117,14 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                 ),
               ),
               PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert_rounded, size: 22.sp, color: AppColors.textSecondary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 22.sp,
+                  color: AppColors.textSecondary,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
                 onSelected: (value) {
                   switch (value) {
                     case 'pdf':
@@ -157,24 +172,24 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
           ),
           SizedBox(height: 12.h),
           // ---------- ຄົ້ນຫາ ----------
-          TextField(
-            controller: controller.searchController,
-            onSubmitted: (_) => controller.focusFirstMatch(),
-            style: TextStyle(fontSize: 14.sp),
-            decoration: InputDecoration(
-              hintText: AppStrings.searchMember,
-              isDense: true,
-              prefixIcon: Icon(Icons.search_rounded, size: 20.sp),
-              suffixIcon: Obx(
-                () => controller.query.value.isEmpty
-                    ? const SizedBox.shrink()
-                    : IconButton(
-                        onPressed: controller.clearSearch,
-                        icon: Icon(Icons.close_rounded, size: 18.sp),
-                      ),
-              ),
-            ),
-          ),
+          // TextField(
+          //   controller: controller.searchController,
+          //   onSubmitted: (_) => controller.focusFirstMatch(),
+          //   style: TextStyle(fontSize: 14.sp),
+          //   decoration: InputDecoration(
+          //     hintText: AppStrings.searchMember,
+          //     isDense: true,
+          //     prefixIcon: Icon(Icons.search_rounded, size: 20.sp),
+          //     suffixIcon: Obx(
+          //       () => controller.query.value.isEmpty
+          //           ? const SizedBox.shrink()
+          //           : IconButton(
+          //               onPressed: controller.clearSearch,
+          //               icon: Icon(Icons.close_rounded, size: 18.sp),
+          //             ),
+          //     ),
+          //   ),
+          // ),
           // ---------- ແຈ້ງເຕືອນ read-only ສຳລັບ member ----------
           Obx(
             () => controller.isAdmin
@@ -183,12 +198,19 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                     padding: EdgeInsets.only(top: 10.h),
                     child: Row(
                       children: [
-                        Icon(Icons.lock_outline_rounded, size: 14.sp, color: AppColors.accent),
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 14.sp,
+                          color: AppColors.accent,
+                        ),
                         SizedBox(width: 6.w),
                         Expanded(
                           child: Text(
                             AppStrings.readOnlyBanner,
-                            style: TextStyle(fontSize: 11.sp, color: const Color(0xFF9A6A11)),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: const Color(0xFF9A6A11),
+                            ),
                           ),
                         ),
                       ],
@@ -200,7 +222,10 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
     );
   }
 
-  Widget _toggle({required bool isTree, required ValueChanged<bool> onChanged}) {
+  Widget _toggle({
+    required bool isTree,
+    required ValueChanged<bool> onChanged,
+  }) {
     return Container(
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
@@ -209,7 +234,11 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
       ),
       child: Row(
         children: [
-          _toggleItem(Icons.account_tree_rounded, isTree, () => onChanged(true)),
+          _toggleItem(
+            Icons.account_tree_rounded,
+            isTree,
+            () => onChanged(true),
+          ),
           _toggleItem(Icons.list_alt_rounded, !isTree, () => onChanged(false)),
         ],
       ),
@@ -217,21 +246,30 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
   }
 
   Widget _toggleItem(IconData icon, bool active, VoidCallback onTap) => InkWell(
-        onTap: onTap,
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(30.r),
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: active ? Colors.white : Colors.transparent,
         borderRadius: BorderRadius.circular(30.r),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 6.h),
-          decoration: BoxDecoration(
-            color: active ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(30.r),
-            boxShadow: active
-                ? [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.1), blurRadius: 6)]
-                : null,
-          ),
-          child: Icon(icon, size: 17.sp, color: active ? AppColors.primary : AppColors.textHint),
-        ),
-      );
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: AppColors.primaryDark.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                ),
+              ]
+            : null,
+      ),
+      child: Icon(
+        icon,
+        size: 17.sp,
+        color: active ? AppColors.primary : AppColors.textHint,
+      ),
+    ),
+  );
 
   // ==================== ຜັງ (canvas) ====================
   Widget _treeCanvas() {
@@ -246,7 +284,9 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
             : 'Admin ຍັງບໍ່ໄດ້ເພີ່ມສະມາຊິກໃນຜັງ',
         icon: Icons.account_tree_outlined,
         actionLabel: controller.isAdmin ? AppStrings.addNode : null,
-        onAction: controller.isAdmin ? () => Get.toNamed(Routes.MEMBER_FORM) : null,
+        onAction: controller.isAdmin
+            ? () => Get.toNamed(Routes.MEMBER_FORM)
+            : null,
       );
     }
 
@@ -284,7 +324,8 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                       top: node.offset.dy,
                       child: TreeNodeCard(
                         member: node.member,
-                        isSelected: controller.selected.value?.id == node.member.id,
+                        isSelected:
+                            controller.selected.value?.id == node.member.id,
                         isHighlighted: node.isHighlighted,
                         onTap: () {
                           controller.selected.value = node.member;
@@ -295,7 +336,10 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                           );
                         },
                         onLongPress: controller.isAdmin
-                            ? () => Get.toNamed(Routes.MEMBER_FORM, arguments: {'memberId': node.member.id})
+                            ? () => Get.toNamed(
+                                Routes.MEMBER_FORM,
+                                arguments: {'memberId': node.member.id},
+                              )
                             : null,
                       ),
                     ),
@@ -318,11 +362,7 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
         ),
 
         // ---------- ຄຳອະທິບາຍ ----------
-        Positioned(
-          left: 14.w,
-          bottom: 16.h,
-          child: const TreeLegend(),
-        ),
+        Positioned(left: 14.w, bottom: 16.h, child: const TreeLegend()),
       ],
     );
   }
@@ -335,17 +375,23 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
       if (node.offset.dy > maxY) maxY = node.offset.dy;
     }
     return Size(
-      maxX + FamilyTreeController.nodeWidth + FamilyTreeController.canvasPadding,
+      maxX +
+          FamilyTreeController.nodeWidth +
+          FamilyTreeController.canvasPadding,
       maxY + FamilyTreeController.nodeHeight + 140,
     );
   }
 
   // ==================== ໂໝດລາຍການ ====================
   Widget _listView() {
-    if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
+    if (controller.isLoading.value)
+      return const Center(child: CircularProgressIndicator());
     final grouped = controller.groupedByGeneration;
     if (grouped.isEmpty) {
-      return const EmptyState(title: AppStrings.noMembers, icon: Icons.groups_outlined);
+      return const EmptyState(
+        title: AppStrings.noMembers,
+        icon: Icons.groups_outlined,
+      );
     }
 
     final query = controller.query.value.toLowerCase();
@@ -382,25 +428,29 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
   }
 
   Widget _generationHeader(int generation, int count) => Row(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 5.h),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(30.r),
-            ),
-            child: Text(
-              'ລຸ້ນທີ $generation',
-              style: TextStyle(fontSize: 11.5.sp, fontWeight: FontWeight.w800, color: Colors.white),
-            ),
+    children: [
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 5.h),
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(30.r),
+        ),
+        child: Text(
+          'ລຸ້ນທີ $generation',
+          style: TextStyle(
+            fontSize: 11.5.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
           ),
-          SizedBox(width: 8.w),
-          Text(
-            '$count ຄົນ',
-            style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
-          ),
-        ],
-      );
+        ),
+      ),
+      SizedBox(width: 8.w),
+      Text(
+        '$count ຄົນ',
+        style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+      ),
+    ],
+  );
 
   /// ບັນທຶກຜັງເປັນຮູບ PNG ໄປໃນເຄື່ອງ
   Future<void> _saveImage() async {
