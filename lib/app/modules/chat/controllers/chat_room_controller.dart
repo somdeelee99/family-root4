@@ -10,6 +10,7 @@ import '../../../core/utils/ui_helpers.dart';
 import '../../../data/models/app_user.dart';
 import '../../../data/models/chat_message.dart';
 import '../../../data/repositories/chat_repository.dart';
+import '../../../data/repositories/moderation_repository.dart';
 import '../../../data/repositories/storage_repository.dart';
 import '../../../data/repositories/user_repository.dart';
 
@@ -21,9 +22,15 @@ class ChatRoomController extends GetxController {
   final ChatRepository _chatRepo = ChatRepository();
   final UserRepository _userRepo = UserRepository();
   final StorageRepository _storageRepo = StorageRepository();
+  final ModerationRepository _moderationRepo = ModerationRepository();
   final ImagePicker _picker = ImagePicker();
 
   StreamSubscription<List<ChatMessage>>? _messagesSub;
+  StreamSubscription<Set<String>>? _blocksSub;
+
+  /// ຂໍ້ຄວາມທັງໝົດກ່ອນກັ່ນຕອງຜູ້ທີ່ຖືກບລັອກ
+  final List<ChatMessage> _allMessages = <ChatMessage>[];
+  Set<String> _blockedUids = <String>{};
 
   final TextEditingController textController = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -33,6 +40,7 @@ class ChatRoomController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxBool isSending = false.obs;
   final RxBool showEmojiPicker = false.obs;
+  final RxBool isOtherBlocked = false.obs;
 
   late String roomId;
   late String otherUid;
@@ -55,6 +63,7 @@ class ChatRoomController extends GetxController {
     }
 
     _listen();
+    _listenBlocks();
     _loadOtherUser();
     _markRead();
   }
@@ -68,7 +77,10 @@ class ChatRoomController extends GetxController {
         .messagesStream(familyId, roomId)
         .listen(
           (list) {
-            messages.assignAll(list);
+            _allMessages
+              ..clear()
+              ..addAll(list);
+            _applyBlockFilter();
             isLoading.value = false;
             _scrollToBottom();
             _markRead();
@@ -78,6 +90,26 @@ class ChatRoomController extends GetxController {
             UiHelpers.error(UiHelpers.mapError(e));
           },
         );
+  }
+
+  void _listenBlocks() {
+    if (myUid.isEmpty) return;
+    _blocksSub = _moderationRepo.blockedUidsStream(myUid).listen((uids) {
+      _blockedUids = uids;
+      isOtherBlocked.value = uids.contains(otherUid);
+      _applyBlockFilter();
+    });
+  }
+
+  /// ເຊື່ອງຂໍ້ຄວາມຈາກຜູ້ທີ່ຖືກບລັອກ
+  void _applyBlockFilter() {
+    if (_blockedUids.isEmpty) {
+      messages.assignAll(_allMessages);
+      return;
+    }
+    messages.assignAll(
+      _allMessages.where((m) => !_blockedUids.contains(m.senderId)),
+    );
   }
 
   Future<void> _loadOtherUser() async {
@@ -99,6 +131,7 @@ class ChatRoomController extends GetxController {
   }
 
   Future<void> sendMessage() async {
+    if (isOtherBlocked.value) return;
     final text = textController.text.trim();
     if (text.isEmpty) return;
 
@@ -128,6 +161,7 @@ class ChatRoomController extends GetxController {
 
   /// ສົ່ງຮູບພາບໃນການສົນທະນາ
   Future<void> sendImage({ImageSource source = ImageSource.gallery}) async {
+    if (isOtherBlocked.value) return;
     final user = AuthService.to.user.value;
     if (user == null) return;
 
@@ -179,6 +213,60 @@ class ChatRoomController extends GetxController {
     );
   }
 
+  /// ບລັອກຜູ້ໃຊ້ນີ້ (Play Store UGC requirement)
+  Future<void> blockOtherUser() async {
+    if (otherUid.isEmpty) return;
+    final name = otherUser.value?.displayName ?? 'ສະມາຊິກນີ້';
+    final confirmed = await UiHelpers.confirm(
+      title: 'ບລັອກ $name?',
+      message:
+          'ທ່ານຈະບໍ່ເຫັນຂໍ້ຄວາມ ແລະ ບໍ່ສາມາດສົ່ງຂໍ້ຄວາມຫາຜູ້ນີ້ໄດ້. '
+          'ສາມາດຍົກເລີກການບລັອກໄດ້ພາຍຫຼັງ.',
+      confirmText: 'ບລັອກ',
+      isDanger: true,
+      icon: Icons.block_rounded,
+    );
+    if (!confirmed) return;
+    try {
+      await _moderationRepo.blockUser(
+        myUid: myUid,
+        blockedUid: otherUid,
+        blockedName: name,
+      );
+      UiHelpers.success('ບລັອກ $name ແລ້ວ');
+    } catch (e) {
+      UiHelpers.error(UiHelpers.mapError(e));
+    }
+  }
+
+  Future<void> unblockOtherUser() async {
+    if (otherUid.isEmpty) return;
+    try {
+      await _moderationRepo.unblockUser(myUid: myUid, blockedUid: otherUid);
+      UiHelpers.success('ຍົກເລີກການບລັອກແລ້ວ');
+    } catch (e) {
+      UiHelpers.error(UiHelpers.mapError(e));
+    }
+  }
+
+  /// ສົ່ງລາຍງານຜູ້ໃຊ້/ເນື້ອຫາໃຫ້ທີມຜູ້ດູແລ
+  Future<void> reportOtherUser(String reason, {String? details}) async {
+    if (otherUid.isEmpty) return;
+    try {
+      await _moderationRepo.reportUser(
+        familyId: familyId,
+        reporterId: myUid,
+        reportedUid: otherUid,
+        reason: reason,
+        details: details,
+        roomId: roomId,
+      );
+      UiHelpers.success('ສົ່ງລາຍງານແລ້ວ. ທີມງານຈະກວດສອບໂດຍໄວ');
+    } catch (e) {
+      UiHelpers.error(UiHelpers.mapError(e));
+    }
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!scrollController.hasClients) return;
@@ -193,6 +281,7 @@ class ChatRoomController extends GetxController {
   @override
   void onClose() {
     _messagesSub?.cancel();
+    _blocksSub?.cancel();
     textController.dispose();
     scrollController.dispose();
     super.onClose();

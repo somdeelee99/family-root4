@@ -18,8 +18,8 @@ class TreeConnectorPainter extends CustomPainter {
 
     // ---------- ເສັ້ນພໍ່ແມ່ -> ລູກ ----------
     final childPaint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.42)
-      ..strokeWidth = 1.8
+      ..color = AppColors.primary.withValues(alpha: 0.34)
+      ..strokeWidth = 1.55
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
@@ -64,8 +64,8 @@ class TreeConnectorPainter extends CustomPainter {
     // ---------- ເສັ້ນຜົວ/ເມຍ ----------
     final spousePairs = <String>{};
     final spousePaint = Paint()
-      ..color = AppColors.female.withValues(alpha: 0.55)
-      ..strokeWidth = 2.2
+      ..color = AppColors.female.withValues(alpha: 0.68)
+      ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
     for (final node in nodes) {
@@ -125,7 +125,9 @@ class TreeConnectorPainter extends CustomPainter {
   }
 
   void _drawHeart(Canvas canvas, Offset center) {
-    final paint = Paint()..color = AppColors.female;
+    final paint = Paint()
+      ..color = AppColors.female
+      ..isAntiAlias = true;
     final path = Path();
     const s = 4.6;
     path.moveTo(center.dx, center.dy + s * 0.9);

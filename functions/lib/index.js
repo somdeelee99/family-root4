@@ -16,6 +16,7 @@ const app_1 = require("firebase-admin/app");
 const auth_1 = require("firebase-admin/auth");
 const firestore_1 = require("firebase-admin/firestore");
 const messaging_1 = require("firebase-admin/messaging");
+const storage_1 = require("firebase-admin/storage");
 const https_1 = require("firebase-functions/v2/https");
 const firestore_2 = require("firebase-functions/v2/firestore");
 const firebase_functions_1 = require("firebase-functions");
@@ -92,36 +93,123 @@ exports.createMemberAccount = (0, https_1.onCall)({ region: "asia-southeast1", c
     return { uid: userRecord.uid };
 });
 /**
- * ລຶບບັນຊີຜູ້ໃຊ້ອອກຈາກ Firebase Auth (admin ເທົ່ານັ້ນ)
+ * ລຶບບັນຊີຜູ້ໃຊ້ອອກຈາກ Firebase Auth + Firestore + Storage.
+ *
+ * - ຜູ້ໃຊ້ລຶບບັນຊີຕົນເອງໄດ້ (Play Store Data deletion policy)
+ * - Admin ລຶບບັນຊີສະມາຊິກໃນຄອບຄົວດຽວກັນໄດ້
+ * - ຖ້າເຈົ້າຂອງຄອບຄົວລຶບບັນຊີ, ຈະໂອນສິດໃຫ້ admin/ສະມາຊິກຄົນອື່ນ
+ *   ຫຼື ລຶບຂໍ້ມູນຄອບຄົວຖ້າບໍ່ມີຄົນອື່ນເຫຼືອ
  */
 exports.deleteUserAccount = (0, https_1.onCall)({ region: "asia-southeast1", cors: true }, async (request) => {
     const callerUid = request.auth?.uid;
-    if (!callerUid)
+    if (!callerUid) {
         throw new https_1.HttpsError("unauthenticated", "ຕ້ອງເຂົ້າລະບົບກ່ອນ");
-    const caller = (await db.collection("users").doc(callerUid).get()).data();
-    if (!caller || caller.role !== "admin") {
-        throw new https_1.HttpsError("permission-denied", "ສະເພາະ Admin ຈຶ່ງລຶບບັນຊີໄດ້");
     }
     const { uid } = request.data ?? {};
-    if (!uid)
+    if (!uid || typeof uid !== "string") {
         throw new https_1.HttpsError("invalid-argument", "ຕ້ອງສົ່ງ uid");
-    if (uid === callerUid) {
-        throw new https_1.HttpsError("failed-precondition", "ບໍ່ສາມາດລຶບບັນຊີຕົນເອງໄດ້");
     }
-    const target = (await db.collection("users").doc(uid).get()).data();
-    if (!target ||
-        (caller.familyId &&
-            target.familyId &&
-            caller.familyId !== target.familyId)) {
-        throw new https_1.HttpsError("permission-denied", "ບໍ່ສາມາດລຶບບັນຊີຄອບຄົວອື່ນໄດ້");
+    const isSelf = uid === callerUid;
+    const caller = (await db.collection("users").doc(callerUid).get()).data();
+    if (!isSelf && (!caller || caller.role !== "admin")) {
+        throw new https_1.HttpsError("permission-denied", "ສະເພາະ Admin ຈຶ່ງລຶບບັນຊີຄົນອື່ນໄດ້");
     }
+    const targetRef = db.collection("users").doc(uid);
+    const target = (await targetRef.get()).data();
+    if (!isSelf) {
+        if (!target ||
+            (caller?.familyId &&
+                target.familyId &&
+                caller.familyId !== target.familyId)) {
+            throw new https_1.HttpsError("permission-denied", "ບໍ່ສາມາດລຶບບັນຊີຄອບຄົວອື່ນໄດ້");
+        }
+    }
+    const familyId = target?.familyId ?? (isSelf ? caller?.familyId : undefined);
+    // ປ້ອງກັນ admin ລຶບເຈົ້າຂອງຄອບຄົວ (ເວັ້ນແຕ່ເຈົ້າຕົວເອງລຶບຕົນເອງ)
+    let familySnap = null;
+    if (familyId) {
+        familySnap = await db.collection("families").doc(familyId).get();
+        if (!isSelf && familySnap.data()?.ownerId === uid) {
+            throw new https_1.HttpsError("failed-precondition", "ບໍ່ສາມາດລຶບບັນຊີເຈົ້າຂອງຄອບຄົວໄດ້ - ກະລຸນາໂອນສິດກ່ອນ");
+        }
+    }
+    // ລຶບ Auth account ກ່ອນ. ຖ້າລຶບບໍ່ສຳເລັດ ຢ່າໄປລຶບຂໍ້ມູນອື່ນ
+    // ເພື່ອບໍ່ໃຫ້ເກີດສະຖານະ "login ໄດ້ແຕ່ profile ຫາຍ".
     try {
         await auth.deleteUser(uid);
     }
     catch (error) {
-        firebase_functions_1.logger.warn(`ລຶບ user ໃນ Auth ບໍ່ສຳເລັດ: ${error.message}`);
+        const code = error.code;
+        if (code !== "auth/user-not-found") {
+            firebase_functions_1.logger.error(`ລຶບ user ໃນ Auth ບໍ່ສຳເລັດ: ${error.message}`);
+            throw new https_1.HttpsError("internal", "ລຶບບັນຊີໃນ Firebase Auth ບໍ່ສຳເລັດ");
+        }
     }
-    await db.collection("users").doc(uid).delete();
+    // ໂອນສິດເຈົ້າຂອງຄອບຄົວ ຫຼື ລຶບຄອບຄົວທີ່ບໍ່ມີສະມາຊິກເຫຼືອ
+    if (familyId && familySnap?.exists) {
+        try {
+            const familyRef = db.collection("families").doc(familyId);
+            if (familySnap.data()?.ownerId === uid) {
+                const familyUsers = await db
+                    .collection("users")
+                    .where("familyId", "==", familyId)
+                    .get();
+                const candidates = familyUsers.docs.filter((doc) => doc.id !== uid);
+                const successor = candidates.find((doc) => doc.data().role === "admin") ??
+                    candidates[0];
+                if (successor) {
+                    await familyRef.update({
+                        ownerId: successor.id,
+                        updatedAt: firestore_1.FieldValue.serverTimestamp(),
+                    });
+                    if (successor.data().role !== "admin") {
+                        await successor.ref.update({
+                            role: "admin",
+                            updatedAt: firestore_1.FieldValue.serverTimestamp(),
+                        });
+                    }
+                }
+                else {
+                    // ບໍ່ມີໃຜເຫຼືອ - ລຶບ family + members + chats + activity
+                    await db.recursiveDelete(familyRef);
+                }
+            }
+            // ຮັກສາ node ໃນຜັງໄວ້ ແຕ່ຕັດການເຊື່ອມກັບ login account
+            try {
+                const linkedMembers = await db
+                    .collection("families")
+                    .doc(familyId)
+                    .collection("members")
+                    .where("linkedUserId", "==", uid)
+                    .get();
+                await Promise.all(linkedMembers.docs.map((doc) => doc.ref.update({
+                    linkedUserId: null,
+                    isAccountHolder: false,
+                    updatedAt: firestore_1.FieldValue.serverTimestamp(),
+                })));
+            }
+            catch (error) {
+                firebase_functions_1.logger.warn(`ຕັດ linkedUserId ບໍ່ສຳເລັດ: ${error.message}`);
+            }
+        }
+        catch (error) {
+            firebase_functions_1.logger.error(`ໂອນສິດ/ລຶບຂໍ້ມູນຄອບຄົວບໍ່ສຳເລັດ: ${error.message}`);
+        }
+    }
+    try {
+        await targetRef.delete();
+    }
+    catch (error) {
+        firebase_functions_1.logger.warn(`ລຶບ users/${uid} ບໍ່ສຳເລັດ: ${error.message}`);
+    }
+    // ລຶບຮູບໂປຣໄຟລ໌ (avatars/{uid}/...)
+    try {
+        await (0, storage_1.getStorage)().bucket().deleteFiles({ prefix: `avatars/${uid}/` });
+    }
+    catch (error) {
+        firebase_functions_1.logger.warn(`ລຶບຮູບໂປຣໄຟລ໌ບໍ່ສຳເລັດ: ${error.message}`);
+    }
+    firebase_functions_1.logger.info(`${isSelf ? "ຜູ້ໃຊ້" : `Admin ${callerUid}`} ລຶບບັນຊີ ${uid}`);
     return { success: true };
 });
 /**

@@ -1,4 +1,6 @@
+import 'package:family_root/app/modules/family_tree/views/member_form_view.dart';
 import 'package:get/get.dart';
+
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/auth_view.dart';
 import '../modules/chat/bindings/chat_room_binding.dart';
@@ -6,7 +8,6 @@ import '../modules/chat/views/chat_room_view.dart';
 import '../modules/family_setup/bindings/family_setup_binding.dart';
 import '../modules/family_setup/views/family_setup_view.dart';
 import '../modules/family_tree/bindings/member_form_binding.dart';
-import '../modules/family_tree/views/member_form_view.dart';
 import '../modules/members/bindings/account_form_binding.dart';
 import '../modules/members/bindings/member_detail_binding.dart';
 import '../modules/members/views/account_form_view.dart';
@@ -90,9 +91,11 @@ class AppPages {
   ];
 
   // ສຳລັບການນຳທາງດ້ວຍ GetX
-  static Future<T?>? toPage<T>(String route,
-          {dynamic arguments, Map<String, String>? parameters}) =>
-      Get.toNamed<T>(route, arguments: arguments, parameters: parameters);
+  static Future<T?>? toPage<T>(
+    String route, {
+    dynamic arguments,
+    Map<String, String>? parameters,
+  }) => Get.toNamed<T>(route, arguments: arguments, parameters: parameters);
 
   static Future<T?>? offAll<T>(String route, {dynamic arguments}) =>
       Get.offAllNamed<T>(route, arguments: arguments);

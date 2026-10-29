@@ -58,10 +58,20 @@ class NotificationService {
     await _local.initialize(
       settings: InitializationSettings(android: androidInit, iOS: iosInit),
     );
-    await _local
+    final androidPlugin = _local
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(_channel);
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.createNotificationChannel(_channel);
+
+    // Android 13+ ຕ້ອງຂໍ POST_NOTIFICATIONS ຕອນ runtime ຈຶ່ງຈະສະແດງແຈ້ງເຕືອນໄດ້.
+    // FirebaseMessaging.requestPermission() ບໍ່ຄຸມສິດນີ້ໃນ Android.
+    if (Platform.isAndroid) {
+      try {
+        await androidPlugin?.requestNotificationsPermission();
+      } catch (e) {
+        _log.w('ຂໍສິດແຈ້ງເຕືອນບໍ່ສຳເລັດ: $e');
+      }
+    }
 
     // Foreground handler
     FirebaseMessaging.onMessage.listen(_showForeground);

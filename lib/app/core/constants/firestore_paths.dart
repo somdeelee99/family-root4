@@ -16,6 +16,8 @@ class FirestorePaths {
   static const String messages = 'messages';
   static const String activity = 'activity';
   static const String notifications = 'notifications';
+  static const String blockedUsers = 'blockedUsers';
+  static const String reports = 'reports';
 
   static String userDoc(String uid) => '$users/$uid';
   static String familyDoc(String familyId) => '$families/$familyId';

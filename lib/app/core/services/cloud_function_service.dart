@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
@@ -9,7 +10,13 @@ class CloudFunctionService {
   static final CloudFunctionService instance = CloudFunctionService._internal();
 
   final Logger _log = Logger(printer: PrettyPrinter(methodCount: 0));
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+
+  /// Cloud Functions ຖືກ deploy ຢູ່ region ດຽວກັນກັບ functions/src/index.ts
+  /// (asia-southeast1). ຖ້າບໍ່ກຳນົດ region ຈະເອີ້ນ us-central1 ແລ້ວໄດ້ not-found.
+  static const String region = 'asia-southeast1';
+  final FirebaseFunctions _functions = FirebaseFunctions.instanceFor(
+    region: region,
+  );
 
   /// ສ້າງບັນຊີ member (ເຮັດຢູ່ເຊີບເວີ ເພື່ອບໍ່ໃຫ້ admin ອອກຈາກລະບົບ)
   /// ຖ້າ Cloud Function ຍັງບໍ່ຖືກ deploy ຈະສົ່ງຄືນ null ແລະ ແອັບຈະໃຊ້ວິທີສຳຮອງ (secondary auth)
@@ -56,12 +63,29 @@ class CloudFunctionService {
   /// ລຶບບັນຊີຜູ້ໃຊ້ອອກຈາກ Firebase Auth ຢ່າງສົມບູນ
   Future<bool> deleteUserAccount(String uid) async {
     try {
-      final callable = _functions.httpsCallable('deleteUserAccount');
+      final callable = _functions.httpsCallable(
+        'deleteUserAccount',
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 60)),
+      );
       await callable.call<void>({'uid': uid});
       return true;
     } catch (e) {
       _log.w('ລຶບບັນຊີດ້ວຍ Cloud Function ບໍ່ສຳເລັດ: $e');
       return false;
     }
+  }
+
+  /// ລຶບບັນຊີຂອງຕົນເອງ (Play Store Data deletion policy).
+  /// ຖ້າ Cloud Function ບໍ່ສຳເລັດ ຈະ throw ເພື່ອບໍ່ໃຫ້ຜູ້ໃຊ້ເຂົ້າໃຈຜິດວ່າລຶບແລ້ວ.
+  Future<void> deleteMyAccount() async {
+    final current = FirebaseAuth.instance.currentUser;
+    if (current == null) {
+      throw StateError('ບໍ່ໄດ້ເຂົ້າລະບົບ');
+    }
+    final callable = _functions.httpsCallable(
+      'deleteUserAccount',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 60)),
+    );
+    await callable.call<void>({'uid': current.uid});
   }
 }

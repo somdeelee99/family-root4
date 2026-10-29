@@ -39,8 +39,8 @@ service firebase.storage {
           firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
       }
 
-      // ອ່ານໄດ້ທຸກຄົນທີ່ເຂົ້າລະບົບ (ເນື່ອງຈາກ URL ມີ token ຢູ່ແລ້ວ)
-      allow read: if isSignedIn();
+      // ອ່ານໄດ້ສະເພາະສະມາຊິກຄອບຄົວດຽວກັນ (ບໍ່ໃຫ້ຄົນນອກຄອບຄົວອ່ານຮູບ)
+      allow read: if isSignedIn() && familyOf() == familyId;
 
       // ຮູບສະມາຊິກ ແລະ ຮູບປົກ ອັບໂຫຼດໄດ້ສະເພາະ admin
       allow write: if isAdminOfFamily() && isImage() && sizeLimitMb(8);

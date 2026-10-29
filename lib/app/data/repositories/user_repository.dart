@@ -240,14 +240,18 @@ class UserRepository {
     }, SetOptions(merge: true));
   }
 
-  /// ລຶບບັນຊີສະມາຊິກ (ລຶບໃນ Firestore ແລະ ພະຍາຍາມລຶບໃນ Firebase Auth ຜ່ານ Cloud Function)
+  /// ລຶບບັນຊີສະມາຊິກ (Firestore + Firebase Auth) ຜ່ານ Cloud Function.
+  ///
+  /// ຕ້ອງໃຫ້ Cloud Function ລຶບກ່ອນ; ຖ້າລຶບ users/{uid} ໃນແອັບກ່ອນ
+  /// function ຈະຫາ target ບໍ່ພົບ ແລ້ວ Auth account ຈະຄ້າງຢູ່.
+  /// ບໍ່ decrement memberCount ເພາະ memberCount ນັບ node ໃນຜັງ
+  /// (families/{id}/members) ບໍ່ແມ່ນບັນຊີ login.
   Future<void> deleteMemberAccount(String uid, {String? familyId}) async {
-    await _users.doc(uid).delete();
-    await CloudFunctionService.instance.deleteUserAccount(uid);
-    if (familyId != null) {
-      await _firestore.doc(FirestorePaths.familyDoc(familyId)).set({
-        'memberCount': FieldValue.increment(-1),
-      }, SetOptions(merge: true));
+    final ok = await CloudFunctionService.instance.deleteUserAccount(uid);
+    if (!ok) {
+      throw Exception(
+        'ລຶບບັນຊີບໍ່ສຳເລັດ - ກະລຸນາກວດສອບວ່າ Cloud Functions ຖືກ deploy ແລ້ວ',
+      );
     }
   }
 

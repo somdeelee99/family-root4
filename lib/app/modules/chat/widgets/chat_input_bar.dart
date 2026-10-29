@@ -41,8 +41,11 @@ class ChatInputBar extends GetView<ChatRoomController> {
                 ),
                 IconButton(
                   onPressed: () => controller.sendImage(),
-                  icon: Icon(Icons.image_outlined,
-                      size: 24.sp, color: AppColors.textSecondary),
+                  icon: Icon(
+                    Icons.image_outlined,
+                    size: 24.sp,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 Expanded(
                   child: Container(
@@ -62,7 +65,9 @@ class ChatInputBar extends GetView<ChatRoomController> {
                       decoration: InputDecoration(
                         hintText: 'ພິມຂໍ້ຄວາມ...',
                         hintStyle: TextStyle(
-                            fontSize: 13.5.sp, color: AppColors.textHint),
+                          fontSize: 13.5.sp,
+                          color: AppColors.textHint,
+                        ),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -90,10 +95,15 @@ class ChatInputBar extends GetView<ChatRoomController> {
                               width: 20.w,
                               height: 20.w,
                               child: const CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
-                          : Icon(Icons.send_rounded,
-                              size: 20.sp, color: Colors.white),
+                          : Icon(
+                              Icons.send_rounded,
+                              size: 20.sp,
+                              color: Colors.white,
+                            ),
                     ),
                   ),
                 ),
@@ -111,9 +121,7 @@ class ChatInputBar extends GetView<ChatRoomController> {
                         height: 256.h,
                         // bgColor: Colors.white,
                         checkPlatformCompatibility: true,
-                        emojiViewConfig: EmojiViewConfig(
-                          emojiSizeMax: 24.sp,
-                        ),
+                        emojiViewConfig: EmojiViewConfig(emojiSizeMax: 24.sp),
                         categoryViewConfig: CategoryViewConfig(
                           backgroundColor: Colors.white,
                           indicatorColor: AppColors.primary,
@@ -121,8 +129,9 @@ class ChatInputBar extends GetView<ChatRoomController> {
                           iconColorSelected: AppColors.primary,
                         ),
                         skinToneConfig: const SkinToneConfig(enabled: false),
-                        bottomActionBarConfig:
-                            const BottomActionBarConfig(enabled: false),
+                        bottomActionBarConfig: const BottomActionBarConfig(
+                          enabled: false,
+                        ),
                       ),
                     ),
                   )

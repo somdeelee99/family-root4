@@ -42,7 +42,11 @@ class ChatRoomTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(color: unread > 0 ? AppColors.primary.withValues(alpha: 0.35) : AppColors.divider),
+            border: Border.all(
+              color: unread > 0
+                  ? AppColors.primary.withValues(alpha: 0.35)
+                  : AppColors.divider,
+            ),
           ),
           child: Row(
             children: [
@@ -80,8 +84,12 @@ class ChatRoomTile extends StatelessWidget {
                           AppDateUtils.chatStamp(room.lastMessageAt),
                           style: TextStyle(
                             fontSize: 10.5.sp,
-                            color: unread > 0 ? AppColors.primary : AppColors.textHint,
-                            fontWeight: unread > 0 ? FontWeight.w700 : FontWeight.w400,
+                            color: unread > 0
+                                ? AppColors.primary
+                                : AppColors.textHint,
+                            fontWeight: unread > 0
+                                ? FontWeight.w700
+                                : FontWeight.w400,
                           ),
                         ),
                       ],
@@ -92,23 +100,35 @@ class ChatRoomTile extends StatelessWidget {
                         if (isMine)
                           Text(
                             'ທ່ານ: ',
-                            style: TextStyle(fontSize: 12.sp, color: AppColors.textSecondary),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         Expanded(
                           child: Text(
-                            room.lastMessage.isEmpty ? 'ເລີ່ມການສົນທະນາໃໝ່' : room.lastMessage,
+                            room.lastMessage.isEmpty
+                                ? 'ເລີ່ມການສົນທະນາໃໝ່'
+                                : room.lastMessage,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: unread > 0 ? AppColors.textPrimary : AppColors.textSecondary,
-                              fontWeight: unread > 0 ? FontWeight.w600 : FontWeight.w400,
+                              color: unread > 0
+                                  ? AppColors.textPrimary
+                                  : AppColors.textSecondary,
+                              fontWeight: unread > 0
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
                             ),
                           ),
                         ),
                         if (unread > 0)
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 7.w,
+                              vertical: 2.h,
+                            ),
                             constraints: BoxConstraints(minWidth: 20.w),
                             decoration: BoxDecoration(
                               color: AppColors.danger,
@@ -189,10 +209,15 @@ class StartChatTile extends StatelessWidget {
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      user.phone?.isNotEmpty == true ? user.phone! : (user.email ?? ''),
+                      user.phone?.isNotEmpty == true
+                          ? user.phone!
+                          : (user.email ?? ''),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 11.5.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -206,13 +231,21 @@ class StartChatTile extends StatelessWidget {
                     color: AppColors.primarySoft,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.chat_bubble_rounded, size: 17.sp, color: AppColors.primary),
+                  child: Icon(
+                    Icons.chat_bubble_rounded,
+                    size: 17.sp,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
               IconButton(
                 onPressed: onTapDetail,
                 tooltip: 'ລາຍລະອຽດ',
-                icon: Icon(Icons.info_outline_rounded, size: 19.sp, color: AppColors.textHint),
+                icon: Icon(
+                  Icons.info_outline_rounded,
+                  size: 19.sp,
+                  color: AppColors.textHint,
+                ),
               ),
             ],
           ),

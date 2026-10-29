@@ -171,25 +171,7 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
             ],
           ),
           SizedBox(height: 12.h),
-          // ---------- ຄົ້ນຫາ ----------
-          // TextField(
-          //   controller: controller.searchController,
-          //   onSubmitted: (_) => controller.focusFirstMatch(),
-          //   style: TextStyle(fontSize: 14.sp),
-          //   decoration: InputDecoration(
-          //     hintText: AppStrings.searchMember,
-          //     isDense: true,
-          //     prefixIcon: Icon(Icons.search_rounded, size: 20.sp),
-          //     suffixIcon: Obx(
-          //       () => controller.query.value.isEmpty
-          //           ? const SizedBox.shrink()
-          //           : IconButton(
-          //               onPressed: controller.clearSearch,
-          //               icon: Icon(Icons.close_rounded, size: 18.sp),
-          //             ),
-          //     ),
-          //   ),
-          // ),
+          _searchField(),
           // ---------- ແຈ້ງເຕືອນ read-only ສຳລັບ member ----------
           Obx(
             () => controller.isAdmin
@@ -218,6 +200,56 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _searchField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: AppColors.divider.withValues(alpha: 0.75)),
+      ),
+      child: TextField(
+        controller: controller.searchController,
+        onSubmitted: (_) => _focusFirstMatchInView(),
+        textInputAction: TextInputAction.search,
+        style: TextStyle(fontSize: 13.sp, color: AppColors.textPrimary),
+        decoration: InputDecoration(
+          hintText: AppStrings.searchMember,
+          hintStyle: TextStyle(fontSize: 12.5.sp, color: AppColors.textHint),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            size: 20.sp,
+            color: AppColors.primary,
+          ),
+          suffixIcon: Obx(
+            () => controller.query.value.isEmpty
+                ? const SizedBox.shrink()
+                : IconButton(
+                    tooltip: 'ລ້າງຄຳຄົ້ນຫາ',
+                    onPressed: controller.clearSearch,
+                    icon: Icon(Icons.close_rounded, size: 18.sp),
+                  ),
+          ),
+          isDense: true,
+          filled: true,
+          fillColor: Colors.transparent,
+          contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: AppColors.primary, width: 1.2),
+          ),
+        ),
       ),
     );
   }
@@ -306,47 +338,146 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
               width: size.width,
               height: size.height,
               color: AppColors.background,
-              child: Stack(
-                children: [
-                  // ວາດເສັ້ນເຊື່ອມກ່ອນ (ຢູ່ໃຕ້ node)
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: TreeConnectorPainter(
-                        nodes: controller.nodes,
-                        selectedId: controller.selected.value?.id,
-                      ),
-                    ),
-                  ),
-                  // ວາດ node
-                  for (final node in controller.nodes)
-                    Positioned(
-                      left: node.offset.dx,
-                      top: node.offset.dy,
-                      child: TreeNodeCard(
+              child: Obx(() {
+                final query = controller.query.value.toLowerCase();
+                // Highlight ຢູ່ຊັ້ນ UI; ບໍ່ປ່ຽນການຄຳນວນຕຳແໜ່ງໃນ controller.
+                final visibleNodes = controller.nodes
+                    .map((node) {
+                      final name = node.member.fullName.toLowerCase();
+                      final nickname = (node.member.nickname ?? '')
+                          .toLowerCase();
+                      return TreeNodePosition(
                         member: node.member,
-                        isSelected:
-                            controller.selected.value?.id == node.member.id,
-                        isHighlighted: node.isHighlighted,
-                        onTap: () {
-                          controller.selected.value = node.member;
-                          showMemberDetailSheet(
-                            node.member,
-                            allMembers: controller.members,
-                            onChanged: controller.refreshSelected,
-                          );
-                        },
-                        onLongPress: controller.isAdmin
-                            ? () => Get.toNamed(
-                                Routes.MEMBER_FORM,
-                                arguments: {'memberId': node.member.id},
-                              )
-                            : null,
+                        offset: node.offset,
+                        isHighlighted:
+                            query.isNotEmpty &&
+                            (name.contains(query) || nickname.contains(query)),
+                      );
+                    })
+                    .toList(growable: false);
+
+                return Stack(
+                  children: [
+                    // ຕາລາງພື້ນຫຼັງບາງໆ ຊ່ວຍກະປະມານຕຳແໜ່ງໃນຜັງໃຫຍ່
+                    const Positioned.fill(
+                      child: CustomPaint(painter: _TreeCanvasGridPainter()),
+                    ),
+                    // ວາດເສັ້ນເຊື່ອມກ່ອນ (ຢູ່ໃຕ້ node)
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: TreeConnectorPainter(
+                          nodes: visibleNodes,
+                          selectedId: controller.selected.value?.id,
+                        ),
                       ),
                     ),
-                ],
-              ),
+                    // ວາດ node
+                    for (final node in visibleNodes)
+                      Positioned(
+                        left: node.offset.dx,
+                        top: node.offset.dy,
+                        child: TreeNodeCard(
+                          member: node.member,
+                          isSelected:
+                              controller.selected.value?.id == node.member.id,
+                          isHighlighted: node.isHighlighted,
+                          onTap: () {
+                            controller.selected.value = node.member;
+                            showMemberDetailSheet(
+                              node.member,
+                              allMembers: controller.members,
+                              onChanged: controller.refreshSelected,
+                            );
+                          },
+                          onLongPress: controller.isAdmin
+                              ? () => Get.toNamed(
+                                  Routes.MEMBER_FORM,
+                                  arguments: {'memberId': node.member.id},
+                                )
+                              : null,
+                        ),
+                      ),
+                  ],
+                );
+              }),
             ),
           ),
+        ),
+
+        // ---------- ຈຳນວນສະມາຊິກ / ຜົນຄົ້ນຫາ ----------
+        Positioned(
+          left: 12.w,
+          top: 12.h,
+          child: Obx(() {
+            final queryActive = controller.query.value.isNotEmpty;
+            final query = controller.query.value.toLowerCase();
+            final matched = query.isEmpty
+                ? 0
+                : controller.nodes
+                      .where(
+                        (n) =>
+                            n.member.fullName.toLowerCase().contains(query) ||
+                            (n.member.nickname ?? '').toLowerCase().contains(
+                              query,
+                            ),
+                      )
+                      .length;
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.96),
+                borderRadius: BorderRadius.circular(13.r),
+                border: Border.all(
+                  color: AppColors.divider.withValues(alpha: 0.8),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryDark.withValues(alpha: 0.07),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    queryActive
+                        ? Icons.manage_search_rounded
+                        : Icons.groups_2_rounded,
+                    size: 16.sp,
+                    color: queryActive ? AppColors.accent : AppColors.primary,
+                  ),
+                  SizedBox(width: 6.w),
+                  Text(
+                    queryActive
+                        ? 'ພົບ $matched ຄົນ'
+                        : '${controller.members.length} ສະມາຊິກ',
+                    style: TextStyle(
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  if (queryActive && matched > 0) ...[
+                    SizedBox(width: 4.w),
+                    InkWell(
+                      onTap: _focusFirstMatchInView,
+                      borderRadius: BorderRadius.circular(20.r),
+                      child: Padding(
+                        padding: EdgeInsets.all(2.w),
+                        child: Icon(
+                          Icons.center_focus_strong_rounded,
+                          size: 15.sp,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
         ),
 
         // ---------- ປຸ່ມຊູມ ----------
@@ -357,7 +488,7 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
             onZoomIn: controller.zoomIn,
             onZoomOut: controller.zoomOut,
             onReset: controller.resetZoom,
-            onCenter: controller.focusFirstMatch,
+            onCenter: _focusFirstMatchInView,
           ),
         ),
 
@@ -365,6 +496,19 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
         Positioned(left: 14.w, bottom: 16.h, child: const TreeLegend()),
       ],
     );
+  }
+
+  void _focusFirstMatchInView() {
+    final query = controller.query.value.toLowerCase();
+    if (query.isEmpty) return;
+    for (final node in controller.nodes) {
+      final name = node.member.fullName.toLowerCase();
+      final nickname = (node.member.nickname ?? '').toLowerCase();
+      if (name.contains(query) || nickname.contains(query)) {
+        controller.focusNode(node);
+        return;
+      }
+    }
   }
 
   Size _canvasSize() {
@@ -395,32 +539,89 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
     }
 
     final query = controller.query.value.toLowerCase();
+    final visibleGroups = grouped.entries
+        .map(
+          (entry) => MapEntry(
+            entry.key,
+            entry.value.where((member) {
+              return query.isEmpty ||
+                  member.fullName.toLowerCase().contains(query) ||
+                  (member.nickname ?? '').toLowerCase().contains(query);
+            }).toList(),
+          ),
+        )
+        .where((entry) => entry.value.isNotEmpty)
+        .toList();
+
+    if (visibleGroups.isEmpty) {
+      return EmptyState(
+        title: 'ບໍ່ພົບສະມາຊິກ',
+        description: 'ລອງຄົ້ນຫາດ້ວຍຊື່ ຫຼື ຊື່ຫຼິ້ນອື່ນ',
+        icon: Icons.search_off_rounded,
+        actionLabel: 'ລ້າງຄຳຄົ້ນຫາ',
+        onAction: controller.clearSearch,
+      );
+    }
 
     return ListView(
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 90.h),
       physics: const BouncingScrollPhysics(),
       children: [
-        for (final entry in grouped.entries) ...[
+        Padding(
+          padding: EdgeInsets.only(bottom: 14.h),
+          child: Row(
+            children: [
+              Icon(
+                Icons.groups_2_rounded,
+                size: 17.sp,
+                color: AppColors.primary,
+              ),
+              SizedBox(width: 7.w),
+              Text(
+                query.isEmpty ? 'ສະມາຊິກທັງໝົດ' : 'ຜົນການຄົ້ນຫາ',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  '${visibleGroups.fold<int>(0, (sum, group) => sum + group.value.length)} ຄົນ',
+                  style: TextStyle(
+                    fontSize: 10.5.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        for (final entry in visibleGroups) ...[
           _generationHeader(entry.key, entry.value.length),
           SizedBox(height: 10.h),
           for (final member in entry.value)
-            if (query.isEmpty ||
-                member.fullName.toLowerCase().contains(query) ||
-                (member.nickname ?? '').toLowerCase().contains(query))
-              Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
-                child: MemberTile(
-                  member: member,
-                  onTap: () {
-                    controller.selected.value = member;
-                    showMemberDetailSheet(
-                      member,
-                      allMembers: controller.members,
-                      onChanged: controller.refreshSelected,
-                    );
-                  },
-                ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10.h),
+              child: MemberTile(
+                member: member,
+                onTap: () {
+                  controller.selected.value = member;
+                  showMemberDetailSheet(
+                    member,
+                    allMembers: controller.members,
+                    onChanged: controller.refreshSelected,
+                  );
+                },
               ),
+            ),
           SizedBox(height: 14.h),
         ],
       ],
@@ -469,4 +670,27 @@ class FamilyTreeView extends GetView<FamilyTreeController> {
     }
     UiHelpers.success('ບັນທຶກຮູບແລ້ວ: $path');
   }
+}
+
+/// ວາດຕາລາງແບບຈາງໆໃນ canvas ເພື່ອອ່ານຜັງຂະໜາດໃຫຍ່ໄດ້ງ່າຍຂຶ້ນ.
+class _TreeCanvasGridPainter extends CustomPainter {
+  const _TreeCanvasGridPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const spacing = 44.0;
+    final paint = Paint()
+      ..color = AppColors.primaryDark.withValues(alpha: 0.035)
+      ..strokeWidth = 0.7;
+
+    for (double x = 0; x <= size.width; x += spacing) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y <= size.height; y += spacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _TreeCanvasGridPainter oldDelegate) => false;
 }

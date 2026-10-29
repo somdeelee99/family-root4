@@ -33,11 +33,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystorePropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            // ຫ້າມ fallback ໄປ debug key ເດັດຂາດ: APK/AAB ທີ່ອັບຂຶ້ນ Play ຕ້ອງ sign
+            // ດ້ວຍ upload key ສະເໝີ. ຖ້າ key.properties ຫາຍ ໃຫ້ build  fail ແທນ.
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

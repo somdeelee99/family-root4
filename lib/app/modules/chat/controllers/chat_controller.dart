@@ -8,6 +8,7 @@ import '../../../core/utils/ui_helpers.dart';
 import '../../../data/models/app_user.dart';
 import '../../../data/models/chat_room.dart';
 import '../../../data/repositories/chat_repository.dart';
+import '../../../data/repositories/moderation_repository.dart';
 import '../../../data/repositories/user_repository.dart';
 import '../../../routes/app_routes.dart';
 
@@ -17,9 +18,16 @@ import '../../../routes/app_routes.dart';
 class ChatController extends GetxController {
   final ChatRepository _chatRepo = ChatRepository();
   final UserRepository _userRepo = UserRepository();
+  final ModerationRepository _moderationRepo = ModerationRepository();
 
   StreamSubscription<List<ChatRoom>>? _roomsSub;
   StreamSubscription<List<AppUser>>? _usersSub;
+  StreamSubscription<Set<String>>? _blocksSub;
+
+  /// uid ຜູ້ໃຊ້ທີ່ຂ້ອຍບລັອກໄວ້
+  Set<String> _blockedUids = <String>{};
+  List<ChatRoom> _allRooms = <ChatRoom>[];
+  List<AppUser> _allOthers = <AppUser>[];
 
   final TextEditingController searchController = TextEditingController();
 
@@ -48,14 +56,33 @@ class ChatController extends GetxController {
     }
 
     _roomsSub = _chatRepo.roomsStream(fid, myUid).listen((list) {
-      rooms.assignAll(list);
+      _allRooms = list;
+      _applyBlocks();
       isLoading.value = false;
     }, onError: (Object e) => isLoading.value = false);
 
     // ບໍ່ສະແດງຂໍ້ມູນຂອງຕົນເອງ
-    _usersSub = _userRepo
-        .othersStream(fid, myUid)
-        .listen((list) => others.assignAll(list));
+    _usersSub = _userRepo.othersStream(fid, myUid).listen((list) {
+      _allOthers = list;
+      _applyBlocks();
+    });
+
+    _blocksSub = _moderationRepo.blockedUidsStream(myUid).listen((uids) {
+      _blockedUids = uids;
+      _applyBlocks();
+    });
+  }
+
+  void _applyBlocks() {
+    if (_blockedUids.isEmpty) {
+      rooms.assignAll(_allRooms);
+      others.assignAll(_allOthers);
+      return;
+    }
+    rooms.assignAll(
+      _allRooms.where((r) => !_blockedUids.contains(r.otherParty(myUid))),
+    );
+    others.assignAll(_allOthers.where((u) => !_blockedUids.contains(u.uid)));
   }
 
   /// ລາຍການຫ້ອງສົນທະນາຕາມການຄົ້ນຫາ
@@ -116,6 +143,7 @@ class ChatController extends GetxController {
   void onClose() {
     _roomsSub?.cancel();
     _usersSub?.cancel();
+    _blocksSub?.cancel();
     searchController.dispose();
     super.onClose();
   }

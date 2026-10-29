@@ -58,13 +58,19 @@ class MessageBubble extends StatelessWidget {
                     width: 200.w,
                     height: 150.h,
                     color: AppColors.surfaceAlt,
-                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
                   ),
                   errorWidget: (_, __, ___) => Container(
                     width: 200.w,
                     height: 120.h,
                     color: AppColors.surfaceAlt,
-                    child: Icon(Icons.broken_image_rounded, color: AppColors.textHint, size: 30.sp),
+                    child: Icon(
+                      Icons.broken_image_rounded,
+                      color: AppColors.textHint,
+                      size: 30.sp,
+                    ),
                   ),
                 ),
               ),
@@ -82,7 +88,9 @@ class MessageBubble extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 3.h),
       child: Row(
-        mainAxisAlignment: isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMine
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMine) ...[
@@ -99,13 +107,17 @@ class MessageBubble extends StatelessWidget {
             SizedBox(width: 6.w),
           ],
           Column(
-            crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: isMine
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               bubble,
               Padding(
                 padding: EdgeInsets.only(top: 2.h, left: 4.w, right: 4.w),
                 child: Text(
-                  AppDateUtils.timeOnly.format(message.createdAt ?? DateTime.now()),
+                  AppDateUtils.timeOnly.format(
+                    message.createdAt ?? DateTime.now(),
+                  ),
                   style: TextStyle(fontSize: 9.5.sp, color: AppColors.textHint),
                 ),
               ),
@@ -170,7 +182,10 @@ class ChatDateDivider extends StatelessWidget {
               ),
               child: Text(
                 AppDateUtils.displayDate.format(date),
-                style: TextStyle(fontSize: 10.5.sp, color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: 10.5.sp,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
           ),

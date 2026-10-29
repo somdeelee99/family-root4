@@ -8,7 +8,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/auth_service.dart';
-import '../../../core/services/theme_service.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../core/widgets/section_header.dart';
@@ -204,6 +203,13 @@ class ProfileView extends GetView<ProfileController> {
                       subtitle: controller.family.value?.displayName ?? '-',
                       onTap: controller.goToFamilyInfo,
                     ),
+                    _menuItem(
+                      icon: Icons.delete_forever_outlined,
+                      title: 'ລຶບບັນຊີ',
+                      subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
+                      onTap: controller.deleteMyAccount,
+                      color: AppColors.danger,
+                    ),
                     // ---------- ການເຊື່ອມຕໍ່ (Admin) ----------
                     // if (controller.isAdmin) _loginConnections(),
                   ]),
@@ -240,6 +246,18 @@ class ProfileView extends GetView<ProfileController> {
                     //     onChanged: (_) => controller.toggleNotifications(),
                     //   ),
                     // ),
+                    _menuItem(
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ',
+                      subtitle: 'ວິທີເກັບ ແລະ ໃຊ້ຂໍ້ມູນຂອງທ່ານ',
+                      onTap: controller.openPrivacyPolicy,
+                    ),
+                    _menuItem(
+                      icon: Icons.gavel_rounded,
+                      title: 'ຂໍ້ກຳນົດການໃຊ້',
+                      subtitle: 'ກົດລະບຽບການໃຊ້ແອັບ',
+                      onTap: controller.openTerms,
+                    ),
                     _menuItem(
                       icon: Icons.info_outline_rounded,
                       title: AppStrings.about,
@@ -360,6 +378,7 @@ class ProfileView extends GetView<ProfileController> {
     ),
   );
 
+  // ignore: unused_element
   Widget _switchItem({
     required IconData icon,
     required String title,
@@ -483,6 +502,7 @@ class ProfileView extends GetView<ProfileController> {
   //   );
   // }
 
+  // ignore: unused_element
   IconData _providerIcon(AuthProviderType provider) {
     switch (provider) {
       case AuthProviderType.google:
