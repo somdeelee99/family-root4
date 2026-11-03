@@ -341,10 +341,7 @@ class _MemberPickSheet extends StatelessWidget {
               ),
             ),
             SizedBox(height: 12.h),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.5,
-              ),
+            Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: members.length,

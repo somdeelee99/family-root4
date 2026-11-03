@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -12,37 +13,22 @@ import '../../../data/models/family.dart';
 import '../../../data/models/family_member.dart';
 import '../../../data/repositories/family_repository.dart';
 import '../../../data/repositories/member_repository.dart';
+import '../layout/tree_layout_config.dart';
+import '../layout/tree_layout_engine.dart';
+import '../layout/tree_layout_result.dart';
 
-/// ຕຳແໜ່ງຂອງ node ໃນຜັງ (ຄຳນວນຈາກ layout engine)
-class TreeNodePosition {
-  const TreeNodePosition({
-    required this.member,
-    required this.offset,
-    this.isHighlighted = false,
-  });
-
-  final FamilyMember member;
-  final Offset offset;
-  final bool isHighlighted;
-
-  Rect get rect => Rect.fromLTWH(
-    offset.dx,
-    offset.dy,
-    FamilyTreeController.nodeWidth,
-    FamilyTreeController.nodeHeight,
-  );
-}
+export '../layout/tree_layout_result.dart'
+    show TreeEdge, TreeEdgeType, TreeNodePosition;
 
 /// ຄວບຄຸມຜັງໄມ້ຄອບຄົວ
 class FamilyTreeController extends GetxController {
-  static const double nodeWidth = 128;
-  static const double nodeHeight = 150;
-  static const double gapX = 26;
-  static const double gapY = 74;
+  static const double nodeWidth = TreeLayoutConfig.nodeWidth;
+  static const double nodeHeight = TreeLayoutConfig.nodeHeight;
   static const double canvasPadding = 60;
 
   final MemberRepository _memberRepo = MemberRepository();
   final FamilyRepository _familyRepo = FamilyRepository();
+  final TreeLayoutEngine _engine = const TreeLayoutEngine();
 
   final TransformationController transformation = TransformationController();
   final GlobalKey boundaryKey = GlobalKey();
@@ -52,24 +38,38 @@ class FamilyTreeController extends GetxController {
 
   final RxList<FamilyMember> members = <FamilyMember>[].obs;
   final RxList<TreeNodePosition> nodes = <TreeNodePosition>[].obs;
+  final RxSet<String> matchedIds = <String>{}.obs;
   final Rxn<FamilyMember> selected = Rxn<FamilyMember>();
   final Rxn<Family> family = Rxn<Family>();
   final RxString query = ''.obs;
   final RxBool isLoading = true.obs;
   final RxBool isTreeMode = true.obs; // ຜັງ vs ລາຍການ
   final RxBool isExporting = false.obs;
-  final Size canvasSize = const Size(1200, 900);
+
+  /// ຂະໜາດ viewport ຕົວຈິງ (ອັບເດດຈາກ LayoutBuilder ໃນ canvas)
+  Size viewportSize = Size.zero;
+
+  TreeLayoutResult _layoutResult = TreeLayoutResult.empty;
+  TreeLayoutResult get layoutResult => _layoutResult;
+  int _layoutRevision = 0;
+  bool _didAutoFit = false;
 
   bool get isAdmin => AuthService.to.isAdmin;
   String get familyId => AuthService.to.familyId;
+
+  /// ຂະໜາດ canvas ທີ່ layout engine ຄຳນວນໄວ້
+  Size get canvasSize => _layoutResult.canvasSize;
 
   @override
   void onInit() {
     super.onInit();
     _listen();
-    searchController.addListener(
-      () => query.value = searchController.text.trim(),
-    );
+    searchController.addListener(() {
+      final text = searchController.text.trim();
+      if (query.value == text) return;
+      query.value = text;
+      _updateMatches();
+    });
   }
 
   void _listen() {
@@ -83,6 +83,7 @@ class FamilyTreeController extends GetxController {
         .listen(
           (list) {
             members.assignAll(list);
+            _updateMatches();
             _layout();
             isLoading.value = false;
             if (selected.value != null) {
@@ -100,110 +101,13 @@ class FamilyTreeController extends GetxController {
     _familyRepo.familyStream(fid).listen((value) => family.value = value);
   }
 
-  // ==================== LAYOUT ENGINE ====================
+  // ==================== LAYOUT ====================
 
-  /// ຈັດຕຳແໜ່ງ node ໃນຜັງ (ຈັດຕາມລຸ້ນ ແລະ ຈັບກຸ່ມລູກໄວ້ໃຕ້ພໍ່ແມ່)
+  /// ຈັດຕຳແໜ່ງ node ໃໝ່ທັງໝົດ (ຄູ່ຕິດກັນ + ລູກແຍກຕາມຄູ່ພໍ່ແມ່)
   void _layout() {
-    if (members.isEmpty) {
-      nodes.clear();
-      return;
-    }
-
-    final byId = {for (final m in members) m.id: m};
-    final maxGeneration = members
-        .map((m) => m.generation)
-        .reduce((a, b) => a > b ? a : b);
-
-    // ຈັດລຳດັບພາຍໃນແຕ່ລະລຸ້ນ
-    final ordered = <int, List<FamilyMember>>{};
-    for (var gen = 1; gen <= maxGeneration; gen++) {
-      ordered[gen] = [];
-    }
-
-    // ລຸ້ນທີ 1: ຜູ້ທີ່ບໍ່ມີພໍ່ແມ່ (ຮາກຂອງຄອບຄົວ)
-    final roots =
-        members
-            .where(
-              (m) =>
-                  m.generation <= 1 ||
-                  (m.fatherId == null && m.motherId == null),
-            )
-            .toList()
-          ..sort(
-            (a, b) => (a.birthDate?.year ?? 9999).compareTo(
-              b.birthDate?.year ?? 9999,
-            ),
-          );
-    ordered[1] = roots;
-
-    final placed = <String>{for (final r in roots) r.id};
-    for (var gen = 2; gen <= maxGeneration; gen++) {
-      final list = <FamilyMember>[];
-      // ລູກຂອງຜູ້ຢູ່ລຸ້ນກ່ອນ (ຕາມລຳດັບທີ່ຈັດແລ້ວ)
-      for (final parent in ordered[gen - 1] ?? const <FamilyMember>[]) {
-        for (final childId in parent.childIds) {
-          final child = byId[childId];
-          if (child == null || placed.contains(child.id)) continue;
-          if (child.generation > gen) continue;
-          list.add(child);
-          placed.add(child.id);
-        }
-      }
-      // ຜູ້ທີ່ຍັງບໍ່ຖືກຈັດ (ບໍ່ມີຂໍ້ມູນພໍ່ແມ່)
-      for (final m in members.where(
-        (m) => m.generation == gen && !placed.contains(m.id),
-      )) {
-        list.add(m);
-        placed.add(m.id);
-      }
-      ordered[gen] = list;
-    }
-
-    // ຜູ້ທີ່ຍັງເຫຼືອ (generation ຜິດປົກກະຕິ)
-    final leftovers = members.where((m) => !placed.contains(m.id)).toList();
-    if (leftovers.isNotEmpty) {
-      ordered[maxGeneration] = [
-        ...(ordered[maxGeneration] ?? []),
-        ...leftovers,
-      ];
-    }
-
-    // ຄຳນວນຕຳແໜ່ງ
-    final result = <TreeNodePosition>[];
-    final highlighted = query.value.toLowerCase();
-
-    var maxRowWidth = 0.0;
-    for (var gen = 1; gen <= maxGeneration; gen++) {
-      final row = ordered[gen] ?? const <FamilyMember>[];
-      if (row.isEmpty) continue;
-      final rowWidth = row.length * nodeWidth + (row.length - 1) * gapX;
-      maxRowWidth = rowWidth > maxRowWidth ? rowWidth : maxRowWidth;
-    }
-
-    for (var gen = 1; gen <= maxGeneration; gen++) {
-      final row = ordered[gen] ?? const <FamilyMember>[];
-      if (row.isEmpty) continue;
-      final rowWidth = row.length * nodeWidth + (row.length - 1) * gapX;
-      final startX = canvasPadding + (maxRowWidth - rowWidth) / 2;
-      final y = canvasPadding + (gen - 1) * (nodeHeight + gapY);
-
-      for (var i = 0; i < row.length; i++) {
-        final m = row[i];
-        final isMatch =
-            highlighted.isNotEmpty &&
-            (m.fullName.toLowerCase().contains(highlighted) ||
-                (m.nickname ?? '').toLowerCase().contains(highlighted));
-        result.add(
-          TreeNodePosition(
-            member: m,
-            offset: Offset(startX + i * (nodeWidth + gapX), y),
-            isHighlighted: isMatch,
-          ),
-        );
-      }
-    }
-
-    nodes.assignAll(result);
+    _layoutRevision++;
+    _layoutResult = _engine.layout(members, revision: _layoutRevision);
+    nodes.assignAll(_layoutResult.nodes);
   }
 
   // ==================== ການຄົ້ນຫາ ====================
@@ -213,13 +117,26 @@ class FamilyTreeController extends GetxController {
   void clearSearch() {
     searchController.clear();
     query.value = '';
-    _layout();
+    matchedIds.clear();
   }
 
-  /// ເລື່ອນໄປຫາ node ທີ່ຄົ້ນຫາເຫັນຄັ້ງທຳອິດ
+  void _updateMatches() {
+    final q = query.value.trim().toLowerCase();
+    matchedIds.clear();
+    if (q.isEmpty) return;
+    for (final member in members) {
+      if (member.fullName.toLowerCase().contains(q) ||
+          (member.nickname ?? '').toLowerCase().contains(q)) {
+        matchedIds.add(member.id);
+      }
+    }
+  }
+
+  /// ເລື່ອນໄປຫາ node ທຳອິດທີ່ຄົ້ນຫາເຫັນ
   void focusFirstMatch() {
+    if (matchedIds.isEmpty) return;
     for (final node in nodes) {
-      if (node.isHighlighted) {
+      if (matchedIds.contains(node.member.id)) {
         focusNode(node);
         return;
       }
@@ -228,14 +145,13 @@ class FamilyTreeController extends GetxController {
 
   /// ເລື່ອນ viewport ໄປຫາ node ທີ່ເລືອກ (ຮັກສາລະດັບ zoom ເດີມ)
   void focusNode(TreeNodePosition node) {
-    final scale = transformation.value.getMaxScaleOnAxis();
-    const viewportCenterX = 195.0;
-    const viewportCenterY = 240.0;
+    final viewport = _effectiveViewport;
+    final scale = transformation.value.getMaxScaleOnAxis().clamp(0.35, 2.6);
     final x = node.offset.dx + nodeWidth / 2;
     final y = node.offset.dy + nodeHeight / 2;
     final translation = Matrix4.translationValues(
-      viewportCenterX - x * scale,
-      viewportCenterY - y * scale,
+      viewport.width / 2 - x * scale,
+      viewport.height / 2 - y * scale,
       0,
     );
     transformation.value =
@@ -257,16 +173,66 @@ class FamilyTreeController extends GetxController {
     _layout();
   }
 
+  // ==================== ZOOM / VIEWPORT ====================
+
+  void updateViewport(Size size) {
+    if (size.isEmpty || size == viewportSize) return;
+    viewportSize = size;
+  }
+
+  /// ປັບຜັງໃຫ້ເຫັນເຕັມ viewport ຄັ້ງທຳອິດ
+  void maybeAutoFit() {
+    if (_didAutoFit || nodes.isEmpty || viewportSize.isEmpty) return;
+    _didAutoFit = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => fitToScreen());
+  }
+
   void zoomIn() => _zoom(1.25);
   void zoomOut() => _zoom(0.8);
 
+  /// ຊູມອ້ອມຈຸດກາງ viewport ໂດຍບໍ່ລຶບ pan ເດີມ
   void _zoom(double factor) {
     final current = transformation.value.getMaxScaleOnAxis();
     final next = (current * factor).clamp(0.35, 2.6);
-    transformation.value = Matrix4.diagonal3Values(next, next, 1);
+    if ((next - current).abs() < 0.001) return;
+
+    final viewport = _effectiveViewport;
+    final cx = viewport.width / 2;
+    final cy = viewport.height / 2;
+    final zoom =
+        Matrix4.translationValues(cx, cy, 0) *
+        Matrix4.diagonal3Values(next / current, next / current, 1) *
+        Matrix4.translationValues(-cx, -cy, 0);
+
+    transformation.value = zoom * transformation.value;
   }
 
   void resetZoom() => transformation.value = Matrix4.identity();
+
+  /// ປັບ scale/ຕຳແໜ່ງໃຫ້ຜັງທັງໝົດຢູ່ກາງ viewport
+  void fitToScreen() {
+    final viewport = _effectiveViewport;
+    final bounds = _layoutResult.bounds;
+    if (bounds.isEmpty || nodes.isEmpty) {
+      resetZoom();
+      return;
+    }
+
+    final scale = math
+        .min(viewport.width / bounds.width, viewport.height / bounds.height)
+        .clamp(0.35, 2.6);
+    final dx =
+        (viewport.width - bounds.width * scale) / 2 - bounds.left * scale;
+    final dy =
+        (viewport.height - bounds.height * scale) / 2 - bounds.top * scale;
+
+    transformation.value =
+        Matrix4.translationValues(dx, dy, 0) *
+        Matrix4.diagonal3Values(scale, scale, 1);
+  }
+
+  Size get _effectiveViewport =>
+      viewportSize.isEmpty ? const Size(390, 600) : viewportSize;
 
   // ==================== ການຈັດການສະມາຊິກ ====================
 

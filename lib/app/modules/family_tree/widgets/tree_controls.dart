@@ -11,12 +11,14 @@ class TreeControls extends StatelessWidget {
     required this.onZoomOut,
     required this.onReset,
     this.onCenter,
+    this.onFit,
   });
 
   final VoidCallback onZoomIn;
   final VoidCallback onZoomOut;
   final VoidCallback onReset;
   final VoidCallback? onCenter;
+  final VoidCallback? onFit;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class TreeControls extends StatelessWidget {
         SizedBox(height: 8.h),
         _button(Icons.center_focus_strong_rounded, onCenter ?? onReset),
         SizedBox(height: 8.h),
-        _button(Icons.zoom_out_map_rounded, onReset),
+        _button(Icons.zoom_out_map_rounded, onFit ?? onReset),
       ],
     );
   }
