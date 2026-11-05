@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/services/auth_service.dart';
 import '../../../core/utils/ui_helpers.dart';
@@ -125,8 +126,27 @@ class MemberFormController extends GetxController {
   }
 
   // ==================== ເລືອກຮູບ ====================
+
+  /// ອະນຸຍາດກ້ອມກ່ອນເປິດກ້ອມຖ່າຍຮູບ (Android 10+ ຕ້ອງຂອບ runtime permission)
+  /// ຖ້າບໍ່ໄດ້ຮັບອະນຸຍາດ ຈະບໍ່ເປິດກ້ອມ ເປັນການປ້ອງກັນແອັບຄ້າງ / ປິດ
+  Future<bool> _ensureCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (status.isGranted) return true;
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
+      UiHelpers.error(
+        'ບໍ່ໄດ້ຮັບອະນຸຍາດໃຊ້ກ້ອມ ກະລຸນາອະນຸຍາດໃນການຕั้งຄ່າຂອບແອັບ',
+      );
+    } else {
+      UiHelpers.error('ບໍ່ໄດ້ຮັບອະນຸຍາດໃຊ້ກ້ອມ ບໍ່ສາມາດຖ່າຍຮູບໄດ້');
+    }
+    return false;
+  }
+
   Future<void> pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
+      if (source == ImageSource.camera && !(await _ensureCameraPermission())) return;
+
       final XFile? picked = await _picker.pickImage(
         source: source,
         imageQuality: 90,
@@ -156,47 +176,203 @@ class MemberFormController extends GetxController {
   void chooseImageSource() {
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(18),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 28),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('ເລືອກຈາກຄັງຮູບ'),
+            // ຕົວຈັບລາກ (drag handle)
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const Text(
+              'ປ່ຽນຮູບໂປຣໄຟລ໌',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1F2937),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'ເລືອກວິທີທີ່ທ່ານຕ້ອງການ',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            ),
+            const SizedBox(height: 18),
+
+            _buildOptionTile(
+              icon: Icons.photo_library_outlined,
+              iconColor: const Color(0xFF6366F1),
+              iconBg: const Color(0xFFEEF2FF),
+              title: 'ເລືອກຮູບຈາກຄັງຮູບ',
               onTap: () {
                 Get.back();
                 pickImage();
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('ຖ່າຍຮູບໃໝ່'),
+            const SizedBox(height: 10),
+
+            _buildOptionTile(
+              icon: Icons.photo_camera_outlined,
+              iconColor: const Color(0xFF10B981),
+              iconBg: const Color(0xFFECFDF5),
+              title: 'ຖ່າຍຮູບດ້ວຍກ້ອງ',
               onTap: () {
                 Get.back();
                 pickImage(source: ImageSource.camera);
               },
             ),
-            if (avatarUrl.value != null)
-              ListTile(
-                leading: const Icon(
-                  Icons.delete_outline_rounded,
-                  color: Colors.red,
-                ),
-                title: const Text(
-                  'ລຶບຮູບ',
-                  style: TextStyle(color: Colors.red),
-                ),
+
+            if (avatarUrl.value != null) ...[
+              const SizedBox(height: 10),
+              _buildOptionTile(
+                icon: Icons.delete_outline_rounded,
+                iconColor: const Color(0xFFEF4444),
+                iconBg: const Color(0xFFFEF2F2),
+                title: 'ລຶບຮູບ',
                 onTap: () {
                   Get.back();
                   pickedImage.value = null;
                   avatarUrl.value = null;
                 },
               ),
+            ],
+
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () => Get.back(),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: Colors.grey.shade100,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: const Text(
+                  'ຍົກເລີກ',
+                  style: TextStyle(
+                    color: Color(0xFF4B5563),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent, // ← ສຳຄັນ
+    );
+  }
+
+  Widget _buildOptionTile({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBg,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF374151),
+                  ),
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  // void chooseImageSource() {
+  //   Get.bottomSheet(
+  //     Container(
+  //       padding: const EdgeInsets.all(18),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           ListTile(
+  //             leading: const Icon(Icons.photo_library_outlined),
+  //             title: const Text('ເລືອກຮູບ'),
+  //             onTap: () {
+  //               Get.back();
+  //               pickImage();
+  //             },
+  //           ),
+  //           ListTile(
+  //             leading: const Icon(Icons.photo_camera_outlined),
+  //             title: const Text('ຖ່າຍຮູບ'),
+  //             onTap: () {
+  //               Get.back();
+  //               pickImage(source: ImageSource.camera);
+  //             },
+  //           ),
+  //           if (avatarUrl.value != null)
+  //             ListTile(
+  //               leading: const Icon(
+  //                 Icons.delete_outline_rounded,
+  //                 color: Colors.red,
+  //               ),
+  //               title: const Text(
+  //                 'ລຶບຮູບ',
+  //                 style: TextStyle(color: Colors.red),
+  //               ),
+  //               onTap: () {
+  //                 Get.back();
+  //                 pickedImage.value = null;
+  //                 avatarUrl.value = null;
+  //               },
+  //             ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // ==================== ຄວາມສຳພັນ ====================
   void toggleSpouse(String id) => _toggle(spouseIds, id);

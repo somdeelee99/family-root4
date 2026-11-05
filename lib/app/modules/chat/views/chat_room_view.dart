@@ -8,8 +8,8 @@ import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/role_badge.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/chat_room_controller.dart';
-import '../widgets/chat_input_bar.dart';
-import '../widgets/message_bubble.dart';
+import '../components/chat_input_bar.dart';
+import '../components/message_bubble.dart';
 
 /// ຫ້ອງສົນທະນາ 1:1 (ເຫັນປະຫວັດທັງໝົດ ແລະ ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້)
 class ChatRoomView extends GetView<ChatRoomController> {

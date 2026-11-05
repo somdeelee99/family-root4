@@ -9,7 +9,7 @@ import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/chat_controller.dart';
-import '../widgets/chat_room_tile.dart';
+import '../components/chat_room_tile.dart';
 
 /// ໜ້າສົນທະນາ - ທັງ admin ແລະ member ໃຊ້ UI ດຽວກັນ
 /// ເຫັນລາຍລະອຽດຂອງສະມາຊິກຄົນອື່ນທັງໝົດ (ບໍ່ລວມຕົນເອງ), ກົດແຊັດ ແລະ ເຫັນປະຫວັດໄດ້

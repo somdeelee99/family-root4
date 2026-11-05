@@ -1,17 +1,18 @@
+import 'package:family_root/app/core/widgets/contac_card.dart';
+import 'package:family_root/app/core/widgets/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/services/auth_service.dart';
-import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../core/widgets/section_header.dart';
-import '../../../data/models/enums.dart';
 import '../controllers/profile_controller.dart';
 
 /// ໜ້າໂປຣໄຟລ໌
@@ -31,7 +32,6 @@ class ProfileView extends GetView<ProfileController> {
           padding: EdgeInsets.zero,
           physics: const BouncingScrollPhysics(),
           children: [
-            // ---------- ຫົວ ----------
             Container(
               width: double.infinity,
               decoration: const BoxDecoration(
@@ -147,35 +147,6 @@ class ProfileView extends GetView<ProfileController> {
               ),
             ).animate().fadeIn(duration: 400.ms),
 
-            // ---------- ສະຖິຕິສ່ວນຕົວ ----------
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 0),
-              child: Row(
-                children: [
-                  _miniStat(
-                    'ສະມາຊິກ',
-                    '${controller.totalMembers}',
-                    Icons.groups_rounded,
-                  ),
-                  SizedBox(width: 12.w),
-                  _miniStat(
-                    'ລຸ້ນ',
-                    '${controller.generationCount}',
-                    Icons.layers_rounded,
-                  ),
-                  SizedBox(width: 12.w),
-                  _miniStat(
-                    'ເຂົ້າໃຊ້ຫຼ້າສຸດ',
-                    user?.lastSeenAt == null
-                        ? '-'
-                        : AppDateUtils.relative(user!.lastSeenAt)
-                              .replaceAll('ກ່ອນ', ''),
-                    Icons.schedule_rounded,
-                  ),
-                ],
-              ),
-            ),
-
             // ---------- ບັນຊີ ----------
             Padding(
               padding: EdgeInsets.fromLTRB(20.w, 22.h, 20.w, 0),
@@ -186,33 +157,41 @@ class ProfileView extends GetView<ProfileController> {
                     title: 'ບັນຊີຂອງຂ້ອຍ',
                     icon: Icons.person_outline_rounded,
                   ),
-                  _menuCard([
-                    _menuItem(
-                      icon: Icons.edit_outlined,
-                      title: controller.isAdmin
-                          ? 'ອັບເດດຂໍ້ມູນ ແລະ ຮູບພາບ'
-                          : AppStrings.editProfile,
-                      subtitle: controller.isAdmin
-                          ? 'ປ່ຽນຮູບພາບ ແລະ ຊື່ຂອງທ່ານ'
-                          : 'ຊື່, ນາມສະກຸນ, ເບີໂທ, WhatsApp ແລະ ຮູບພາບ',
-                      onTap: controller.goToEditProfile,
+                  Material(
+                    color: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+                      side: const BorderSide(color: AppColors.divider),
                     ),
-                    _menuItem(
-                      icon: Icons.family_restroom_rounded,
-                      title: AppStrings.familyInfo,
-                      subtitle: controller.family.value?.displayName ?? '-',
-                      onTap: controller.goToFamilyInfo,
+                    child: Column(
+                      children: [
+                        MenuItem(
+                          icon: Icons.edit_outlined,
+                          title: controller.isAdmin
+                              ? 'ອັບເດດຂໍ້ມູນ ແລະ ຮູບພາບ'
+                              : AppStrings.editProfile,
+                          subtitle: controller.isAdmin
+                              ? 'ປ່ຽນຮູບພາບ ແລະ ຊື່ຂອງທ່ານ'
+                              : 'ຊື່, ນາມສະກຸນ, ເບີໂທ, WhatsApp ແລະ ຮູບພາບ',
+                          onTap: controller.goToEditProfile,
+                        ),
+                        MenuItem(
+                          icon: Icons.family_restroom_rounded,
+                          title: AppStrings.familyInfo,
+                          subtitle: controller.family.value?.displayName ?? '-',
+                          onTap: controller.goToFamilyInfo,
+                        ),
+                        MenuItem(
+                          icon: Icons.delete_forever_outlined,
+                          title: 'ລຶບບັນຊີ',
+                          subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
+                          onTap: controller.deleteMyAccount,
+                          color: AppColors.danger,
+                        ),
+                      ],
                     ),
-                    _menuItem(
-                      icon: Icons.delete_forever_outlined,
-                      title: 'ລຶບບັນຊີ',
-                      subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
-                      onTap: controller.deleteMyAccount,
-                      color: AppColors.danger,
-                    ),
-                    // ---------- ການເຊື່ອມຕໍ່ (Admin) ----------
-                    // if (controller.isAdmin) _loginConnections(),
-                  ]),
+                  ),
                 ],
               ),
             ),
@@ -227,44 +206,43 @@ class ProfileView extends GetView<ProfileController> {
                     title: AppStrings.settings,
                     icon: Icons.settings_outlined,
                   ),
-                  _menuCard([
-                    // Obx(
-                    //   () => _switchItem(
-                    //     icon: Icons.dark_mode_outlined,
-                    //     title: AppStrings.darkMode,
-                    //     subtitle: 'ປ່ຽນໂໝດການສະແດງຜົນ',
-                    //     value: ThemeService.to.isDark.value,
-                    //     onChanged: (_) => controller.toggleTheme(),
-                    //   ),
-                    // ),
-                    // Obx(
-                    //   () => _switchItem(
-                    //     icon: Icons.notifications_none_rounded,
-                    //     title: AppStrings.notifications,
-                    //     subtitle: 'ແຈ້ງເຕືອນເມື່ອມີຂໍ້ຄວາມໃໝ່',
-                    //     value: controller.notificationsEnabled.value,
-                    //     onChanged: (_) => controller.toggleNotifications(),
-                    //   ),
-                    // ),
-                    _menuItem(
-                      icon: Icons.privacy_tip_outlined,
-                      title: 'ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ',
-                      subtitle: 'ວິທີເກັບ ແລະ ໃຊ້ຂໍ້ມູນຂອງທ່ານ',
-                      onTap: controller.openPrivacyPolicy,
+                  Material(
+                    color: Colors.white,
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
+                      side: const BorderSide(color: AppColors.divider),
                     ),
-                    _menuItem(
-                      icon: Icons.gavel_rounded,
-                      title: 'ຂໍ້ກຳນົດການໃຊ້',
-                      subtitle: 'ກົດລະບຽບການໃຊ້ແອັບ',
-                      onTap: controller.openTerms,
+                    child: Column(
+                      children: [
+                        MenuItem(
+                          icon: Icons.privacy_tip_outlined,
+                          title: 'ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ',
+                          subtitle: 'ວິທີເກັບ ແລະ ໃຊ້ຂໍ້ມູນຂອງທ່ານ',
+                          onTap: controller.openPrivacyPolicy,
+                        ),
+                        MenuItem(
+                          icon: Icons.gavel_rounded,
+                          title: 'ຂໍ້ກຳນົດການໃຊ້',
+                          subtitle: 'ກົດລະບຽບການໃຊ້ແອັບ',
+                          onTap: controller.openTerms,
+                        ),
+                        MenuItem(
+                          icon: Icons.info_outline_rounded,
+                          title: AppStrings.about,
+                          subtitle:
+                              '${AppStrings.appName} • ${AppStrings.version}',
+                          onTap: _showAbout,
+                        ),
+                        MenuItem(
+                          icon: Icons.bug_report_outlined,
+                          title: 'ຕິດຕໍ່ຫາ',
+                          subtitle: 'ທ່ານສາມາດຕິດຕໍ່ ແລະ ລາຍງານບັນຫາໄດ້',
+                          onTap: _showContact,
+                        ),
+                      ],
                     ),
-                    _menuItem(
-                      icon: Icons.info_outline_rounded,
-                      title: AppStrings.about,
-                      subtitle: '${AppStrings.appName} • ${AppStrings.version}',
-                      onTap: _showAbout,
-                    ),
-                  ]),
+                  ),
                 ],
               ),
             ),
@@ -287,233 +265,6 @@ class ProfileView extends GetView<ProfileController> {
         ),
       ),
     );
-  }
-
-  Widget _miniStat(String label, String value, IconData icon) => Expanded(
-    child: Container(
-      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 10.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-        border: Border.all(color: AppColors.divider),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 17.sp, color: AppColors.primary),
-          SizedBox(height: 7.h),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            label,
-            style: TextStyle(fontSize: 10.5.sp, color: AppColors.textSecondary),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  Widget _menuCard(List<Widget> children) => Material(
-    color: Colors.white,
-    clipBehavior: Clip.antiAlias,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-      side: const BorderSide(color: AppColors.divider),
-    ),
-    child: Column(children: children),
-  );
-
-  Widget _menuItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required VoidCallback onTap,
-    Color color = AppColors.primary,
-  }) => Material(
-    type: MaterialType.transparency,
-    child: ListTile(
-      onTap: onTap,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-      ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-      leading: Container(
-        padding: EdgeInsets.all(9.w),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(11.r),
-        ),
-        child: Icon(icon, size: 17.sp, color: color),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-      ),
-      subtitle: subtitle == null
-          ? null
-          : Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 11.5.sp,
-                color: AppColors.textSecondary,
-              ),
-            ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        size: 20.sp,
-        color: AppColors.textHint,
-      ),
-    ),
-  );
-
-  // ignore: unused_element
-  Widget _switchItem({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) => Material(
-    type: MaterialType.transparency,
-    child: SwitchListTile(
-      value: value,
-      onChanged: onChanged,
-      activeThumbColor: AppColors.primary,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-      secondary: Container(
-        padding: EdgeInsets.all(9.w),
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(11.r),
-        ),
-        child: Icon(icon, size: 17.sp, color: AppColors.primary),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-      ),
-      subtitle: subtitle == null
-          ? null
-          : Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 11.5.sp,
-                color: AppColors.textSecondary,
-              ),
-            ),
-    ),
-  );
-
-  /// ສະແດງການເຊື່ອມຕໍ່ການເຂົ້າລະບົບ ຂອງ Admin
-  // Widget _loginConnections() {
-  //   final user = AuthService.to.user.value;
-  //   final providers = user?.providers ?? const <AuthProviderType>[];
-  //   final all = AuthProviderType.values.where(
-  //     (p) => p != AuthProviderType.password,
-  //   );
-
-  //   return Padding(
-  //     padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 14.h),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           children: [
-  //             Icon(
-  //               Icons.link_rounded,
-  //               size: 15.sp,
-  //               color: AppColors.textSecondary,
-  //             ),
-  //             SizedBox(width: 7.w),
-  //             Text(
-  //               AppStrings.loginConnections,
-  //               style: TextStyle(
-  //                 fontSize: 12.5.sp,
-  //                 fontWeight: FontWeight.w700,
-  //                 color: AppColors.textSecondary,
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         SizedBox(height: 10.h),
-  //         Row(
-  //           children: [
-  //             for (final provider in all) ...[
-  //               Expanded(
-  //                 child: Container(
-  //                   padding: EdgeInsets.symmetric(vertical: 10.h),
-  //                   decoration: BoxDecoration(
-  //                     color: providers.contains(provider)
-  //                         ? AppColors.primarySoft
-  //                         : AppColors.surfaceAlt,
-  //                     borderRadius: BorderRadius.circular(12.r),
-  //                     border: Border.all(
-  //                       color: providers.contains(provider)
-  //                           ? AppColors.primary
-  //                           : AppColors.divider,
-  //                     ),
-  //                   ),
-  //                   child: Column(
-  //                     children: [
-  //                       Icon(
-  //                         _providerIcon(provider),
-  //                         size: 20.sp,
-  //                         color: providers.contains(provider)
-  //                             ? AppColors.primary
-  //                             : AppColors.textHint,
-  //                       ),
-  //                       SizedBox(height: 4.h),
-  //                       Text(
-  //                         provider.label,
-  //                         style: TextStyle(
-  //                           fontSize: 10.5.sp,
-  //                           fontWeight: FontWeight.w700,
-  //                           color: providers.contains(provider)
-  //                               ? AppColors.primary
-  //                               : AppColors.textHint,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //               if (provider != all.last) SizedBox(width: 8.w),
-  //             ],
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // ignore: unused_element
-  IconData _providerIcon(AuthProviderType provider) {
-    switch (provider) {
-      case AuthProviderType.google:
-        return Icons.g_mobiledata_rounded;
-      case AuthProviderType.facebook:
-        return Icons.facebook_rounded;
-      case AuthProviderType.apple:
-        return Icons.apple_rounded;
-      case AuthProviderType.password:
-        return Icons.mail_outline_rounded;
-    }
   }
 
   void _showAbout() async {
@@ -555,5 +306,151 @@ class ProfileView extends GetView<ProfileController> {
         ],
       ),
     );
+  }
+
+  void _showContact() {
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 28.h, horizontal: 20.w),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primary,
+                      AppColors.primary.withValues(alpha: 0.75),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(24.r),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(14.r),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.support_agent_rounded,
+                        color: Colors.white,
+                        size: 36.sp,
+                      ),
+                    ),
+                    SizedBox(height: 14.h),
+                    Text(
+                      'ຕິດຕໍ່ຫາ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      'ທ່ານສາມາດຕິດຕໍ່ ແລະ ລາຍງານບັນຫາໄດ້',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Contact cards
+              Padding(
+                padding: EdgeInsets.all(16.r),
+                child: Column(
+                  children: [
+                    ContactCard(
+                      icon: Icons.email_rounded,
+                      color: const Color(0xFFE65100),
+                      title: 'Email',
+                      value: 'somdeelee99@gmail.com',
+                      onTap: () => _openUri(
+                        Uri(scheme: 'mailto', path: 'somdeelee99@gmail.com'),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
+                    ContactCard(
+                      icon: Icons.phone_rounded,
+                      color: const Color(0xFF1E88E5),
+                      title: 'Phone',
+                      value: '+856 2078135458',
+                      onTap: () =>
+                          _openUri(Uri(scheme: 'tel', path: '+856 2078135458')),
+                    ),
+                    SizedBox(height: 10.h),
+                    ContactCard(
+                      icon: Icons.chat_rounded,
+                      color: const Color(0xFF25D366),
+                      title: 'WhatsApp',
+                      value: '+856 2078135458',
+                      onTap: () =>
+                          _openUri(Uri.parse('https://wa.me/8562078135458')),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Close button
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                child: SizedBox(
+                  height: 48.h,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
+                    ),
+                    onPressed: () => Get.back(),
+                    child: Text(
+                      'ຕົກລົງ',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openUri(Uri uri) async {
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        Get.snackbar('Error', 'Could not open ${uri.toString()}');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Could not open ${uri.toString()}');
+    }
   }
 }

@@ -4,6 +4,12 @@
     <!-- Internet permission -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <!-- Camera & Media (ສ້າງໂປຣໄຟລ໌ / ຖ່າຍຮູບ / ເລືອກຮູບ) -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+
     <!-- ແອັບບໍ່ມີໂຄສະນາ ແລະ ບໍ່ໄດ້ໃຊ້ Advertising ID. Removing AD_ID ຫຼຸດ
          ຄວາມສ່ຽງ Data Safety ບໍ່ກົງກັບການປະກາດ. -->
     <uses-permission
@@ -91,6 +97,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Image Cropper (ປັບຮູບໂປຣໄຟລ໌) -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     </application>
 

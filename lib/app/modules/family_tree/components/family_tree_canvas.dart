@@ -31,7 +31,7 @@ class FamilyTreeCanvas extends StatelessWidget {
           title: AppStrings.noMembers,
           description: controller.isAdmin
               ? 'ເລີ່ມສ້າງຜັງໄມ້ຄອບຄົວໂດຍການເພີ່ມສະມາຊິກຄົນທຳອິດ'
-              : 'Admin ຍັງບໍ່ໄດ້ເພີ່ມສະມາຊິກໃນຜັງ',
+              : 'Admin ຍັງບໍ່ໄດ້ເພີ່ມສະມາຊິກ',
           icon: Icons.account_tree_outlined,
           actionLabel: controller.isAdmin ? AppStrings.addNode : null,
           onAction: controller.isAdmin

@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/family_tree_controller.dart';
-import '../widgets/family_tree_canvas.dart';
-import '../widgets/family_tree_header.dart';
-import '../widgets/family_tree_list_view.dart';
+import '../components/family_tree_canvas.dart';
+import '../components/family_tree_header.dart';
+import '../components/family_tree_list_view.dart';
 
 /// ໜ້າຜັງໄມ້ຄອບຄົວ
 /// - Admin: ເບິ່ງແບບເຕັມ (zoom/pan) + ເພີ່ມ / ແກ້ໄຂ / ລຶບ + Export PDF

@@ -33,6 +33,8 @@ class UiHelpers {
       titleText: const SizedBox.shrink(),
       messageText: Text(
         message,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,

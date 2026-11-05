@@ -14,7 +14,7 @@ import '../../../data/models/app_user.dart';
 import '../../../data/models/enums.dart';
 import '../../../data/models/family_member.dart';
 import '../controllers/member_detail_controller.dart';
-import '../widgets/person_info_section.dart';
+import '../component/person_info_section.dart';
 
 /// ໜ້າລາຍລະອຽດຂອງສະມາຊິກ
 /// ທັງ Admin ແລະ Member ເບິ່ງໄດ້ ແລະ ກົດແຊັດຫາໄດ້ (ຍົກເວັ້ນຂໍ້ມູນຂອງຕົນເອງ)
@@ -33,7 +33,8 @@ class MemberDetailView extends GetView<MemberDetailController> {
                 ? PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert_rounded),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r)),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
                     onSelected: (value) {
                       if (value == 'edit') {
                         controller.type.value == 'account'
@@ -60,10 +61,14 @@ class MemberDetailView extends GetView<MemberDetailController> {
                         child: ListTile(
                           dense: true,
                           contentPadding: EdgeInsets.zero,
-                          leading: Icon(Icons.delete_outline_rounded,
-                              color: Colors.red),
-                          title:
-                              Text('ລຶບ', style: TextStyle(color: Colors.red)),
+                          leading: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.red,
+                          ),
+                          title: Text(
+                            'ລຶບ',
+                            style: TextStyle(color: Colors.red),
+                          ),
                         ),
                       ),
                     ],
@@ -126,7 +131,8 @@ class MemberDetailView extends GetView<MemberDetailController> {
             imageUrl: avatar,
             name: name,
             size: 92,
-            gender: person?.gender ??
+            gender:
+                person?.gender ??
                 (account?.gender == null
                     ? null
                     : Gender.fromString(account!.gender)),
@@ -150,8 +156,9 @@ class MemberDetailView extends GetView<MemberDetailController> {
             Text(
               subtitle,
               style: TextStyle(
-                  fontSize: 12.5.sp,
-                  color: Colors.white.withValues(alpha: 0.85)),
+                fontSize: 12.5.sp,
+                color: Colors.white.withValues(alpha: 0.85),
+              ),
             ),
           ],
           SizedBox(height: 14.h),
@@ -165,8 +172,10 @@ class MemberDetailView extends GetView<MemberDetailController> {
               if (person != null) StatusBadge(status: person.status),
               if (person != null)
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 5.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(30.r),
@@ -174,9 +183,10 @@ class MemberDetailView extends GetView<MemberDetailController> {
                   child: Text(
                     person.generationLabel,
                     style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white),
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
             ],
@@ -250,31 +260,31 @@ class MemberDetailView extends GetView<MemberDetailController> {
     required String label,
     required Color color,
     required VoidCallback onTap,
-  }) =>
-      InkWell(
-        onTap: onTap,
+  }) => InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(14.r),
+    child: Container(
+      padding: EdgeInsets.symmetric(vertical: 12.h),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(14.r),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 12.h),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 19.sp, color: color),
+          SizedBox(height: 5.h),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5.sp,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
-          child: Column(
-            children: [
-              Icon(icon, size: 19.sp, color: color),
-              SizedBox(height: 5.h),
-              Text(
-                label,
-                style: TextStyle(
-                    fontSize: 11.5.sp,
-                    fontWeight: FontWeight.w700,
-                    color: color),
-              ),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 
   // ==================== ຂໍ້ມູນບັນຊີ ====================
   Widget _accountInfoCard(AppUser account) {
@@ -290,8 +300,11 @@ class MemberDetailView extends GetView<MemberDetailController> {
         children: [
           Row(
             children: [
-              Icon(Icons.account_circle_outlined,
-                  size: 17.sp, color: AppColors.primary),
+              Icon(
+                Icons.account_circle_outlined,
+                size: 17.sp,
+                color: AppColors.primary,
+              ),
               SizedBox(width: 8.w),
               Text(
                 AppStrings.accountInfo,
@@ -304,22 +317,35 @@ class MemberDetailView extends GetView<MemberDetailController> {
             ],
           ),
           SizedBox(height: 12.h),
-          _infoRow(Icons.mail_outline_rounded, AppStrings.email,
-              account.email ?? '-',
-              onTap: (account.email ?? '').isEmpty
-                  ? null
-                  : () => controller.sendEmail(account.email!)),
-          _infoRow(Icons.call_outlined, AppStrings.phone, account.phone ?? '-',
-              onTap: (account.phone ?? '').isEmpty
-                  ? null
-                  : () => controller.call(account.phone!)),
           _infoRow(
-              Icons.chat_outlined, AppStrings.whatsapp, account.whatsapp ?? '-',
-              onTap: (account.whatsapp ?? '').isEmpty
-                  ? null
-                  : () => controller.openWhatsApp(account.whatsapp!)),
-          _infoRow(Icons.verified_user_outlined, AppStrings.role,
-              account.role.label),
+            Icons.mail_outline_rounded,
+            AppStrings.email,
+            account.email ?? '-',
+            onTap: (account.email ?? '').isEmpty
+                ? null
+                : () => controller.sendEmail(account.email!),
+          ),
+          _infoRow(
+            Icons.call_outlined,
+            AppStrings.phone,
+            account.phone ?? '-',
+            onTap: (account.phone ?? '').isEmpty
+                ? null
+                : () => controller.call(account.phone!),
+          ),
+          _infoRow(
+            Icons.chat_outlined,
+            AppStrings.whatsapp,
+            account.whatsapp ?? '-',
+            onTap: (account.whatsapp ?? '').isEmpty
+                ? null
+                : () => controller.openWhatsApp(account.whatsapp!),
+          ),
+          _infoRow(
+            Icons.verified_user_outlined,
+            AppStrings.role,
+            account.role.label,
+          ),
           _infoRow(
             Icons.event_available_outlined,
             'ເຂົ້າໃຊ້ຫຼ້າສຸດ',
@@ -339,8 +365,12 @@ class MemberDetailView extends GetView<MemberDetailController> {
     );
   }
 
-  Widget _infoRow(IconData icon, String label, String value,
-      {VoidCallback? onTap}) {
+  Widget _infoRow(
+    IconData icon,
+    String label,
+    String value, {
+    VoidCallback? onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10.r),
@@ -355,7 +385,9 @@ class MemberDetailView extends GetView<MemberDetailController> {
               child: Text(
                 label,
                 style: TextStyle(
-                    fontSize: 12.5.sp, color: AppColors.textSecondary),
+                  fontSize: 12.5.sp,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
             Expanded(
@@ -369,8 +401,11 @@ class MemberDetailView extends GetView<MemberDetailController> {
               ),
             ),
             if (onTap != null)
-              Icon(Icons.open_in_new_rounded,
-                  size: 13.sp, color: AppColors.textHint),
+              Icon(
+                Icons.open_in_new_rounded,
+                size: 13.sp,
+                color: AppColors.textHint,
+              ),
           ],
         ),
       ),

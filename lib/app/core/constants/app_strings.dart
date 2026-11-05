@@ -59,7 +59,7 @@ class AppStrings {
   // ---- Family tree ----
   static const String familyTree = 'ຜັງໄມ້ຄອບຄົວ';
   static const String searchMember = 'ຄົ້ນຫາສະມາຊິກ';
-  static const String addNode = 'ເພີ່ມສະມາຊິກໃນຜັງ';
+  static const String addNode = 'ເພີ່ມສະມາຊິກ';
   static const String editNode = 'ແກ້ໄຂຂໍ້ມູນ';
   static const String deleteNode = 'ລຶບສະມາຊິກ';
   static const String deleteNodeConfirm =

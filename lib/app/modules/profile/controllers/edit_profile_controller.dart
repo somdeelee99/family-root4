@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/services/auth_service.dart';
@@ -42,26 +41,16 @@ class EditProfileController extends GetxController {
   }
 
   Future<void> pickImage({ImageSource source = ImageSource.gallery}) async {
-    final XFile? picked =
-        await _picker.pickImage(source: source, imageQuality: 90);
-    if (picked == null) return;
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: picked.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'ປັບຮູບໂປຣໄຟລ໌',
-          toolbarColor: const Color(0xFF1E6F5C),
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.square,
-          lockAspectRatio: true,
-        ),
-        IOSUiSettings(
-          title: 'ປັບຮູບໂປຣໄຟລ໌',
-          aspectRatioLockEnabled: true,
-        ),
-      ],
-    );
-    pickedImage.value = File(cropped?.path ?? picked.path);
+    try {
+      final XFile? picked =
+          await _picker.pickImage(source: source, imageQuality: 90);
+      if (picked == null) return; // ຜູ່ໃຊ້ຍກະລັດ
+
+      pickedImage.value = File(picked.path);
+      UiHelpers.success('ເລືອກຮູບສຳເລັດ');
+    } catch (e) {
+      UiHelpers.error('ເລືອກຮູບບໍ່ສຳເລັດ: ${UiHelpers.mapError(e)}');
+    }
   }
 
   void chooseImageSource() {
