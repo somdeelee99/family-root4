@@ -2,9 +2,10 @@ import 'package:family_root/app/core/constants/app_colors.dart';
 import 'package:family_root/app/core/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 Widget MenuItem({
-  required IconData icon,
+  required Widget icon,
   required String title,
   String? subtitle,
   required VoidCallback onTap,
@@ -23,7 +24,10 @@ Widget MenuItem({
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(11.r),
       ),
-      child: Icon(icon, size: 17.sp, color: color),
+      child: IconTheme(
+        data: IconThemeData(size: 17.sp, color: color),
+        child: icon,
+      ),
     ),
     title: Text(
       title,
@@ -39,9 +43,9 @@ Widget MenuItem({
             subtitle,
             style: TextStyle(fontSize: 11.5.sp, color: AppColors.textSecondary),
           ),
-    trailing: Icon(
-      Icons.chevron_right_rounded,
-      size: 20.sp,
+    trailing: FaIcon(
+      FontAwesomeIcons.chevronRight,
+      size: 16.sp,
       color: AppColors.textHint,
     ),
   ),

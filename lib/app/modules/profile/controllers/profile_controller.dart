@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:family_root/app/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -72,24 +74,29 @@ class ProfileController extends GetxController {
   void goToFamilyInfo() => Get.toNamed(Routes.FAMILY_INFO);
 
   // Play Store ຕ້ອງການ privacy policy URL ທີ່ເຂົ້າເຖິງໄດ້.
-  static const String privacyPolicyUrl =
-      'https://familyroot-26df8.web.app/privacy.html';
-  static const String termsUrl =
-      'https://familyroot-26df8.web.app/terms.html';
 
-  Future<void> openPrivacyPolicy() => _openUrl(privacyPolicyUrl);
+  static const String email = 'somdeelee99@gmail.com';
+  static const String phoneNumber = '+856 2078135458';
+  static const String whatsappUrl = 'https://wa.me/8562078135458';
 
-  Future<void> openTerms() => _openUrl(termsUrl);
+  Future<void> emailToSupport() => _openUri(Uri(scheme: 'mailto', path: email));
 
-  Future<void> _openUrl(String url) async {
+  Future<void> phoneToSupport() =>
+      _openUri(Uri(scheme: 'tel', path: phoneNumber));
+
+  Future<void> openWhatsApp() => _openUri(Uri.parse(whatsappUrl));
+
+  Future<void> _openUri(Uri uri) async {
     try {
-      final ok = await launchUrl(
-        Uri.parse(url),
+      final launched = await launchUrl(
+        uri,
         mode: LaunchMode.externalApplication,
       );
-      if (!ok) UiHelpers.error('ບໍ່ສາມາດເປີດລິ້ງໄດ້');
-    } catch (_) {
-      UiHelpers.error('ບໍ່ສາມາດເປີດລິ້ງໄດ້');
+      if (!launched) {
+        Get.snackbar('Error', 'Could not open ${uri.toString()}');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Could not open ${uri.toString()}');
     }
   }
 
@@ -101,7 +108,9 @@ class ProfileController extends GetxController {
       isDanger: true,
       icon: Icons.logout_rounded,
     );
-    if (confirmed != true) return; // <--- สำคัญ
+    if (confirmed != true) return;
+
+    _showSignOutLoading();
 
     try {
       await _familySub?.cancel();
@@ -111,8 +120,28 @@ class ProfileController extends GetxController {
     try {
       await auth.signOut();
     } finally {
+      if (Get.isDialogOpen == true) Get.back();
       Get.offAllNamed(Routes.AUTH);
     }
+  }
+
+  void _showSignOutLoading() {
+    Get.dialog(
+      PopScope(
+        canPop: false,
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: CircularProgressIndicator(color: AppColors.primary),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   /// ລຶບບັນຊີຂອງຕົນເອງ ແລະ ຂໍ້ມູນສ່ວນຕົວ (Play Store requirement)

@@ -1,11 +1,10 @@
-import 'package:family_root/app/core/widgets/contac_card.dart';
 import 'package:family_root/app/core/widgets/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
@@ -167,7 +166,7 @@ class ProfileView extends GetView<ProfileController> {
                     child: Column(
                       children: [
                         MenuItem(
-                          icon: Icons.edit_outlined,
+                          icon: FaIcon(FontAwesomeIcons.edit),
                           title: controller.isAdmin
                               ? 'ອັບເດດຂໍ້ມູນ ແລະ ຮູບພາບ'
                               : AppStrings.editProfile,
@@ -177,13 +176,13 @@ class ProfileView extends GetView<ProfileController> {
                           onTap: controller.goToEditProfile,
                         ),
                         MenuItem(
-                          icon: Icons.family_restroom_rounded,
+                          icon: FaIcon(FontAwesomeIcons.users),
                           title: AppStrings.familyInfo,
                           subtitle: controller.family.value?.displayName ?? '-',
                           onTap: controller.goToFamilyInfo,
                         ),
                         MenuItem(
-                          icon: Icons.delete_forever_outlined,
+                          icon: FaIcon(FontAwesomeIcons.trash),
                           title: 'ລຶບບັນຊີ',
                           subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
                           onTap: controller.deleteMyAccount,
@@ -216,26 +215,14 @@ class ProfileView extends GetView<ProfileController> {
                     child: Column(
                       children: [
                         MenuItem(
-                          icon: Icons.privacy_tip_outlined,
-                          title: 'ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ',
-                          subtitle: 'ວິທີເກັບ ແລະ ໃຊ້ຂໍ້ມູນຂອງທ່ານ',
-                          onTap: controller.openPrivacyPolicy,
-                        ),
-                        MenuItem(
-                          icon: Icons.gavel_rounded,
-                          title: 'ຂໍ້ກຳນົດການໃຊ້',
-                          subtitle: 'ກົດລະບຽບການໃຊ້ແອັບ',
-                          onTap: controller.openTerms,
-                        ),
-                        MenuItem(
-                          icon: Icons.info_outline_rounded,
+                          icon: FaIcon(FontAwesomeIcons.infoCircle),
                           title: AppStrings.about,
                           subtitle:
                               '${AppStrings.appName} • ${AppStrings.version}',
                           onTap: _showAbout,
                         ),
                         MenuItem(
-                          icon: Icons.bug_report_outlined,
+                          icon: FaIcon(FontAwesomeIcons.addressCard),
                           title: 'ຕິດຕໍ່ຫາ',
                           subtitle: 'ທ່ານສາມາດຕິດຕໍ່ ແລະ ລາຍງານບັນຫາໄດ້',
                           onTap: _showContact,
@@ -363,7 +350,7 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'ທ່ານສາມາດຕິດຕໍ່ ແລະ ລາຍງານບັນຫາໄດ້',
+                      'ທ່ານສາມາດຕິດຕໍ່ຫາທິມງານ',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
@@ -379,32 +366,25 @@ class ProfileView extends GetView<ProfileController> {
                 padding: EdgeInsets.all(16.r),
                 child: Column(
                   children: [
-                    ContactCard(
-                      icon: Icons.email_rounded,
-                      color: const Color(0xFFE65100),
+                    MenuItem(
+                      icon: FaIcon(FontAwesomeIcons.envelope),
                       title: 'Email',
-                      value: 'somdeelee99@gmail.com',
-                      onTap: () => _openUri(
-                        Uri(scheme: 'mailto', path: 'somdeelee99@gmail.com'),
-                      ),
+                      subtitle: 'somdeelee99@gmail.com',
+                      onTap: controller.emailToSupport,
                     ),
                     SizedBox(height: 10.h),
-                    ContactCard(
-                      icon: Icons.phone_rounded,
-                      color: const Color(0xFF1E88E5),
+                    MenuItem(
+                      icon: FaIcon(FontAwesomeIcons.phone),
                       title: 'Phone',
-                      value: '+856 2078135458',
-                      onTap: () =>
-                          _openUri(Uri(scheme: 'tel', path: '+856 2078135458')),
+                      subtitle: '+856 2078135458',
+                      onTap: controller.phoneToSupport,
                     ),
                     SizedBox(height: 10.h),
-                    ContactCard(
-                      icon: Icons.chat_rounded,
-                      color: const Color(0xFF25D366),
+                    MenuItem(
+                      icon: FaIcon(FontAwesomeIcons.whatsapp),
                       title: 'WhatsApp',
-                      value: '+856 2078135458',
-                      onTap: () =>
-                          _openUri(Uri.parse('https://wa.me/8562078135458')),
+                      subtitle: '+856 2078135458',
+                      onTap: controller.openWhatsApp,
                     ),
                   ],
                 ),
@@ -438,19 +418,5 @@ class ProfileView extends GetView<ProfileController> {
         ),
       ),
     );
-  }
-
-  Future<void> _openUri(Uri uri) async {
-    try {
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        Get.snackbar('Error', 'Could not open ${uri.toString()}');
-      }
-    } catch (e) {
-      Get.snackbar('Error', 'Could not open ${uri.toString()}');
-    }
   }
 }
