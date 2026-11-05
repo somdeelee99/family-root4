@@ -8,14 +8,6 @@ import '../components/family_tree_canvas.dart';
 import '../components/family_tree_header.dart';
 import '../components/family_tree_list_view.dart';
 
-/// ໜ້າຜັງໄມ້ຄອບຄົວ
-/// - Admin: ເບິ່ງແບບເຕັມ (zoom/pan) + ເພີ່ມ / ແກ້ໄຂ / ລຶບ + Export PDF
-/// - Member: ເບິ່ງແບບ read-only + ຄົ້ນຫາ + ເບິ່ງລາຍລະອຽດ
-///
-/// ໄຟລ໌ນີ້ເປັນພຽງ orchestrator. ລາຍລະອຽດຖືກແຍກໄປຢູ່ widgets:
-/// - [FamilyTreeHeader]    ຫົວໜ້າ + ຄົ້ນຫາ + export
-/// - [FamilyTreeCanvas]    ຜັງ (zoom/pan/node/ເສັ້ນເຊື່ອມ)
-/// - [FamilyTreeListView]  ໂໝດລາຍການ
 class FamilyTreeView extends GetView<FamilyTreeController> {
   const FamilyTreeView({super.key});
 

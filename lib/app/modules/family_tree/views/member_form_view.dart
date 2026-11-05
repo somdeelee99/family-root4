@@ -44,16 +44,23 @@ class MemberFormView extends GetView<MemberFormController> {
                   padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 120.h),
                   physics: const BouncingScrollPhysics(),
                   children: [
+                    // ຮູບໂປຣໄຟລ໌ + ປຸ່ມເລືອກ/ປ່ຽນຮູບ
                     MemberAvatarPicker(controller: controller),
                     SizedBox(height: 20.h),
+                    // ຂໍ້ມູນພື້ນຖານ: ຊື່, ຊື່ຫຼິ້ນ, ເພດ, ວັນເກີດ, ລຸ້ນ
                     MemberBasicInfoSection(controller: controller),
                     SizedBox(height: 14.h),
+                    // ສະຖານະ
                     MemberStatusSection(controller: controller),
                     SizedBox(height: 14.h),
+                    // ຄວາມສຳພັນ: ພໍ່, ແມ່, ຄູ່, ລູກ, ເພື່ອນ
                     MemberRelationshipsSection(controller: controller),
                     SizedBox(height: 14.h),
+                    // ຂໍ້ມູນຕິດຕໍ່: ເບີໂທ, ອີເມວ, ທີ່ຢູ່
                     MemberContactSection(controller: controller),
                     SizedBox(height: 14.h),
+                    // ການເຊື່ອມບັນຊີ: ເຊື່ອມບັນຊີ Google, Facebook, Apple
+
                     MemberAccountLinkSection(controller: controller),
                   ],
                 ),

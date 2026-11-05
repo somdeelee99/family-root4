@@ -25,7 +25,7 @@ class MemberBasicInfoSection extends StatelessWidget {
         AppTextField(
           controller: controller.nameController,
           label: 'ຊື່ ແລະ ນາມສະກຸນ',
-          hint: 'ຕົວຢ່າງ: ສົມພອນ ວົງສະຫວັນ',
+          hint: 'ຕົວຢ່າງ: ສົມດີ ລີເລ່ຍນູ',
           prefixIcon: Icons.person_outline_rounded,
           isRequired: true,
           textCapitalization: TextCapitalization.words,
@@ -35,7 +35,7 @@ class MemberBasicInfoSection extends StatelessWidget {
         AppTextField(
           controller: controller.nicknameController,
           label: 'ຊື່ຫຼິ້ນ',
-          hint: 'ຕົວຢ່າງ: ພອນ',
+          hint: 'ຕົວຢ່າງ: ສົມດີ',
           prefixIcon: Icons.emoji_emotions_outlined,
           isOptional: true,
         ),
