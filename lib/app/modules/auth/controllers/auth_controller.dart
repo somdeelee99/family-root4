@@ -42,7 +42,7 @@ class AuthController extends GetxController {
         UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
-      UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
+      // UiHelpers.success('${provider.label} - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
@@ -60,7 +60,7 @@ class AuthController extends GetxController {
         UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
-      UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
+      // UiHelpers.success('Facebook - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
@@ -78,7 +78,7 @@ class AuthController extends GetxController {
         UiHelpers.error(msg.isEmpty ? AppStrings.error : msg);
         return;
       }
-      UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
+      // UiHelpers.success('Apple - ເຂົ້າລະບົບສຳເລັດ');
       await Future<void>.delayed(const Duration(milliseconds: 400));
       _routeAfterLogin();
     } finally {
@@ -111,7 +111,7 @@ class AuthController extends GetxController {
       await _auth.signOut();
       return;
     }
-    UiHelpers.success('ຍິນດີຕ້ອນຮັບ ${user.displayName}');
+    // UiHelpers.success('ຍິນດີຕ້ອນຮັບ ${user.displayName}');
     await Future<void>.delayed(const Duration(milliseconds: 350));
     _routeAfterLogin();
   }
