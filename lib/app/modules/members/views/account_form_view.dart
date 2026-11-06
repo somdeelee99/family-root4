@@ -1,3 +1,5 @@
+import 'package:family_root/app/modules/members/component/card_widget.dart';
+import 'package:family_root/app/modules/members/component/role_option.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -86,7 +88,7 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 12.h),
 
-            _card(
+            CardWidget(
               title: 'ຂໍ້ມູນບັນຊີ',
               icon: Icons.badge_outlined,
               children: [
@@ -123,7 +125,7 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 14.h),
 
-            _card(
+            CardWidget(
               title: 'ການເຂົ້າລະບົບ',
               icon: Icons.lock_outline_rounded,
               children: [
@@ -179,19 +181,19 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
             SizedBox(height: 14.h),
 
-            _card(
+            CardWidget(
               title: AppStrings.role,
               icon: Icons.admin_panel_settings_outlined,
               children: [
-                // FIX: เอา Obx ออกจาก Column ใหญ่ ไปใส่ใน _roleOption แทน
-                _roleOption(
+                // FIX: ເອົາ Obx ออกจาก Column ໃຫ້ ໄປໃນ _roleOption  thay
+                RoleOption(
                   role: UserRole.member,
                   icon: Icons.person_rounded,
                   title: AppStrings.roleMember,
                   description: 'ເບິ່ງຂໍ້ມູນ, ແຊັດຫາ ແລະ ແກ້ໄຂໂປຣໄຟລ໌ຂອງຕົນເອງ',
                 ),
                 SizedBox(height: 10.h),
-                _roleOption(
+                RoleOption(
                   role: UserRole.admin,
                   icon: Icons.verified_rounded,
                   title: AppStrings.roleAdmin,
@@ -317,126 +319,6 @@ class AccountFormView extends GetView<AccountFormController> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _roleOption({
-    required UserRole role,
-    required IconData icon,
-    required String title,
-    required String description,
-    bool isGold = false,
-  }) {
-    // FIX: เอา Obx มาไว้ในนี้เลย เพื่อให้ .value อยู่ตรงใน Obx
-    return Obx(() {
-      final selected = controller.role.value == role;
-      final color = isGold ? AppColors.accent : AppColors.primary;
-      return InkWell(
-        onTap: () => controller.setRole(role),
-        borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.all(13.w),
-          decoration: BoxDecoration(
-            color: selected
-                ? color.withValues(alpha: 0.09)
-                : AppColors.surfaceAlt,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
-            border: Border.all(
-              color: selected ? color : AppColors.divider,
-              width: selected ? 1.6 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(9.w),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(11.r),
-                ),
-                child: Icon(icon, size: 18.sp, color: color),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 13.5.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: AppColors.textSecondary,
-                        height: 1.35,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                selected
-                    ? Icons.radio_button_checked_rounded
-                    : Icons.radio_button_unchecked_rounded,
-                size: 20.sp,
-                color: selected ? color : AppColors.textHint,
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _card({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg.r),
-        border: Border.all(color: AppColors.divider),
-        boxShadow: AppSizes.softShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: AppColors.primarySoft,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(icon, size: 16.sp, color: AppColors.primary),
-              ),
-              SizedBox(width: 10.w),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.5.sp,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          ...children,
-        ],
       ),
     );
   }

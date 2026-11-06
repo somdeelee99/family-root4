@@ -64,8 +64,10 @@ class AccountFormController extends GetxController {
   void setRole(UserRole value) => role.value = value;
 
   Future<void> pickImage({ImageSource source = ImageSource.gallery}) async {
-    final XFile? picked =
-        await _picker.pickImage(source: source, imageQuality: 90);
+    final XFile? picked = await _picker.pickImage(
+      source: source,
+      imageQuality: 90,
+    );
     if (picked == null) return;
     final cropped = await ImageCropper().cropImage(
       sourcePath: picked.path,
@@ -77,10 +79,7 @@ class AccountFormController extends GetxController {
           initAspectRatio: CropAspectRatioPreset.square,
           lockAspectRatio: true,
         ),
-        IOSUiSettings(
-          title: 'ປັບຮູບໂປຣໄຟລ໌',
-          aspectRatioLockEnabled: true,
-        ),
+        IOSUiSettings(title: 'ປັບຮູບໂປຣໄຟລ໌', aspectRatioLockEnabled: true),
       ],
     );
     pickedImage.value = File(cropped?.path ?? picked.path);
@@ -120,7 +119,7 @@ class AccountFormController extends GetxController {
     final random = DateTime.now().microsecondsSinceEpoch.toString();
     final password = List.generate(10, (i) {
       final index =
-          (random.codeUnitAt(i % random.length) + i * 7) % chars.length;
+          (random.codeUnitAt(i % random.length) + i * 8) % chars.length;
       return chars[index];
     }).join();
     passwordController.text = password;
@@ -140,7 +139,8 @@ class AccountFormController extends GetxController {
 
     isSaving.value = true;
     UiHelpers.loading(
-        message: isEdit ? 'ກຳລັງອັບເດດບັນຊີ...' : 'ກຳລັງສ້າງບັນຊີ...');
+      message: isEdit ? 'ກຳລັງອັບເດດບັນຊີ...' : 'ກຳລັງສ້າງບັນຊີ...',
+    );
 
     try {
       var finalAvatar = avatarUrl.value;
@@ -185,10 +185,14 @@ class AccountFormController extends GetxController {
 
         // ສະແດງຂໍ້ມູນບັນຊີທີ່ສ້າງໃໝ່ ເພື່ອສົ່ງຕໍ່
         _showCredentialDialog(
-            emailController.text.trim(), passwordController.text, newUid);
+          emailController.text.trim(),
+          passwordController.text,
+          newUid,
+        );
         return;
       }
-      Get.back(result: true);
+      // Get.back(result: true);
+      Get.back();
     } catch (e) {
       UiHelpers.hideLoading();
       UiHelpers.error(UiHelpers.mapError(e));
@@ -200,8 +204,11 @@ class AccountFormController extends GetxController {
   void _showCredentialDialog(String email, String password, String newUid) {
     Get.dialog(
       AlertDialog(
-        icon: Icon(Icons.check_circle_rounded,
-            color: Color(0xFF22A06B), size: 40),
+        icon: Icon(
+          Icons.check_circle_rounded,
+          color: Color(0xFF22A06B),
+          size: 40,
+        ),
         title: const Text('ສ້າງບັນຊີສຳເລັດ'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -231,30 +238,30 @@ class AccountFormController extends GetxController {
   }
 
   Widget _credentialRow(String label, String value) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF0F5F3),
-          borderRadius: BorderRadius.circular(10),
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: const Color(0xFFF0F5F3),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Row(
+      children: [
+        SizedBox(
+          width: 78,
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 11.5, color: Color(0xFF6B7C77)),
+          ),
         ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 78,
-              child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 11.5, color: Color(0xFF6B7C77))),
-            ),
-            Expanded(
-              child: SelectableText(
-                value,
-                style: const TextStyle(
-                    fontSize: 12.5, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ],
+        Expanded(
+          child: SelectableText(
+            value,
+            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   @override
   void onClose() {
