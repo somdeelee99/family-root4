@@ -1,7 +1,7 @@
 import 'package:family_root/app/data/models/family_member.dart';
-import 'package:family_root/app/modules/family_tree/layout/tree_layout_config.dart';
-import 'package:family_root/app/modules/family_tree/layout/tree_layout_engine.dart';
-import 'package:family_root/app/modules/family_tree/layout/tree_layout_result.dart';
+import 'package:family_root/app/modules/family_tree/controllers/tree_layout_config.dart';
+import 'package:family_root/app/modules/family_tree/controllers/tree_layout_engine.dart';
+import 'package:family_root/app/modules/family_tree/controllers/tree_layout_result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -13,11 +13,11 @@ import '../../../data/models/family.dart';
 import '../../../data/models/family_member.dart';
 import '../../../data/repositories/family_repository.dart';
 import '../../../data/repositories/member_repository.dart';
-import '../layout/tree_layout_config.dart';
-import '../layout/tree_layout_engine.dart';
-import '../layout/tree_layout_result.dart';
+import 'tree_layout_config.dart';
+import 'tree_layout_engine.dart';
+import 'tree_layout_result.dart';
 
-export '../layout/tree_layout_result.dart'
+export 'tree_layout_result.dart'
     show TreeEdge, TreeEdgeType, TreeNodePosition;
 
 /// ຄວບຄຸມຜັງໄມ້ຄອບຄົວ

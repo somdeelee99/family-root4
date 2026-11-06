@@ -8,10 +8,8 @@ import '../../../../core/widgets/app_avatar.dart';
 import '../../controllers/member_form_controller.dart';
 
 /// ຮູບໂປຣໄຟລ໌ + ປຸ່ມເລືອກ/ປ່ຽນຮູບ
-class MemberAvatarPicker extends StatelessWidget {
-  const MemberAvatarPicker({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberAvatarPicker extends GetView<MemberFormController> {
+  const MemberAvatarPicker({super.key});
 
   @override
   Widget build(BuildContext context) {

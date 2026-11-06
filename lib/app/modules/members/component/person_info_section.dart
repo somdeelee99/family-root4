@@ -7,7 +7,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../core/widgets/app_avatar.dart';
 import '../../../data/models/family_member.dart';
-import '../../family_tree/components/member_detail_sheet.dart';
+import '../../family_tree/widgets/member_detail_sheet.dart';
 import '../controllers/member_detail_controller.dart';
 
 /// ພາກຂໍ້ມູນບຸກຄົນໃນຜັງ (ສຳລັບໜ້າລາຍລະອຽດ)

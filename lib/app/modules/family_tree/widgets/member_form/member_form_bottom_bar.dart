@@ -7,10 +7,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../controllers/member_form_controller.dart';
 
 /// ແຖບປຸ່ມ ຍົກເລີກ / ບັນທຶກ ຢູ່ລຸ່ມຟອມ
-class MemberFormBottomBar extends StatelessWidget {
-  const MemberFormBottomBar({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberFormBottomBar extends GetView<MemberFormController> {
+  const MemberFormBottomBar({super.key});
 
   @override
   Widget build(BuildContext context) {

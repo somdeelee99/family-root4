@@ -10,10 +10,8 @@ import '../controllers/family_tree_controller.dart';
 
 /// ຫົວໜ້າຂອງໜ້າຜັງໄມ້ຄອບຄົວ:
 /// ຊື່ໜ້າ, ຈຳນວນສະມາຊິກ, ສະລັບ ຜັງ/ລາຍການ, ເມນູ export ແລະ ຊ່ອງຄົ້ນຫາ.
-class FamilyTreeHeader extends StatelessWidget {
-  const FamilyTreeHeader({super.key, required this.controller});
-
-  final FamilyTreeController controller;
+class FamilyTreeHeader extends GetView<FamilyTreeController> {
+  const FamilyTreeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

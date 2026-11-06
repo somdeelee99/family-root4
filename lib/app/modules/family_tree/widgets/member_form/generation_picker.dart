@@ -9,10 +9,8 @@ import '../../controllers/member_form_controller.dart';
 import 'form_controls.dart';
 
 /// ຊ່ອງເລືອກລຸ້ນ (Generation) ພ້ອມ bottom sheet
-class GenerationField extends StatelessWidget {
-  const GenerationField({super.key, required this.controller});
-
-  final MemberFormController controller;
+class GenerationField extends GetView<MemberFormController> {
+  const GenerationField({super.key});
 
   @override
   Widget build(BuildContext context) {

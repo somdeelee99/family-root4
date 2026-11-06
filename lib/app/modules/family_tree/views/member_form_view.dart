@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../controllers/member_form_controller.dart';
-import '../components/member_form/member_account_link_section.dart';
-import '../components/member_form/member_avatar_picker.dart';
-import '../components/member_form/member_basic_info_section.dart';
-import '../components/member_form/member_contact_section.dart';
-import '../components/member_form/member_form_bottom_bar.dart';
-import '../components/member_form/member_relationships_section.dart';
-import '../components/member_form/member_status_section.dart';
+import '../widgets/member_form/member_account_link_section.dart';
+import '../widgets/member_form/member_avatar_picker.dart';
+import '../widgets/member_form/member_basic_info_section.dart';
+import '../widgets/member_form/member_contact_section.dart';
+import '../widgets/member_form/member_form_bottom_bar.dart';
+import '../widgets/member_form/member_relationships_section.dart';
+import '../widgets/member_form/member_status_section.dart';
 
 /// ຟອມເພີ່ມ / ແກ້ໄຂ ສະມາຊິກໃນຜັງ (Admin)
 ///
@@ -45,28 +45,28 @@ class MemberFormView extends GetView<MemberFormController> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     // ຮູບໂປຣໄຟລ໌ + ປຸ່ມເລືອກ/ປ່ຽນຮູບ
-                    MemberAvatarPicker(controller: controller),
+                    const MemberAvatarPicker(),
                     SizedBox(height: 20.h),
                     // ຂໍ້ມູນພື້ນຖານ: ຊື່, ຊື່ຫຼິ້ນ, ເພດ, ວັນເກີດ, ລຸ້ນ
-                    MemberBasicInfoSection(controller: controller),
+                    const MemberBasicInfoSection(),
                     SizedBox(height: 14.h),
                     // ສະຖານະ
-                    MemberStatusSection(controller: controller),
+                    const MemberStatusSection(),
                     SizedBox(height: 14.h),
                     // ຄວາມສຳພັນ: ພໍ່, ແມ່, ຄູ່, ລູກ, ເພື່ອນ
-                    MemberRelationshipsSection(controller: controller),
+                    const MemberRelationshipsSection(),
                     SizedBox(height: 14.h),
                     // ຂໍ້ມູນຕິດຕໍ່: ເບີໂທ, ອີເມວ, ທີ່ຢູ່
-                    MemberContactSection(controller: controller),
+                    const MemberContactSection(),
                     SizedBox(height: 14.h),
                     // ການເຊື່ອມບັນຊີ: ເຊື່ອມບັນຊີ Google, Facebook, Apple
 
-                    MemberAccountLinkSection(controller: controller),
+                    const MemberAccountLinkSection(),
                   ],
                 ),
               ),
       ),
-      bottomNavigationBar: MemberFormBottomBar(controller: controller),
+      bottomNavigationBar: const MemberFormBottomBar(),
     );
   }
 }

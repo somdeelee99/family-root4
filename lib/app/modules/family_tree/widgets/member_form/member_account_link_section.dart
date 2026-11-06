@@ -7,10 +7,8 @@ import '../../controllers/member_form_controller.dart';
 import 'form_controls.dart';
 
 /// ຜູກສະມາຊິກໃນຜັງກັບບັນຊີເຂົ້າລະບົບ
-class MemberAccountLinkSection extends StatelessWidget {
-  const MemberAccountLinkSection({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberAccountLinkSection extends GetView<MemberFormController> {
+  const MemberAccountLinkSection({super.key});
 
   @override
   Widget build(BuildContext context) {

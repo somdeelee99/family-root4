@@ -12,10 +12,8 @@ import '../controllers/family_tree_controller.dart';
 import 'member_detail_sheet.dart';
 
 /// ໂໝດລາຍການ: ສະແດງສະມາຊິກແຍກຕາມລຸ້ນ ແລະ ກັ່ນຕອງຕາມຄຳຄົ້ນຫາ.
-class FamilyTreeListView extends StatelessWidget {
-  const FamilyTreeListView({super.key, required this.controller});
-
-  final FamilyTreeController controller;
+class FamilyTreeListView extends GetView<FamilyTreeController> {
+  const FamilyTreeListView({super.key});
 
   @override
   Widget build(BuildContext context) {

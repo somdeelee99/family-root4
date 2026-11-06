@@ -11,10 +11,8 @@ import 'form_controls.dart';
 import 'generation_picker.dart';
 
 /// ຂໍ້ມູນພື້ນຖານ: ຊື່, ຊື່ຫຼິ້ນ, ເພດ, ວັນເກີດ, ລຸ້ນ
-class MemberBasicInfoSection extends StatelessWidget {
-  const MemberBasicInfoSection({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberBasicInfoSection extends GetView<MemberFormController> {
+  const MemberBasicInfoSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +63,7 @@ class MemberBasicInfoSection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        GenerationField(controller: controller),
+        const GenerationField(),
         SizedBox(height: 8.h),
         Text(
           'ແນະນຳ: ລຸ້ນຈະຖືກຄຳນວນອັດຕະໂນມັດ ເມື່ອກຳນົດພໍ່ແມ່ (ລູກ = ລຸ້ນພໍ່ແມ່ + 1)',

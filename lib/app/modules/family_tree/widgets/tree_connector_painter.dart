@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../layout/tree_layout_config.dart';
-import '../layout/tree_layout_result.dart';
+import '../controllers/tree_layout_config.dart';
+import '../controllers/tree_layout_result.dart';
 
 /// ວາດເສັ້ນເຊື່ອມຄວາມສຳພັນລະຫວ່າງ node.
 ///

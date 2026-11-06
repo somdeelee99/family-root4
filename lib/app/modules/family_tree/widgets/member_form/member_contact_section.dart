@@ -1,6 +1,7 @@
-import 'package:family_root/app/modules/family_tree/components/phone_field.dart';
+import 'package:family_root/app/modules/family_tree/widgets/phone_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/validators.dart';
@@ -9,10 +10,8 @@ import '../../controllers/member_form_controller.dart';
 import 'form_controls.dart';
 
 /// ຂໍ້ມູນຕິດຕໍ່ ແລະ ຂໍ້ມູນເພີ່ມເຕີມ
-class MemberContactSection extends StatelessWidget {
-  const MemberContactSection({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberContactSection extends GetView<MemberFormController> {
+  const MemberContactSection({super.key});
 
   @override
   Widget build(BuildContext context) {

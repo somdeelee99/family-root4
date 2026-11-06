@@ -15,10 +15,8 @@ import 'tree_grid_painter.dart';
 import 'tree_node_card.dart';
 
 /// canvas ຂອງຜັງໄມ້ຄອບຄົວ (zoom / pan / ຄົ້ນຫາ / ປຸ່ມຄວບຄຸມ)
-class FamilyTreeCanvas extends StatelessWidget {
-  const FamilyTreeCanvas({super.key, required this.controller});
-
-  final FamilyTreeController controller;
+class FamilyTreeCanvas extends GetView<FamilyTreeController> {
+  const FamilyTreeCanvas({super.key});
 
   @override
   Widget build(BuildContext context) {

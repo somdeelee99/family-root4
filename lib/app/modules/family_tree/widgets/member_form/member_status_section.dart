@@ -8,10 +8,8 @@ import '../../controllers/member_form_controller.dart';
 import 'form_controls.dart';
 
 /// ສະຖານະຂອງສະມາຊິກ (ຢູ່ / ເສຍຊີວິດ / ຢ່າຮ້າງ)
-class MemberStatusSection extends StatelessWidget {
-  const MemberStatusSection({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberStatusSection extends GetView<MemberFormController> {
+  const MemberStatusSection({super.key});
 
   @override
   Widget build(BuildContext context) {

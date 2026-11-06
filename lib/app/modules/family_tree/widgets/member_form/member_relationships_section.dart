@@ -8,10 +8,8 @@ import '../relation_picker.dart';
 import 'form_controls.dart';
 
 /// ຄວາມສຳພັນ: ພໍ່, ແມ່, ຄູ່ສົມລົດ, ລູກ, ອ້າຍເອື້ອຍນ້ອງ
-class MemberRelationshipsSection extends StatelessWidget {
-  const MemberRelationshipsSection({super.key, required this.controller});
-
-  final MemberFormController controller;
+class MemberRelationshipsSection extends GetView<MemberFormController> {
+  const MemberRelationshipsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
