@@ -60,14 +60,7 @@ class AppTextField extends StatelessWidget {
         if (label != null) ...[
           Row(
             children: [
-              Text(
-                label!,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
+              Text(label!, style: Theme.of(context).textTheme.labelMedium),
               if (isRequired)
                 Text(
                   ' *',

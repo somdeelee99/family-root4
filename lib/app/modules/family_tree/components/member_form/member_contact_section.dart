@@ -1,3 +1,4 @@
+import 'package:family_root/app/modules/family_tree/components/phone_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,24 +20,23 @@ class MemberContactSection extends StatelessWidget {
       title: 'ຂໍ້ມູນຕິດຕໍ່',
       icon: Icons.contact_phone_outlined,
       children: [
-        AppTextField(
-          controller: controller.phoneController,
+        Text('ເບີໂທລະສັບ', style: Theme.of(context).textTheme.labelMedium),
+        SizedBox(height: 14.h),
+        PhoneField(
+          textController: controller.phoneController,
           label: AppStrings.phone,
-          hint: '020 xxxx xxxx',
-          prefixIcon: Icons.call_outlined,
-          isOptional: true,
-          keyboardType: TextInputType.phone,
-          validator: (v) => Validators.phone(v),
+          icon: Icons.call_outlined,
+          onChanged: (number) => controller.phoneNumber = number.phoneNumber,
         ),
         SizedBox(height: 14.h),
-        AppTextField(
-          controller: controller.whatsappController,
+
+        Text('Whatsapp', style: Theme.of(context).textTheme.labelMedium),
+        SizedBox(height: 14.h),
+        PhoneField(
+          textController: controller.whatsappController,
           label: AppStrings.whatsapp,
-          hint: '020 xxxx xxxx',
-          prefixIcon: Icons.chat_outlined,
-          isOptional: true,
-          keyboardType: TextInputType.phone,
-          validator: (v) => Validators.phone(v),
+          icon: Icons.chat_outlined,
+          onChanged: (number) => controller.whatsappNumber = number.phoneNumber,
         ),
         SizedBox(height: 14.h),
         AppTextField(

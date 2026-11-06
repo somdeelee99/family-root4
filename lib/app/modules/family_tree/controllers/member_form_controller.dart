@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:family_root/app/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -19,6 +20,9 @@ import '../../../data/repositories/user_repository.dart';
 
 /// ຟອມເພີ່ມ / ແກ້ໄຂ ສະມາຊິກໃນຜັງໄມ້ຄອບຄົວ (Admin ເທົ່ານັ້ນ)
 class MemberFormController extends GetxController {
+  String? phoneNumber;
+  String? whatsappNumber;
+
   final MemberRepository _memberRepo = MemberRepository();
   final FamilyRepository _familyRepo = FamilyRepository();
   final StorageRepository _storageRepo = StorageRepository();
@@ -145,7 +149,8 @@ class MemberFormController extends GetxController {
 
   Future<void> pickImage({ImageSource source = ImageSource.gallery}) async {
     try {
-      if (source == ImageSource.camera && !(await _ensureCameraPermission())) return;
+      if (source == ImageSource.camera && !(await _ensureCameraPermission()))
+        return;
 
       final XFile? picked = await _picker.pickImage(
         source: source,
@@ -502,7 +507,8 @@ class MemberFormController extends GetxController {
 
       UiHelpers.hideLoading();
       UiHelpers.success(isEdit ? 'ອັບເດດຂໍ້ມູນສຳເລັດ' : 'ເພີ່ມສະມາຊິກສຳເລັດ');
-      Get.back(result: true);
+      // Get.back;
+      Get.offAllNamed(Routes.SHELL);
     } catch (e) {
       UiHelpers.hideLoading();
       UiHelpers.error(UiHelpers.mapError(e));
