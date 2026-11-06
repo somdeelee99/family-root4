@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 /// ຄ້າຍຄື [IndexedStack] ແຕ່ຈະ build ສະເພາະໜ້າທີ່ເຄີຍເປີດແລ້ວ
 ///
 /// ປະໂຫຍດ:
-/// - ບໍ່ build ທັງ 5 ໜ້າພ້ອມກັນຕອນເປີດແອັບ (ປະຢັດເວລາ ແລະ ຫນ່ວຍຄວາມຈຳ)
+/// - ບໍ່ build ທັງໝົດພ້ອມກັນຕອນເປີດແອັບ (ປະຢັດເວລາ ແລະ ຫນ່ວຍຄວາມຈຳ)
 /// - ສະຖານະຂອງໜ້າທີ່ເຄີຍເປີດ (scroll, ຄຳຄົ້ນຫາ) ຍັງຄົງຢູ່
-/// - ຫຼຸດໂອກາດ widget ຊ້ຳກັນ (ເຊັ່ນ Hero tag ຊ້ຳ) ລະຫວ່າງໜ້າ
-///
-/// ໝາຍເຫດ: ເມື່ອໜ້າໃດຖືກເປີດແລ້ວ ມັນຈະຄົງຢູ່ໃນຕົ້ນໄມ້ຕໍ່ໄປ
-/// ສະນັ້ນ widget ທີ່ໃຊ້ tag ອັດຕະໂນມັດ (FloatingActionButton, Hero)
-/// ຍັງຄວນຕັ້ງ tag ໃຫ້ບໍ່ຊ້ຳກັນຢູ່ດີ
 class LazyIndexedStack extends StatefulWidget {
   const LazyIndexedStack({
     super.key,
@@ -40,7 +35,8 @@ class _LazyIndexedStackState extends State<LazyIndexedStack> {
   @override
   void didUpdateWidget(covariant LazyIndexedStack oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!_loaded.contains(widget.index) && widget.index < widget.children.length) {
+    if (!_loaded.contains(widget.index) &&
+        widget.index < widget.children.length) {
       _loaded.add(widget.index);
     }
   }

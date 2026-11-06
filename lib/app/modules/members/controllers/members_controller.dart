@@ -44,7 +44,8 @@ class MembersController extends GetxController {
   void onInit() {
     super.onInit();
     searchController.addListener(
-        () => query.value = searchController.text.trim().toLowerCase());
+      () => query.value = searchController.text.trim().toLowerCase(),
+    );
     _listen();
   }
 
@@ -105,7 +106,7 @@ class MembersController extends GetxController {
   }
 
   void setRoleFilter(UserRole? role) {
-    roleFilter.value = roleFilter.value == role ? null : role;
+    roleFilter.value = role;
   }
 
   /// ເປີດຫ້ອງແຊັດກັບສະມາຊິກຄົນນັ້ນ (ບໍ່ສະແດງຂໍ້ມູນຂອງຕົນເອງ)

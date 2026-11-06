@@ -1,25 +1,40 @@
-import 'package:family_root/app/core/constants/app_colors.dart';
-import 'package:family_root/app/core/constants/app_sizes.dart';
-import 'package:family_root/app/data/models/enums.dart';
-import 'package:family_root/app/modules/members/controllers/account_form_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-Widget RoleOption({
-  required UserRole role,
-  required IconData icon,
-  required String title,
-  required String description,
-  bool isGold = false,
-}) {
-  final controller = Get.find<AccountFormController>();
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_sizes.dart';
+import '../../../data/models/enums.dart';
 
-  return Obx(() {
-    final selected = controller.role.value == role;
+/// ຕົວເລືອກບົດບາດຂອງບັນຊີ (Member / Admin)
+///
+/// widget ນີ້ບໍ່ຮູ້ຈັກ controller ເລີຍ — ຜູ້ໃຊ້ສົ່ງ [selected] ແລະ [onTap] ເຂົ້າມາ
+/// ເພື່ອໃຫ້ທົດສອບ ແລະ ນຳໃຊ້ຄືນໄດ້ງ່າຍ.
+class RoleOption extends StatelessWidget {
+  const RoleOption({
+    super.key,
+    required this.role,
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.selected,
+    required this.onTap,
+    this.isGold = false,
+  });
+
+  final UserRole role;
+  final IconData icon;
+  final String title;
+  final String description;
+  final bool selected;
+  final VoidCallback onTap;
+  final bool isGold;
+
+  @override
+  Widget build(BuildContext context) {
     final color = isGold ? AppColors.accent : AppColors.primary;
+
     return InkWell(
-      onTap: () => controller.setRole(role),
+      onTap: onTap,
       borderRadius: BorderRadius.circular(AppSizes.radiusMd.r),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -80,5 +95,5 @@ Widget RoleOption({
         ),
       ),
     );
-  });
+  }
 }

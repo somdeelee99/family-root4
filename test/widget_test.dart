@@ -1,10 +1,12 @@
-import 'package:family_root/app/modules/shell/widgets/lazy_indexed_stack.dart';
+import 'package:family_root/app/core/widgets/lazy_indexed_stack.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Widget host(int index, List<Widget> children) => MaterialApp(
-    home: Scaffold(body: LazyIndexedStack(index: index, children: children)),
+    home: Scaffold(
+      body: LazyIndexedStack(index: index, children: children),
+    ),
   );
 
   // ໝາຍເຫດ: IndexedStack ເກັບໜ້າທີ່ບໍ່ໄດ້ເລືອກໄວ້ offstage ຈຶ່ງຕ້ອງໃຊ້
@@ -29,7 +31,9 @@ void main() {
     expect(find.text('tab-a'), findsNothing);
   });
 
-  testWidgets('keeps a visited tab mounted so its state survives', (tester) async {
+  testWidgets('keeps a visited tab mounted so its state survives', (
+    tester,
+  ) async {
     final children = <Widget>[const _Counter(), const Text('tab-b')];
     await tester.pumpWidget(host(0, children));
 

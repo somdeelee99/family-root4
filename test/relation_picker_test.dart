@@ -1,5 +1,6 @@
 import 'package:family_root/app/data/models/family_member.dart';
-import 'package:family_root/app/modules/family_tree/widgets/relation_picker.dart';
+import 'package:family_root/app/modules/family_tree/component/relation_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';

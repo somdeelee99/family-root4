@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../routes/app_routes.dart';
 import '../controllers/family_tree_controller.dart';
-import '../widgets/family_tree_canvas.dart';
-import '../widgets/family_tree_header.dart';
-import '../widgets/family_tree_list_view.dart';
+import '../component/family_tree_canvas.dart';
+import '../component/family_tree_header.dart';
+import '../component/family_tree_list_view.dart';
 
 class FamilyTreeView extends GetView<FamilyTreeController> {
   const FamilyTreeView({super.key});

@@ -7,8 +7,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_sizes.dart';
 import '../../../core/constants/app_strings.dart';
 import '../controllers/auth_controller.dart';
-import '../widgets/login_form_card.dart';
-import '../widgets/social_login_section.dart';
+import '../component/login_form_card.dart';
+import '../component/social_login_section.dart';
 
 class AuthView extends GetView<AuthController> {
   const AuthView({super.key});

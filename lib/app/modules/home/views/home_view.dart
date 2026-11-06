@@ -1,4 +1,4 @@
-import 'package:family_root/app/modules/home/widgets/quick_action.dart';
+import 'package:family_root/app/modules/home/component/quick_action.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,9 +16,9 @@ import '../../../core/widgets/section_header.dart';
 import '../../../routes/app_routes.dart';
 import '../../shell/controllers/shell_controller.dart';
 import '../controllers/home_controller.dart';
-import '../widgets/gender_donut_chart.dart';
-import '../widgets/generation_bar_chart.dart';
-import '../widgets/home_stat_grid.dart';
+import '../component/gender_donut_chart.dart';
+import '../component/generation_bar_chart.dart';
+import '../component/home_stat_grid.dart';
 
 /// ໜ້າຫຼັກ - ສະແດງພາບລວມຂອງຄອບຄົວ
 /// Admin ແລະ Member ເຫັນກາຟຂໍ້ມູນດຽວກັນ (ຂໍ້ມູນທັງໝົດ, ອາຍຸຕຳກວ່າ 18, ຊາຍ, ຍິງ, ເສຍຊີວິດ)

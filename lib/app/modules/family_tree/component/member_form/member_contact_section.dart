@@ -1,4 +1,4 @@
-import 'package:family_root/app/modules/family_tree/widgets/phone_field.dart';
+import 'package:family_root/app/core/widgets/phone_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

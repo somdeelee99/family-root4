@@ -110,7 +110,7 @@ class FamilyInfoController extends GetxController {
       );
 
       UiHelpers.hideLoading();
-      UiHelpers.success('ອັບເດດຂໍ້ມູນຄອບຄົວສຳລັບ');
+      UiHelpers.success('ອັບເດດຂໍ້ມູນຄອບຄົວສຳເລັດ');
       isEditing.value = false;
       pickedCover.value = null;
     } catch (e) {

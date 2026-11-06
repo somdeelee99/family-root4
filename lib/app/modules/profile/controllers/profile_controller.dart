@@ -93,10 +93,10 @@ class ProfileController extends GetxController {
         mode: LaunchMode.externalApplication,
       );
       if (!launched) {
-        Get.snackbar('Error', 'Could not open ${uri.toString()}');
+        UiHelpers.error('ບໍ່ສາມາດເປີດລິ້ງໄດ້: $uri');
       }
-    } catch (e) {
-      Get.snackbar('Error', 'Could not open ${uri.toString()}');
+    } catch (_) {
+      UiHelpers.error('ບໍ່ສາມາດເປີດລິ້ງໄດ້: $uri');
     }
   }
 

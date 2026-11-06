@@ -36,6 +36,9 @@ class AccountFormController extends GetxController {
 
   bool get isEdit => uid.value.isNotEmpty;
 
+  String? phoneNumber;
+  String? whatsappNumber;
+
   @override
   void onInit() {
     super.onInit();
@@ -181,7 +184,7 @@ class AccountFormController extends GetxController {
           detail: '${nameController.text.trim()} (${role.value.label})',
         );
         UiHelpers.hideLoading();
-        UiHelpers.success('ສ້າງບັນຊີສຳເລັດ • ແຈ້ງອີແມວ ແລະ ລະຫັດໃຫ້ສະມາຊິກ');
+        // UiHelpers.success('ສ້າງບັນຊີສຳເລັດ • ແຈ້ງອີແມວ ແລະ ລະຫັດໃຫ້ສະມາຊິກ');
 
         // ສະແດງຂໍ້ມູນບັນຊີທີ່ສ້າງໃໝ່ ເພື່ອສົ່ງຕໍ່
         _showCredentialDialog(

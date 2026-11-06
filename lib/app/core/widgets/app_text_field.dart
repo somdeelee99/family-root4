@@ -10,6 +10,7 @@ class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     this.controller,
+    this.initialValue,
     this.label,
     this.hint,
     this.prefixIcon,
@@ -32,6 +33,9 @@ class AppTextField extends StatelessWidget {
   });
 
   final TextEditingController? controller;
+
+  /// ຄ່າເລີ່ມຕົ້ນ (ໃຊ້ເມື່ອບໍ່ມີ [controller])
+  final String? initialValue;
   final String? label;
   final String? hint;
   final IconData? prefixIcon;
@@ -79,6 +83,7 @@ class AppTextField extends StatelessWidget {
         ],
         TextFormField(
           controller: controller,
+          initialValue: controller == null ? initialValue : null,
           obscureText: obscure,
           keyboardType: keyboardType,
           validator: validator,

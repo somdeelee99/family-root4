@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../controllers/member_form_controller.dart';
-import '../widgets/member_form/member_account_link_section.dart';
-import '../widgets/member_form/member_avatar_picker.dart';
-import '../widgets/member_form/member_basic_info_section.dart';
-import '../widgets/member_form/member_contact_section.dart';
-import '../widgets/member_form/member_form_bottom_bar.dart';
-import '../widgets/member_form/member_relationships_section.dart';
-import '../widgets/member_form/member_status_section.dart';
+import '../component/member_form/member_account_link_section.dart';
+import '../component/member_form/member_avatar_picker.dart';
+import '../component/member_form/member_basic_info_section.dart';
+import '../component/member_form/member_contact_section.dart';
+import '../component/member_form/member_form_bottom_bar.dart';
+import '../component/member_form/member_relationships_section.dart';
+import '../component/member_form/member_status_section.dart';
 
 /// ຟອມເພີ່ມ / ແກ້ໄຂ ສະມາຊິກໃນຜັງ (Admin)
 ///
