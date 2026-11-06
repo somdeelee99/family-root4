@@ -110,22 +110,6 @@ class ProfileController extends GetxController {
     );
     if (confirmed != true) return;
 
-    _showSignOutLoading();
-
-    try {
-      await _familySub?.cancel();
-      await _membersSub?.cancel();
-    } catch (_) {}
-
-    try {
-      await auth.signOut();
-    } finally {
-      if (Get.isDialogOpen == true) Get.back();
-      Get.offAllNamed(Routes.AUTH);
-    }
-  }
-
-  void _showSignOutLoading() {
     Get.dialog(
       PopScope(
         canPop: false,
@@ -142,6 +126,18 @@ class ProfileController extends GetxController {
       ),
       barrierDismissible: false,
     );
+
+    try {
+      await _familySub?.cancel();
+      await _membersSub?.cancel();
+    } catch (_) {}
+
+    try {
+      await auth.signOut();
+    } finally {
+      if (Get.isDialogOpen == true) Get.back();
+      Get.offAllNamed(Routes.AUTH);
+    }
   }
 
   /// ລຶບບັນຊີຂອງຕົນເອງ ແລະ ຂໍ້ມູນສ່ວນຕົວ (Play Store requirement)
