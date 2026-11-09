@@ -11,7 +11,6 @@ import '../controllers/chat_room_controller.dart';
 import '../component/chat_input_bar.dart';
 import '../component/message_bubble.dart';
 
-/// ຫ້ອງສົນທະນາ 1:1 (ເຫັນປະຫວັດທັງໝົດ ແລະ ບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້)
 class ChatRoomView extends GetView<ChatRoomController> {
   const ChatRoomView({super.key});
 
@@ -19,6 +18,8 @@ class ChatRoomView extends GetView<ChatRoomController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset:
+          true, // ສຳຄັນຫຼາຍ: ໃຫ້ Scaffold ຍົກເວລາ keyboard ມາ
       appBar: AppBar(
         titleSpacing: 0,
         title: Obx(
@@ -75,103 +76,10 @@ class ChatRoomView extends GetView<ChatRoomController> {
             ),
           ),
         ),
-        actions: [
-          Obx(() {
-            // ອ່ານ observable ຢູ່ນີ້ ເພື່ອໃຫ້ Obx ຈົດຈຳ dependency
-            // (ບໍ່ຄວນອ່ານພາຍໃນ itemBuilder ເພາະມັນເຮັດວຽກນອກ scope ຂອງ Obx)
-            final isBlocked = controller.isOtherBlocked.value;
-            return PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert_rounded),
-              tooltip: 'ຕົວເລືອກ',
-              onSelected: (value) {
-                switch (value) {
-                  case 'report':
-                    _showReportDialog(context);
-                  case 'block':
-                    controller.blockOtherUser();
-                  case 'unblock':
-                    controller.unblockOtherUser();
-                }
-              },
-              itemBuilder: (_) => [
-                const PopupMenuItem(
-                  value: 'report',
-                  child: ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.flag_outlined, size: 20),
-                    title: Text(
-                      'ລາຍງານຜູ້ໃຊ້',
-                      style: TextStyle(fontSize: 13.5),
-                    ),
-                  ),
-                ),
-                if (isBlocked)
-                  const PopupMenuItem(
-                    value: 'unblock',
-                    child: ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.lock_open_rounded, size: 20),
-                      title: Text(
-                        'ຍົກເລີກການບລັອກ',
-                        style: TextStyle(fontSize: 13.5),
-                      ),
-                    ),
-                  )
-                else
-                  const PopupMenuItem(
-                    value: 'block',
-                    child: ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.block_rounded, size: 20),
-                      title: Text(
-                        'ບລັອກຜູ້ໃຊ້',
-                        style: TextStyle(fontSize: 13.5),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          }),
-        ],
       ),
       body: Column(
         children: [
-          // ແຈ້ງເຕືອນວ່າຜູ້ໃຊ້ນີ້ຖືກບລັອກ
-          Obx(
-            () => controller.isOtherBlocked.value
-                ? Container(
-                    width: double.infinity,
-                    color: AppColors.danger.withValues(alpha: 0.08),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 7.h,
-                      horizontal: 16.w,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.block_rounded,
-                          size: 13.sp,
-                          color: AppColors.danger,
-                        ),
-                        SizedBox(width: 7.w),
-                        Expanded(
-                          child: Text(
-                            'ທ່ານໄດ້ບລັອກຜູ້ໃຊ້ນີ້ - ຂໍ້ຄວາມຈະຖືກເຊື່ອງໄວ້',
-                            style: TextStyle(
-                              fontSize: 10.5.sp,
-                              color: AppColors.danger,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          // ແຈ້ງເຕືອນວ່າບໍ່ສາມາດລຶບຂໍ້ຄວາມໄດ້
+          // ແຈ້ງເຕືອນ
           Container(
             width: double.infinity,
             color: AppColors.accentSoft,
@@ -212,6 +120,8 @@ class ChatRoomView extends GetView<ChatRoomController> {
                 controller: controller.scrollController,
                 padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 16.h),
                 physics: const BouncingScrollPhysics(),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 itemCount: controller.messages.length,
                 itemBuilder: (context, index) {
                   final message = controller.messages[index];
@@ -219,7 +129,6 @@ class ChatRoomView extends GetView<ChatRoomController> {
                       ? controller.messages[index - 1]
                       : null;
                   final isMine = message.senderId == controller.myUid;
-
                   final showDivider =
                       previous == null ||
                       previous.createdAt == null ||
@@ -246,117 +155,41 @@ class ChatRoomView extends GetView<ChatRoomController> {
               );
             }),
           ),
-          Obx(
-            () => controller.isOtherBlocked.value
-                ? Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 14.h,
-                      horizontal: 16.w,
-                    ),
-                    color: Colors.white,
-                    child: Text(
-                      'ຍົກເລີກການບລັອກເພື່ອສົ່ງຂໍ້ຄວາມຫາຜູ້ນີ້',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.5.sp,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  )
-                : const ChatInputBar(),
-          ),
         ],
       ),
-    );
-  }
-
-  Future<void> _showReportDialog(BuildContext context) async {
-    const reasons = <String>[
-      'ຂໍ້ຄວາມຫຍາບຄາຍ / ບໍ່ເໝາະສົມ',
-      'ການຂົ່ມເຫັງ ຫຼື ຂົ່ມຂູ່',
-      'ສະແປມ / ຫຼອກລວງ',
-      'ເນື້ອຫາຜູ້ໃຫຍ່',
-      'ອື່ນໆ',
-    ];
-    var selected = reasons.first;
-    final detailsController = TextEditingController();
-
-    final submitted = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (dialogContext, setState) => AlertDialog(
-          title: const Text(
-            'ລາຍງານຜູ້ໃຊ້',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...reasons.map(
-                  (reason) => InkWell(
-                    onTap: () => setState(() => selected = reason),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            selected == reason
-                                ? Icons.radio_button_checked_rounded
-                                : Icons.radio_button_unchecked_rounded,
-                            size: 20,
-                            color: selected == reason
-                                ? AppColors.primary
-                                : AppColors.textHint,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              reason,
-                              style: const TextStyle(fontSize: 13.5),
-                            ),
-                          ),
-                        ],
-                      ),
+      // ແກ້ຈຸດຫຼັກ: ຍ້າຍມາໄວ້ bottomNavigationBar
+      bottomNavigationBar: Obx(
+        () => controller.isOtherBlocked.value
+            ? Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                color: Colors.white,
+                child: SafeArea(
+                  top: false,
+                  child: Text(
+                    'ຍົກເລີກການບລັອກເພື່ອສົ່ງຂໍ້ຄວາມຫາຜູ້ນີ້',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.5.sp,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: detailsController,
-                  maxLines: 3,
-                  maxLength: 500,
-                  style: const TextStyle(fontSize: 13.5),
-                  decoration: const InputDecoration(
-                    hintText: 'ລາຍລະອຽດເພີ່ມເຕີມ (ບໍ່ບັງຄັບ)',
-                    border: OutlineInputBorder(),
+              )
+            : SafeArea(
+                top: false,
+                child: AnimatedPadding(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
+                  // ຕົວນີ້ຈະເຮັດໃຫ້ແຖວພິມຍົກຂຶ້ນຕາມ Keyboard ອັດຕະໂນມັດ
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
                   ),
+                  child: const ChatInputBar(),
                 ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('ຍົກເລີກ'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('ສົ່ງລາຍງານ'),
-            ),
-          ],
-        ),
+              ),
       ),
     );
-
-    if (submitted == true) {
-      await controller.reportOtherUser(
-        selected,
-        details: detailsController.text,
-      );
-    }
-    detailsController.dispose();
   }
 
   bool _sameDay(DateTime a, DateTime b) =>

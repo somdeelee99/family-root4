@@ -24,7 +24,64 @@ class ChatView extends GetView<ChatController> {
         bottom: false,
         child: Column(
           children: [
-            _header(),
+            Container(
+              padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 14.h),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(9.w),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(
+                          Icons.forum_rounded,
+                          size: 18.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 11.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStrings.chat,
+                              style: TextStyle(
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              'ສົນທະນາກັບສະມາຊິກໃນຄອບຄົວ',
+                              style: TextStyle(
+                                fontSize: 11.5.sp,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  TextField(
+                    controller: controller.searchController,
+                    style: TextStyle(fontSize: 14.sp),
+                    decoration: InputDecoration(
+                      hintText: 'ຄົ້ນຫາການສົນທະນາ ຫຼື ສະມາຊິກ...',
+                      isDense: true,
+                      prefixIcon: Icon(Icons.search_rounded, size: 20.sp),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
@@ -100,66 +157,6 @@ class ChatView extends GetView<ChatController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _header() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 14.h),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(9.w),
-                decoration: BoxDecoration(
-                  gradient: AppColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Icon(
-                  Icons.forum_rounded,
-                  size: 18.sp,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(width: 11.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.chat,
-                      style: TextStyle(
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      'ສົນທະນາກັບສະມາຊິກໃນຄອບຄົວ',
-                      style: TextStyle(
-                        fontSize: 11.5.sp,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          TextField(
-            controller: controller.searchController,
-            style: TextStyle(fontSize: 14.sp),
-            decoration: InputDecoration(
-              hintText: 'ຄົ້ນຫາການສົນທະນາ ຫຼື ສະມາຊິກ...',
-              isDense: true,
-              prefixIcon: Icon(Icons.search_rounded, size: 20.sp),
-            ),
-          ),
-        ],
       ),
     );
   }
