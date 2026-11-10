@@ -53,8 +53,8 @@ class AppStrings {
   static const String generationChart = 'ຈຳນວນສະມາຊິກໃນແຕ່ລະລຸ້ນ';
   static const String overview = 'ພາບລວມຂອງຄອບຄົວ';
   static const String quickActions = 'ການຈັດການໄວ';
-  static const String addMember = 'ເພີ່ມສະມາຊິກ';
-  static const String createAccount = 'ສ້າງບັນຊີ member';
+  static const String addMember = 'ເພີ່ມສະມາຊິກໃນຄອບຄົວ';
+  static const String createAccount = 'ສ້າງບັນຊີສະມາຊິກ';
 
   // ---- Family tree ----
   static const String familyTree = 'ຜັງໄມ້ຄອບຄົວ';
