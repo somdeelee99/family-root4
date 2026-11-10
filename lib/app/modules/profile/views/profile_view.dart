@@ -57,13 +57,13 @@ class ProfileView extends GetView<ProfileController> {
                   subtitle: controller.family.value?.displayName ?? '-',
                   onTap: controller.goToFamilyInfo,
                 ),
-                MenuItem(
-                  icon: FaIcon(FontAwesomeIcons.trash),
-                  title: 'ລຶບບັນຊີ',
-                  subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
-                  onTap: controller.deleteMyAccount,
-                  color: AppColors.danger,
-                ),
+                // MenuItem(
+                //   icon: FaIcon(FontAwesomeIcons.trash),
+                //   title: 'ລຶບບັນຊີ',
+                //   subtitle: 'ລຶບບັນຊີ ແລະ ຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ',
+                //   onTap: controller.deleteMyAccount,
+                //   color: AppColors.danger,
+                // ),
               ],
             ),
 

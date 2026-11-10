@@ -8,7 +8,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/member_tile.dart';
-import '../../../core/widgets/segmented_control.dart';
+// import '../../../core/widgets/segmented_control.dart';
 import '../component/member_account_tile.dart';
 import '../component/member_role_filter.dart';
 import '../component/members_header.dart';
@@ -49,25 +49,25 @@ class MembersView extends GetView<MembersController> {
                 searchController: controller.searchController,
               ),
             ),
-            Obx(
-              () => SegmentedControl<MemberListMode>(
-                margin: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 4.h),
-                selected: controller.mode.value,
-                onChanged: controller.changeMode,
-                options: const [
-                  SegmentedOption(
-                    value: MemberListMode.accounts,
-                    label: 'ບັນຊີສະມາຊິກ',
-                    icon: Icons.badge_outlined,
-                  ),
-                  SegmentedOption(
-                    value: MemberListMode.tree,
-                    label: 'ທັງໝົດໃນຜັງ',
-                    icon: Icons.account_tree_outlined,
-                  ),
-                ],
-              ),
-            ),
+            // Obx(
+            //   () => SegmentedControl<MemberListMode>(
+            //     margin: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 4.h),
+            //     selected: controller.mode.value,
+            //     onChanged: controller.changeMode,
+            //     options: const [
+            //       // SegmentedOption(
+            //       //   value: MemberListMode.accounts,
+            //       //   label: 'ບັນຊີສະມາຊິກ',
+            //       //   icon: Icons.badge_outlined,
+            //       // ),
+            //       // SegmentedOption(
+            //       //   value: MemberListMode.tree,
+            //       //   label: 'ທັງໝົດໃນຜັງ',
+            //       //   icon: Icons.account_tree_outlined,
+            //       // ),
+            //     ],
+            //   ),
+            // ),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
@@ -146,13 +146,14 @@ class MembersView extends GetView<MembersController> {
       physics: const BouncingScrollPhysics(),
       itemCount: members.length,
       separatorBuilder: (_, __) => SizedBox(height: 10.h),
-      itemBuilder: (context, index) => MemberTile(
-            member: members[index],
-            onTap: () => controller.openPersonDetail(members[index]),
-          )
-          .animate(delay: (index * 45).ms)
-          .fadeIn(duration: 320.ms)
-          .slideX(begin: 0.05, end: 0),
+      itemBuilder: (context, index) =>
+          MemberTile(
+                member: members[index],
+                onTap: () => controller.openPersonDetail(members[index]),
+              )
+              .animate(delay: (index * 45).ms)
+              .fadeIn(duration: 320.ms)
+              .slideX(begin: 0.05, end: 0),
     );
   }
 }
