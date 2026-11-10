@@ -8,7 +8,7 @@ class AppStrings {
   // ---- Tabs ----
   static const String tabHome = 'ໜ້າຫຼັກ';
   static const String tabTree = 'ຜັງຄອບຄົວ';
-  static const String tabMembers = 'ສະມາຊິກ';
+  // static const String tabMembers = 'ສະມາຊິກ';
   static const String tabChat = 'ສົນທະນາ';
   static const String tabProfile = 'ໂປຣໄຟລ໌';
 

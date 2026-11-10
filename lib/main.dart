@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,12 +29,11 @@ Future<void> main() async {
 
   var firebaseReady = false;
 
-  // 1. Initialize Firebase first.
+  // 1) Firebase
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-
     firebaseReady = true;
 
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
@@ -54,7 +55,7 @@ Future<void> main() async {
     debugPrint('BOOT ERROR: Firebase: $e\n$s');
   }
 
-  // 2. Initialize notifications independently.
+  // 2) Notifications
   if (firebaseReady) {
     try {
       FirebaseMessaging.onBackgroundMessage(
@@ -71,17 +72,20 @@ Future<void> main() async {
     }
   }
 
-  // 3. Set screen orientation.
+  // 3) Orientation
   try {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   } catch (e, s) {
     debugPrint('BOOT ERROR: Orientation: $e\n$s');
   }
 
-  // 4. ThemeService is required by FamilyRootApp.
+  // 4) ThemeService
   try {
-    await Get.putAsync(() => ThemeService().init())
-        .timeout(const Duration(seconds: 15));
+    await Get.putAsync(() async {
+      final service = ThemeService();
+      await service.init();
+      return service;
+    }).timeout(const Duration(seconds: 15));
 
     debugPrint('BOOT: ThemeService OK');
   } catch (e, s) {
@@ -95,20 +99,27 @@ Future<void> main() async {
     return;
   }
 
-  // 5. Initialize other services independently.
+  // 5) Connectivity
   try {
-    await Get.putAsync(() => ConnectivityService().init())
-        .timeout(const Duration(seconds: 15));
+    await Get.putAsync(() async {
+      final service = ConnectivityService();
+      await service.init();
+      return service;
+    }).timeout(const Duration(seconds: 15));
 
     debugPrint('BOOT: ConnectivityService OK');
   } catch (e, s) {
     debugPrint('BOOT ERROR: ConnectivityService: $e\n$s');
   }
 
+  // 6) Auth
   if (firebaseReady) {
     try {
-      await Get.putAsync(() => AuthService().init())
-          .timeout(const Duration(seconds: 15));
+      await Get.putAsync(() async {
+        final service = AuthService();
+        await service.init();
+        return service;
+      }).timeout(const Duration(seconds: 15));
 
       debugPrint('BOOT: AuthService OK');
     } catch (e, s) {
@@ -116,7 +127,7 @@ Future<void> main() async {
     }
   }
 
-  // 6. Start the app.
+  // 7) Run app
   debugPrint('BOOT: runApp');
   runApp(const FamilyRootApp());
 }
